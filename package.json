@@ -1,0 +1,20 @@
+{
+  "name": "tac-storage-sts-sdk",
+  "version": "1.0.0",
+  "description": "Storage 临时密钥",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tencentyun/tac-storage-sts-sdk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tencentyun/tac-storage-sts-sdk/issues"
+  },
+  "homepage": "https://github.com/tencentyun/tac-storage-sts-sdk#readme"
+}
