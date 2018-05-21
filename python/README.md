@@ -14,12 +14,12 @@
 from sts import Sts
 
 config = {
-		# 临时密钥有效时长，单位是秒，如果没有设置，默认是30分钟
-		'duration_in_seconds': 1800,
-		# 您的secret id
-		'secret_id': 'xxx',
-		# 您的secret key
-       'secret_key': 'xxx',
+	# 临时密钥有效时长，单位是秒，如果没有设置，默认是30分钟
+	'duration_in_seconds': 1800,
+	# 您的secret id
+	'secret_id': 'xxx',
+	# 您的secret key
+	'secret_key': 'xxx',
 }
 
 sts = Sts(config)
