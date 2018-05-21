@@ -1,11 +1,16 @@
 {
-  "name": "tac-storage-sts",
+  "name": "qcloud-cos-sts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tencentyun/qcloud-cos-sts-sdk"
+  },
+
   "author": "wjielai@tencent.com",
   "license": "MIT",
   "dependencies": {

@@ -12,7 +12,7 @@
 
 ```
 <dependency>
-	<groupId>com.qcloud</groupId>
+   <groupId>com.qcloud</groupId>
    <artifactId>qcloud-java-sdk</artifactId>
    <version>2.0.6</version>
    <scope>compile</scope>

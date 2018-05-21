@@ -11,7 +11,7 @@
 #### 1. npm install:
 
 ```
-
+npm i qcloud-cos-sts --save
 ```
 
 #### 2. 调用代码如下：
