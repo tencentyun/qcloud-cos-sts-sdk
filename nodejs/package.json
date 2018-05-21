@@ -1,0 +1,20 @@
+{
+  "name": "tac-storage-sts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wjielai@tencent.com",
+  "license": "MIT",
+  "dependencies": {
+    "http-proxy-agent": "^2.1.0",
+    "https-proxy-agent": "^2.2.1",
+    "request": "^2.86.0",
+    "request-debug": "^0.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^5.1.1"
+  }
+}
