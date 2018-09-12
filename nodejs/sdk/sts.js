@@ -24,6 +24,7 @@ var util = {
     // 计算签名
     getSignature: function (opt, key, method) {
         var formatString = method + stsDomain + '/v2/index.php?' + util.json2str(opt, 1);
+        formatString = formatString = decodeURIComponent(formatString);
         var hmac = crypto.createHmac('sha1', key);
         var sign = hmac.update(new Buffer(formatString, 'utf8')).digest('base64');
         return sign;
@@ -58,7 +59,7 @@ var getSTS = function (options, callback) {
         SecretId: options.secretId,
         Timestamp: Timestamp,
         durationSeconds: (options.expired === undefined) ? defaultDurationInSeconds : options.durationInSeconds,
-        policy: policyStr,
+        policy: encodeURIComponent(policyStr),
     };
     params.Signature = encodeURIComponent(util.getSignature(params, options.secretKey, Method));
 
