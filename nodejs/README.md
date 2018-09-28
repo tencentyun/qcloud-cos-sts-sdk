@@ -25,7 +25,9 @@ var options = {
 	// 您的 secretKey
 	secretKey: 'xxx',
 	// 临时密钥有效时长，单位是秒
-	durationInSeconds: 1800
+	durationInSeconds: 1800,
+	// policy
+	policy: 'your policy',
 };
 
 

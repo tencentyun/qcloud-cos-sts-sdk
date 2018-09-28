@@ -20,6 +20,8 @@ config = {
 	'secret_id': 'xxx',
 	# 您的secret key
 	'secret_key': 'xxx',
+	# 您配置的 policy
+	'policy': 'your policy',
 }
 
 sts = Sts(config)

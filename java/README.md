@@ -30,6 +30,8 @@ config.put("SecretId", "xxx");
 config.put("SecretKey", "xxx");
 // 临时密钥有效时长，单位是秒，如果没有设置，默认是30分钟
 config.put("durationInSeconds", 1800);
+// 配置的 policy
+config.put("policy", "your policy");
 
 JSONObject credential = StorageSts.getCredential(config);
 ```
