@@ -1,25 +1,24 @@
 {
   "name": "qcloud-cos-sts",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "demo": "node demo/demo",
+    "sts-server": "node demo/sts-server",
+    "sts-server-scope": "node demo/sts-server-scope"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tencentyun/qcloud-cos-sts-sdk"
   },
-
   "author": "wjielai@tencent.com",
   "license": "MIT",
   "dependencies": {
-    "http-proxy-agent": "^2.1.0",
-    "https-proxy-agent": "^2.2.1",
-    "request": "^2.86.0",
-    "request-debug": "^0.2.0"
+    "request": "^2.88.0"
   },
   "devDependencies": {
-    "mocha": "^5.1.1"
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
   }
 }

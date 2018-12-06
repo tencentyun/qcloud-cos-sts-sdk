@@ -1,48 +1,163 @@
-## 获取 SDK
+# 
 
-[Nodejs SDK 下载>>](https://github.com/tencentyun/tac-storage-sts-sdk)
+### 安装方法
 
-### 查看示例
-
-请查看 `test` 下的 `sts_demo`，里面描述了如何调用SDK。
-
-### 使用方法
-
-#### 1. npm install:
-
-```
-npm i qcloud-cos-sts --save
+```cmd
+npm i cos-sts-sdk --save
 ```
 
-#### 2. 调用代码如下：
+## 接口说明
 
-```
-var sts = require('tac-storage-sts');
+### getCredential
 
-var options = {
-	// 您的 secretId
- 	secretId: 'xxx',
-	// 您的 secretKey
-	secretKey: 'xxx',
-	// 临时密钥有效时长，单位是秒
-	durationInSeconds: 1800,
-	// policy
-	policy: 'your policy',
+获取临时密钥接口
+
+#### 参数说明
+
+| 字段 | 类型 | 描述 | 必选 |
+| ---- | ---- | ---- | ---- |
+| options | Object | 表示当客户端的请求，最少需要什么样的权限，是一个键值对象的数组 | 是 |
+| - secretId | String | 云 API 密钥 Id | 是 |
+| - secretKey | String | 云 API 密钥 Key | 是 |
+| - policy | Object | 要申请的临时密钥，限定的权限范围 | 是 |
+| - durationSeconds | Number | 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200  | 否 |
+| - proxy | String | 代理地址，如："http://proxy.example.com:8080" | 否 |
+| callback | Function | 临时密钥获取完成后的回调方法 | 是 |
+
+#### 返回值说明
+
+| 字段 | 类型 | 描述 |
+| ---- | ---- | ---- |
+| err | Object | 错误信息 |
+| data | Object | 返回的临时密钥内容 |
+| - expiredTime | Number | 有效时间，是 UNIX 时间戳 |
+| - credentials | String | 云API |
+| - - tmpSecretId | String | 临时密钥 Id，可用于计算签名 |
+| - - tmpSecretKey | String | 临时密钥 Key，可用于计算签名 |
+| - - sessionToken | String | 请求时需要用的 token 字符串，最终请求 COS API 时，需要放在 Header 的 x-cos-security-token 字段 |
+
+#### 使用示例
+
+```javascript
+var STS = require('cos-sts-sdk');
+var policy = {
+    'version': '2.0',
+    'statement': [{
+        'action': [
+            'PutObject',
+            'InitiateMultipartUpload',
+            'ListMultipartUploads',
+            'ListParts',
+            'UploadPart',
+            'CompleteMultipartUpload',
+        ],
+        'effect': 'allow',
+        'principal': {'qcs': ['*']},
+        'resource': [
+            'qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/dir/*',
+        ],
+    }],
 };
-
-
-sts.getCredential(options, function(data) {
-    console.info(data)
+STS.getCredential({
+    secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    policy: policy,
+    // durationSeconds: 7200,
+    // proxy: '',
+}, function (err, credential) {
+    console.log(err || credential);
 });
-
 ```
 
-### 返回结果
+#### 返回示例
 
-成功的话，可以拿到包含密钥的 JSON 文本：
-
+```json
+{
+    "credentials": {
+        "sessionToken": "bc94d2d8cfedd715de1212f1d2641e6b653a4aab30001",
+        "tmpSecretId": "AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "tmpSecretKey": "80FSPFuvZ2L4UUKaFhAEa3oxfk6Huq3X"
+    },
+    "expiredTime": 1544101848
+}
 ```
-{"code":0,"message":"","codeDesc":"Success","data":{"credentials":{"sessionToken":"2a0c0ead3e6b8eed9608899eb74f2458812208ab30001","tmpSecretId":"AKIDBSrMaeFD0ZAECKuBzohnjAhJ53XNCE2F","tmpSecretKey":"UC7YjMrIlcuFgoWGwnrHwsMBrQrpUwYI"},"expiredTime":1526288317}}
+
+### getPolicy
+
+获取 policy 接口
+
+传入拼接 policy 所需的参数数组，返回 policy 对象
+
+本接口适用于接收 Web、iOS、Android 客户端 SDK 提供的 Scope 参数。
+
+#### 参数说明
+
+| 字段 | 类型 | 描述 | 必选 |
+| ---- | ---- | ---- | ---- |
+| scope | ObjectArray | 表示当客户端的请求，最少需要什么样的权限，是一个键值对象的数组 | 是 |
+| - action | String | 操作名称 | 是 |
+| - bucket | String | 存储桶名称，格式：test-1250000000 | 是 |
+| - region | String | 园区名称 | 是 |
+| - prefix | String | 拼接 resource 字段所需的 key 前缀，客户端 SDK 默认传固定文件名如 "dir/1.txt"，支持 * 结尾如 "dir/*" | 是 |
+
+#### 返回值说明
+
+| 字段 | 类型 | 描述 |
+| ---- | ---- | ---- |
+| policy | Object | 申请临时密钥所需的权限策略 |
+| - secretId | String | 云API |
+| - secretKey | String | 存储桶名称，格式：test-1250000000 |
+| - region | String | 园区名称 |
+| - prefix | String | 拼接 resource 字段所需的 key 前缀，客户端 SDK 默认传固定文件名如 "dir/1.txt"，支持 * 结尾如 "dir/*" |
+
+返回 policy 对象，是申请临时密钥所需的权限策略
+
+policy 具体格式请看 [文档](https://cloud.tencent.com/document/product/436/14048)
+
+#### 使用示例
+
+```javascript
+var STS = require('cos-sts-sdk');
+var scope = [{
+    action: 'PutObject',
+    bucket: 'test-1250000000',
+    region: 'ap-guangzhou',
+    prefix: '1.txt',
+}];
+var policy = STS.getPolicy(scope);
+console.log(policy);
 ```
 
+#### 返回示例
 
+```json
+{
+    "version": "2.0",
+    "statement": [{
+        "action": [
+            "PutObject",
+            "InitiateMultipartUpload",
+            "ListMultipartUploads",
+            "ListParts",
+            "UploadPart",
+            "CompleteMultipartUpload"
+        ],
+        "effect": "allow",
+        "principal": {"qcs": ["*"]},
+        "resource": [
+            "qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/dir/*"
+        ]
+    }]
+}
+```
+
+## 更多示例
+
+* `demo/demo.js` 是调用例子
+* `demo/sts-server.js` 是临时密钥服务的例子
+* `demo/sts-server-scope.js` 是临时密钥服务的例子，可以细粒度控制权限
+
+## 相关 SDK
+
+* [cos-js-sdk-v5](https://github.com/tencentyun/cos-js-sdk-v5)
+* [cos-nodejs-sdk-v5](https://github.com/tencentyun/cos-nodejs-sdk-v5)

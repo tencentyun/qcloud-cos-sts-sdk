@@ -1,92 +1,102 @@
-var crypto = require('crypto');
-var request = require('request');
+var request= require('request');
+var crypto= require('crypto');
 
-var stsUrl = 'https://sts.api.qcloud.com/v2/index.php';
-var stsDomain = 'sts.api.qcloud.com';
-
-var defaultDurationInSeconds = 1800;
+var StsDomain = 'sts.api.qcloud.com';
+var StsUrl = 'https://sts.api.qcloud.com/v2/index.php';
 
 var util = {
     // 获取随机数
     getRandom: function (min, max) {
         return Math.round(Math.random() * (max - min) + min);
     },
-    // json 转 query string
-    json2str: function (obj, notEncode) {
+    // obj 转 query string
+    json2str: function (obj, $notEncode) {
         var arr = [];
         Object.keys(obj).sort().forEach(function (item) {
             var val = obj[item] || '';
-            !notEncode && (val = encodeURIComponent(val));
-            arr.push(item + '=' + val);
+            arr.push(item + '=' + ($notEncode ? encodeURIComponent(val) : val));
         });
         return arr.join('&');
     },
     // 计算签名
     getSignature: function (opt, key, method) {
-        var formatString = method + stsDomain + '/v2/index.php?' + util.json2str(opt, 1);
-        formatString = formatString = decodeURIComponent(formatString);
+        var formatString = method + StsDomain + '/v2/index.php?' + util.json2str(opt);
         var hmac = crypto.createHmac('sha1', key);
-        var sign = hmac.update(new Buffer(formatString, 'utf8')).digest('base64');
+        var sign = hmac.update(Buffer.from(formatString, 'utf8')).digest('base64');
         return sign;
     },
 };
 
 // 拼接获取临时密钥的参数
-var getSTS = function (options, callback) {
-    var policy = (options.policy === undefined) ? {
-        'version': '2.0',
-        'statement': [{
-            'action': [
-                'name/cos:*'
-            ],
-            'effect': 'allow',
-            'principal': {'qcs': ['*']},
-            'resource': '*'
-        }]
-    } : options.policy;
+var getCredential = function (options, callback) {
+
+    if (options.durationInSeconds !== undefined) {
+        console.warn('warning: durationInSeconds has been deprecated, Please use durationSeconds ).');
+    }
+
+    var secretId = options.secretId;
+    var secretKey = options.secretKey;
+    var proxy = options.proxy || '';
+    var durationSeconds = options.durationSeconds || options.durationInSeconds || 1800;
+    var policy = options.policy;
 
     var policyStr = JSON.stringify(policy);
-    var Action = 'GetFederationToken';
-    var Nonce = util.getRandom(10000, 20000);
-    var Timestamp = parseInt(+new Date() / 1000);
-    var Method = 'GET';
+    var action = 'GetFederationToken';
+    var nonce = util.getRandom(10000, 20000);
+    var timestamp = parseInt(+new Date() / 1000);
+    var method = 'POST';
 
     var params = {
-        Action: Action,
-        Nonce: Nonce,
         Region: '',
-        name: '',
-        SecretId: options.secretId,
-        Timestamp: Timestamp,
-        durationSeconds: (options.expired === undefined) ? defaultDurationInSeconds : options.durationInSeconds,
+        SecretId: secretId,
+        Timestamp: timestamp,
+        Nonce: nonce,
+        Action: action,
+        durationSeconds: durationSeconds,
+        name: 'cos',
         policy: encodeURIComponent(policyStr),
     };
-    params.Signature = encodeURIComponent(util.getSignature(params, options.secretKey, Method));
+    params.Signature = util.getSignature(params, secretKey, method);
 
     var opt = {
-        method: Method,
-        url: stsUrl + '?' + util.json2str(params, 1),
-        rejectUnauthorized: false,
+        method: method,
+        url: StsUrl,
+        strictSSL: false,
+        json: true,
+        form: params,
         headers: {
-            Host: stsDomain
-        }
+            Host: StsDomain
+        },
+        proxy: proxy,
     };
-    if (options.proxy) {
-        opt.proxy = options.proxy;
-    }
     request(opt, function (err, response, body) {
-        body = body && JSON.parse(body);
-        var message = body.message;
-        var error = err || message;
-        if (error) {
-            console.error(error);
-            callback(null);
-        } else {
-            callback(body);
-        }
+        if (body && body.data) body = body.data;
+        callback(err, body);
     });
 };
 
-module.exports = {
-    getCredential: getSTS
+var getPolicy = function (Scope) {
+    // 定义绑定临时密钥的权限策略
+    var statement = Scope.map(function (item) {
+        var action = item.action || '';
+        var bucket = item.bucket || '';
+        var region = item.region || '';
+        var shortBucketName = bucket.substr(0 , bucket.lastIndexOf('-'));
+        var appId = bucket.substr(1 + bucket.lastIndexOf('-'));
+        var prefix = item.prefix;
+        return {
+            'action': ['name/cos:' + action],
+            'effect': 'allow',
+            'principal': {'qcs': ['*']},
+            'resource': 'qcs::cos:' + region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + prefix,
+        };
+    });
+    return {'version': '2.0', 'statement': statement};
 };
+
+var  cosStsSdk = {
+    getCredential: getCredential,
+    getPolicy: getPolicy,
+};
+
+module.exports = cosStsSdk;
