@@ -1,9 +1,9 @@
-# 
+# qcloud-cos-sts
 
-### 安装方法
+## 安装方法
 
 ```cmd
-npm i cos-sts-sdk --save
+npm i qcloud-cos-sts --save
 ```
 
 ## 接口说明
@@ -39,7 +39,7 @@ npm i cos-sts-sdk --save
 #### 使用示例
 
 ```javascript
-var STS = require('cos-sts-sdk');
+var STS = require('qcloud-cos-sts');
 var policy = {
     'version': '2.0',
     'statement': [{
@@ -117,7 +117,7 @@ policy 具体格式请看 [文档](https://cloud.tencent.com/document/product/43
 #### 使用示例
 
 ```javascript
-var STS = require('cos-sts-sdk');
+var STS = require('qcloud-cos-sts');
 var scope = [{
     action: 'PutObject',
     bucket: 'test-1250000000',
