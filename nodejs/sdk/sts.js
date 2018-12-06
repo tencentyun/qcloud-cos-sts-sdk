@@ -70,25 +70,33 @@ var getCredential = function (options, callback) {
         proxy: proxy,
     };
     request(opt, function (err, response, body) {
-        if (body && body.data) body = body.data;
-        callback(err, body);
+        var data = body && body.data;
+        if (data) {
+            callback(null, data);
+        } else {
+            callback(body);
+        }
     });
 };
 
-var getPolicy = function (Scope) {
+var getPolicy = function (scope) {
     // 定义绑定临时密钥的权限策略
-    var statement = Scope.map(function (item) {
+    var statement = scope.map(function (item) {
         var action = item.action || '';
         var bucket = item.bucket || '';
         var region = item.region || '';
         var shortBucketName = bucket.substr(0 , bucket.lastIndexOf('-'));
         var appId = bucket.substr(1 + bucket.lastIndexOf('-'));
         var prefix = item.prefix;
+        var resource = 'qcs::cos:' + region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + prefix;
+        if (action === 'name/cos:GetService') {
+            resource = '*';
+        }
         return {
             'action': [action],
             'effect': 'allow',
             'principal': {'qcs': ['*']},
-            'resource': 'qcs::cos:' + region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + prefix,
+            'resource': resource,
         };
     });
     return {'version': '2.0', 'statement': statement};
