@@ -28,7 +28,7 @@ var config = {
             'effect': 'allow',
             'principal': {'qcs': ['*']},
             'resource': [
-                'qcs::cos:ap-guangzhou:uid/1251902136:prefix//1251902136/test/dir/*',
+                'qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/dir/*',
             ],
         }],
     };
