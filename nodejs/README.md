@@ -75,7 +75,7 @@ STS.getCredential({
 {
     "credentials": {
         "sessionToken": "bc94d2d8cfedd715de1212f1d2641e6b653a4aab30001",
-        "tmpSecretId": "AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "tmpSecretId": "AKIDB3NcyaIxp3uldL4YIS7ySZsF9HQcAlMV",
         "tmpSecretKey": "80FSPFuvZ2L4UUKaFhAEa3oxfk6Huq3X"
     },
     "expiredTime": 1544101848
