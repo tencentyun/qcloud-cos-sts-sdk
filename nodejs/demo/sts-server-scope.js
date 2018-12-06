@@ -25,7 +25,7 @@ var config = {
 // 判断是否允许获取密钥
 var allowScope = function (scope) {
     var allow = (scope || []).every(function (item) {
-        return config.allowActions.includes('name/cos:' + item.action) &&
+        return config.allowActions.includes(item.action) &&
             item.bucket === config.bucket &&
             item.region === config.region &&
             (item.prefix || '').startsWith(config.allowPrefix);

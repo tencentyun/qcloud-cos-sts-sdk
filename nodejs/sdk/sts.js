@@ -85,7 +85,7 @@ var getPolicy = function (Scope) {
         var appId = bucket.substr(1 + bucket.lastIndexOf('-'));
         var prefix = item.prefix;
         return {
-            'action': ['name/cos:' + action],
+            'action': [action],
             'effect': 'allow',
             'principal': {'qcs': ['*']},
             'resource': 'qcs::cos:' + region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + prefix,

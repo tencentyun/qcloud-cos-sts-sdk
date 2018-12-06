@@ -95,9 +95,9 @@ STS.getCredential({
 | 字段 | 类型 | 描述 | 必选 |
 | ---- | ---- | ---- | ---- |
 | scope | ObjectArray | 表示当客户端的请求，最少需要什么样的权限，是一个键值对象的数组 | 是 |
-| - action | String | 操作名称 | 是 |
+| - action | String | 操作名称，如 "name/cos:PutObject" | 是 |
 | - bucket | String | 存储桶名称，格式：test-1250000000 | 是 |
-| - region | String | 园区名称 | 是 |
+| - region | String | 园区名称，如 ap-guangzhou | 是 |
 | - prefix | String | 拼接 resource 字段所需的 key 前缀，客户端 SDK 默认传固定文件名如 "dir/1.txt"，支持 * 结尾如 "dir/*" | 是 |
 
 #### 返回值说明
@@ -119,7 +119,7 @@ policy 具体格式请看 [文档](https://cloud.tencent.com/document/product/43
 ```javascript
 var STS = require('qcloud-cos-sts');
 var scope = [{
-    action: 'PutObject',
+    action: 'name/cos:PutObject',
     bucket: 'test-1250000000',
     region: 'ap-guangzhou',
     prefix: '1.txt',

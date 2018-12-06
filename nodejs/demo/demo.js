@@ -50,7 +50,7 @@ var config = {
 // 获取临时密钥
 (function () {
     var scope = [{
-        action: 'PutObject',
+        action: 'name/cos:PutObject',
         bucket: 'test-1250000000',
         region: 'ap-guangzhou',
         prefix: '1.txt',
