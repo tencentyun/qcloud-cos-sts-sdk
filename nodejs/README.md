@@ -62,7 +62,7 @@ STS.getCredential({
     secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     policy: policy,
-    // durationSeconds: 7200,
+    // durationSeconds: 1800,
     // proxy: '',
 }, function (err, credential) {
     console.log(err || credential);

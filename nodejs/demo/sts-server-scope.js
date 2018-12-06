@@ -7,7 +7,7 @@ var config = {
     secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     proxy: '',
-    durationSeconds: 7200,
+    durationSeconds: 1800,
     bucket: 'test-1250000000',
     region: 'ap-guangzhou',
     allowPrefix: '',
