@@ -44,12 +44,12 @@ var policy = {
     'version': '2.0',
     'statement': [{
         'action': [
-            'PutObject',
-            'InitiateMultipartUpload',
-            'ListMultipartUploads',
-            'ListParts',
-            'UploadPart',
-            'CompleteMultipartUpload',
+            'name/cos:PutObject',
+            'name/cos:InitiateMultipartUpload',
+            'name/cos:ListMultipartUploads',
+            'name/cos:ListParts',
+            'name/cos:UploadPart',
+            'name/cos:CompleteMultipartUpload',
         ],
         'effect': 'allow',
         'principal': {'qcs': ['*']},
@@ -135,12 +135,12 @@ console.log(policy);
     "version": "2.0",
     "statement": [{
         "action": [
-            "PutObject",
-            "InitiateMultipartUpload",
-            "ListMultipartUploads",
-            "ListParts",
-            "UploadPart",
-            "CompleteMultipartUpload"
+            "name/cos:PutObject",
+            "name/cos:InitiateMultipartUpload",
+            "name/cos:ListMultipartUploads",
+            "name/cos:ListParts",
+            "name/cos:UploadPart",
+            "name/cos:CompleteMultipartUpload"
         ],
         "effect": "allow",
         "principal": {"qcs": ["*"]},

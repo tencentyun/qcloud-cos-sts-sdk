@@ -13,19 +13,19 @@ var config = {
     allowPrefix: '',
     // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
     allowActions: [
-        'PutObject',
-        'InitiateMultipartUpload',
-        'ListMultipartUploads',
-        'ListParts',
-        'UploadPart',
-        'CompleteMultipartUpload'
+        'name/cos:PutObject',
+        'name/cos:InitiateMultipartUpload',
+        'name/cos:ListMultipartUploads',
+        'name/cos:ListParts',
+        'name/cos:UploadPart',
+        'name/cos:CompleteMultipartUpload'
     ],
 };
 
 // 判断是否允许获取密钥
 var allowScope = function (scope) {
     var allow = (scope || []).every(function (item) {
-        return config.allowActions.includes(item.action) &&
+        return config.allowActions.includes('name/cos:' + item.action) &&
             item.bucket === config.bucket &&
             item.region === config.region &&
             (item.prefix || '').startsWith(config.allowPrefix);
