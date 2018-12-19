@@ -76,7 +76,6 @@ app.all('/sts', function (req, res, next) {
         policy: policy,
     }, function (err, tempKeys) {
         var result = JSON.stringify(err || tempKeys) || '';
-        result.code = 0;
         res.send(result);
     });
 });
