@@ -8,9 +8,9 @@ npm i qcloud-cos-sts --save
 
 ## 接口说明
 
-### getCredential
+### `getCredential`
 
-获取临时密钥接口
+获取临时密钥接口。
 
 #### 参数说明
 
@@ -31,7 +31,8 @@ npm i qcloud-cos-sts --save
 | ---- | ---- | ---- |
 | err | Object | 错误信息 |
 | data | Object | 返回的临时密钥内容 |
-| - expiredTime | Number | 有效时间，是 UNIX 时间戳 |
+| - startTime | Number | 密钥的起止时间，是 UNIX 时间戳 |
+| - expiredTime | Number | 密钥的失效时间，是 UNIX 时间戳 |
 | - credentials | String | 云API |
 | - - tmpSecretId | String | 临时密钥 Id，可用于计算签名 |
 | - - tmpSecretKey | String | 临时密钥 Key，可用于计算签名 |
@@ -81,17 +82,14 @@ STS.getCredential({
         "tmpSecretId": "AKIDB3NcyaIxp3uldL4YIS7ySZsF9HQcAlMV",
         "tmpSecretKey": "80FSPFuvZ2L4UUKaFhAEa3oxfk6Huq3X"
     },
+    "beginTime": 1544100048,
     "expiredTime": 1544101848
 }
 ```
 
-### getPolicy
+### `getPolicy`
 
-获取 policy 接口
-
-传入拼接 policy 所需的参数数组，返回 policy 对象
-
-本接口适用于接收 Web、iOS、Android 客户端 SDK 提供的 Scope 参数。
+获取 policy 接口。本接口适用于接收 Web、iOS、Android 客户端 SDK 提供的 Scope 参数。推荐您把 Scope 参数放在请求的 Body 里面，通过 POST 方式传到后台。
 
 #### 参数说明
 
@@ -108,12 +106,6 @@ STS.getCredential({
 | 字段 | 类型 | 描述 |
 | ---- | ---- | ---- |
 | policy | Object | 申请临时密钥所需的权限策略 |
-| - secretId | String | 云API |
-| - secretKey | String | 存储桶名称，格式：test-1250000000 |
-| - region | String | 园区名称 |
-| - prefix | String | 拼接 resource 字段所需的 key 前缀，客户端 SDK 默认传固定文件名如 "dir/1.txt"，支持 * 结尾如 "dir/*" |
-
-返回 policy 对象，是申请临时密钥所需的权限策略
 
 policy 具体格式请看 [文档](https://cloud.tencent.com/document/product/436/14048)
 
@@ -161,6 +153,8 @@ console.log(policy);
 * `demo/demo.js` 是调用例子
 * `demo/sts-server.js` 是临时密钥服务的例子
 * `demo/sts-server-scope.js` 是临时密钥服务的例子，可以细粒度控制权限
+
+您可以直接使用 `demo/sts-server.js` 或者 `demo/sts-server-scope.js`，修改配置参数，来搭建本地密钥服务器。
 
 ## 相关 SDK
 
