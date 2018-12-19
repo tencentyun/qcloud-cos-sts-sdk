@@ -22,6 +22,7 @@ npm i qcloud-cos-sts --save
 | - policy | Object | 要申请的临时密钥，限定的权限范围 | 是 |
 | - durationSeconds | Number | 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200  | 否 |
 | - proxy | String | 代理地址，如："http://proxy.example.com:8080" | 否 |
+| - host | String | 可以通过改参数指定请求的域名 | 否 |
 | callback | Function | 临时密钥获取完成后的回调方法 | 是 |
 
 #### 返回值说明
@@ -44,12 +45,14 @@ var policy = {
     'version': '2.0',
     'statement': [{
         'action': [
+            // 简单上传
             'name/cos:PutObject',
+            // 分片上传
             'name/cos:InitiateMultipartUpload',
             'name/cos:ListMultipartUploads',
             'name/cos:ListParts',
             'name/cos:UploadPart',
-            'name/cos:CompleteMultipartUpload',
+            'name/cos:CompleteMultipartUpload'
         ],
         'effect': 'allow',
         'principal': {'qcs': ['*']},
@@ -135,7 +138,9 @@ console.log(policy);
     "version": "2.0",
     "statement": [{
         "action": [
+            // 简单上传
             "name/cos:PutObject",
+            // 分片上传
             "name/cos:InitiateMultipartUpload",
             "name/cos:ListMultipartUploads",
             "name/cos:ListParts",

@@ -8,12 +8,16 @@ var config = {
     secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     proxy: '',
     durationSeconds: 1800,
+
+    // 放行判断相关参数
     bucket: 'test-1250000000',
     region: 'ap-guangzhou',
     allowPrefix: '',
     // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
     allowActions: [
+        // 简单上传
         'name/cos:PutObject',
+        // 分片上传
         'name/cos:InitiateMultipartUpload',
         'name/cos:ListMultipartUploads',
         'name/cos:ListParts',
@@ -24,11 +28,16 @@ var config = {
 
 // 判断是否允许获取密钥
 var allowScope = function (scope) {
+    // 这里自行定制判断放行逻辑
     var allow = (scope || []).every(function (item) {
-        return config.allowActions.includes(item.action) &&
-            item.bucket === config.bucket &&
-            item.region === config.region &&
-            (item.prefix || '').startsWith(config.allowPrefix);
+        if (item.action === 'name/cos:GetService') {
+            return config.allowActions.includes(item.action);
+        } else {
+            return config.allowActions.includes(item.action) &&
+                item.bucket === config.bucket &&
+                item.region === config.region &&
+                (item.prefix || '').startsWith(config.allowPrefix);
+        }
     });
     return allow;
 };
@@ -55,7 +64,7 @@ app.all('/sts', function (req, res, next) {
 
     // TODO 这里根据自己业务需要做好放行判断
     var scope = req.body;
-    if (!scope || !scope.length || !allowScope(scope)) return res.send({code: -1, message: 'deny'});
+    if (!scope || !scope.length || !allowScope(scope)) return res.send({code: 10000, codeDesc: 'ScopeNotAllowed', message: "you are not allowed to perform the operation"});
 
     // 获取临时密钥
     var policy = STS.getPolicy(scope);
@@ -73,7 +82,7 @@ app.all('/sts', function (req, res, next) {
 });
 app.all('*', function (req, res, next) {
     res.writeHead(404);
-    res.send({code: -1, message: '404 Not Found'});
+    res.send({code: 404, codeDesc: 'PageNotFound', message: '404 page not found'});
 });
 
 // 启动签名服务

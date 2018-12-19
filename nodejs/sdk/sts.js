@@ -2,7 +2,7 @@ var request= require('request');
 var crypto= require('crypto');
 
 var StsDomain = 'sts.api.qcloud.com';
-var StsUrl = 'https://sts.api.qcloud.com/v2/index.php';
+var StsUrl = 'https://{host}/v2/index.php';
 
 var util = {
     // 获取随机数
@@ -37,8 +37,10 @@ var getCredential = function (options, callback) {
     var secretId = options.secretId;
     var secretKey = options.secretKey;
     var proxy = options.proxy || '';
+    var host = options.host || '';
     var durationSeconds = options.durationSeconds || options.durationInSeconds || 1800;
     var policy = options.policy;
+    var startTime = Math.round(Date.now() / 1000);
 
     var policyStr = JSON.stringify(policy);
     var action = 'GetFederationToken';
@@ -60,7 +62,7 @@ var getCredential = function (options, callback) {
 
     var opt = {
         method: method,
-        url: StsUrl,
+        url: StsUrl.replace('{host}', host || 'sts.api.qcloud.com'),
         strictSSL: false,
         json: true,
         form: params,
@@ -72,6 +74,7 @@ var getCredential = function (options, callback) {
     request(opt, function (err, response, body) {
         var data = body && body.data;
         if (data) {
+            data.startTime = startTime;
             callback(null, data);
         } else {
             callback(body);
@@ -93,9 +96,9 @@ var getPolicy = function (scope) {
             resource = '*';
         }
         return {
-            'action': [action],
+            'action': action,
             'effect': 'allow',
-            'principal': {'qcs': ['*']},
+            'principal': {'qcs': '*'},
             'resource': resource,
         };
     });

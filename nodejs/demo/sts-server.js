@@ -8,12 +8,16 @@ var config = {
     secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     proxy: '',
     durationSeconds: 1800,
+
+    // 放行判断相关参数
     bucket: 'test-1250000000',
     region: 'ap-guangzhou',
     allowPrefix: '',
     // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
     allowActions: [
+        // 简单上传
         'name/cos:PutObject',
+        // 分片上传
         'name/cos:InitiateMultipartUpload',
         'name/cos:ListMultipartUploads',
         'name/cos:ListParts',
@@ -45,6 +49,8 @@ app.all('/sts', function (req, res, next) {
     // TODO 这里根据自己业务需要做好放行判断
 
     // 获取临时密钥
+    var shortBucketName = config.bucket.substr(0 , config.bucket.lastIndexOf('-'));
+    var appId = config.bucket.substr(1 + config.bucket.lastIndexOf('-'));
     var policy = {
         'version': '2.0',
         'statement': [{
@@ -52,7 +58,7 @@ app.all('/sts', function (req, res, next) {
             'effect': 'allow',
             'principal': {'qcs': ['*']},
             'resource': [
-                'qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/' + config.allowPrefix,
+                'qcs::cos:' + config.region + 'uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
             ],
         }],
     };
@@ -70,7 +76,7 @@ app.all('/sts', function (req, res, next) {
 });
 app.all('*', function (req, res, next) {
     res.writeHead(404);
-    res.send({code: -1, message: '404 Not Found'});
+    res.send({code: 404, codeDesc: 'PageNotFound', message: '404 page not found'});
 });
 
 // 启动签名服务
