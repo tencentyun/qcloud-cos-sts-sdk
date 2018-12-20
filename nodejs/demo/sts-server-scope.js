@@ -4,16 +4,16 @@ var express = require('express');
 
 // 配置参数
 var config = {
-    secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
+    secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
     proxy: '',
-    durationSeconds: 1800,
+    durationSeconds: 1800, // 密钥有效期
 
     // 放行判断相关参数
-    bucket: 'test-1250000000',
-    region: 'ap-guangzhou',
-    allowPrefix: '',
-    // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
+    bucket: 'test-1250000000', // 换成你的 bucket
+    region: 'ap-guangzhou', // 换成 bucket 所在地区
+    allowPrefix: '*', // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
+    // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
     allowActions: [
         // 简单上传
         'name/cos:PutObject',

@@ -2,31 +2,36 @@
 # coding=utf-8
 
 from sts import Sts
-import json
 
 if __name__ == '__main__':
-    try:
-        raw_config = json.load(open('key.json'))
-        config = {}
-        for key, value in raw_config.iteritems():
-            s_key = key.encode('utf-8')
-            if not isinstance(value, dict):
-                config[s_key] = value.encode('utf-8')
-            else:
-                config[s_key] = {}
-                for k, v in value.iteritems():
-                    config[s_key][k.encode('utf-8')] = v.encode('utf-8')
+
+    config = {
         # 临时密钥有效时长，单位是秒
-        config['duration_in_seconds'] = 1800
-    except IOError:
-        config = {
-            # 临时密钥有效时长，单位是秒
-            'duration_in_seconds': 1800,
-            # 您的secret id
-            'secret_id': 'xxx',
-            # 您的secret key
-            'secret_key': 'xxx',
-        }
+        'duration_seconds': 1800,
+        # 固定密钥
+        'secret_id': 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 
+        # 固定密钥
+        'secret_key': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        'proxy': '',
+        # 换成你的 bucket
+        'bucket': 'test-1250000000', 
+        # 换成 bucket 所在地区
+        'region': 'ap-guangzhou',
+        # 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
+        'allow_prefix': '*', 
+        # 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
+        'allow_actions': [
+            # 简单上传
+            'name/cos:PutObject',
+            # 分片上传
+            'name/cos:InitiateMultipartUpload',
+            'name/cos:ListMultipartUploads',
+            'name/cos:ListParts',
+            'name/cos:UploadPart',
+            'name/cos:CompleteMultipartUpload'
+        ]
+
+    }
 
     sts = Sts(config)
     response = sts.get_credential()
