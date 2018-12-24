@@ -40,7 +40,6 @@ var getCredential = function (options, callback) {
     var host = options.host || '';
     var durationSeconds = options.durationSeconds || options.durationInSeconds || 1800;
     var policy = options.policy;
-    var startTime = Math.round(Date.now() / 1000);
 
     var policyStr = JSON.stringify(policy);
     var action = 'GetFederationToken';
@@ -74,7 +73,7 @@ var getCredential = function (options, callback) {
     request(opt, function (err, response, body) {
         var data = body && body.data;
         if (data) {
-            data.startTime = startTime;
+            data.startTime = data.expiredTime - durationSeconds;
             callback(null, data);
         } else {
             callback(body);

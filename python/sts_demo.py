@@ -12,7 +12,8 @@ if __name__ == '__main__':
         'secret_id': 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 
         # 固定密钥
         'secret_key': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-        'proxy': '',
+        'proxy': {
+        },
         # 换成你的 bucket
         'bucket': 'test-1250000000', 
         # 换成 bucket 所在地区
@@ -34,5 +35,6 @@ if __name__ == '__main__':
     }
 
     sts = Sts(config)
-    response = sts.get_credential()
-    print ('get data : ' + response.content.decode("unicode-escape"))
+    response = sts.get_credential()    
+    print ('get data : ' + str(response))
+

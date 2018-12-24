@@ -76,7 +76,7 @@ class Sts:
             
             if isinstance(result_json['data'], dict):
                 result_json = result_json['data']          
-            result_json['startTime'] = int(time.time())
+            result_json['startTime'] = result_json['expiredTime'] - self.duration
             
             return result_json
         except urllib2.HTTPError, e:

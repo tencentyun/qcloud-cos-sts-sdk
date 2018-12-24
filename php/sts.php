@@ -103,7 +103,7 @@ function getTempKeys() {
 
     $result = json_decode($result, 1);
     if (isset($result['data'])) $result = $result['data'];
-    $result['startTime'] = time();
+    $result['startTime'] = $result['expiredTime'] - $config['DurationSeconds'];
 
     return $result;
 }

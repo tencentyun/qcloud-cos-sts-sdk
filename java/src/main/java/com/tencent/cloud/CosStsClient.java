@@ -41,7 +41,8 @@ public class CosStsClient {
             if (data == null) {
                 data = jsonResult;
             }
-            data.put("startTime", System.currentTimeMillis() / 1000);
+            long expiredTime = data.getLong("expiredTime");
+            data.put("startTime", expiredTime - durationSeconds);
             return data;
         } catch (Exception e) {
             e.printStackTrace();
