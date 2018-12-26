@@ -77,7 +77,7 @@ function getTempKeys() {
     $Method = 'POST';
 
     $params = array(
-        'Region'=> $config['Region'],
+        'Region'=> 'gz',
         'SecretId'=> $config['SecretId'],
         'Timestamp'=> $Timestamp,
         'Nonce'=> $Nonce,
@@ -102,8 +102,10 @@ function getTempKeys() {
     curl_close($ch);
 
     $result = json_decode($result, 1);
-    if (isset($result['data'])) $result = $result['data'];
-    $result['startTime'] = $result['expiredTime'] - $config['DurationSeconds'];
+    if (isset($result['data'])) {
+        $result = $result['data'];
+        $result['startTime'] = $result['expiredTime'] - $config['DurationSeconds'];
+    }
 
     return $result;
 }
