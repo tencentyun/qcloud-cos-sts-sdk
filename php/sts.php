@@ -3,17 +3,17 @@
 
 // 配置参数
 $config = array(
-    'Url' => 'https://sts.api.qcloud.com/v2/index.php',
-    'Domain' => 'sts.api.qcloud.com',
-    'Proxy' => '', 
-    'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
-    'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
-    'Bucket' => 'test-1250000000', // 换成你的 bucket
-    'Region' => 'ap-guangzhou', // 换成 bucket 所在地区
-    'DurationSeconds' => 1800, // 密钥有效期
-    'AllowPrefix' => '*', // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
+    'url' => 'https://sts.api.qcloud.com/v2/index.php',
+    'domain' => 'sts.api.qcloud.com',
+    'proxy' => '',
+    'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
+    'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
+    'bucket' => 'test-1250000000', // 换成你的 bucket
+    'region' => 'ap-guangzhou', // 换成 bucket 所在园区
+    'durationSeconds' => 1800, // 密钥有效期
+    'allowPrefix' => '*', // 必填，这里改成允许的路径前缀，这里可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
     // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
-    'AllowActions' => array (
+    'allowActions' => array (
         // 简单上传
         'name/cos:PutObject',
         // 分片上传
@@ -43,7 +43,7 @@ function json2str($obj, $notEncode = false) {
 // 计算临时密钥用的签名
 function getSignature($opt, $key, $method) {
     global $config;
-    $formatString = $method . $config['Domain'] . '/v2/index.php?' . json2str($opt, 1);
+    $formatString = $method . $config['domain'] . '/v2/index.php?' . json2str($opt, 1);
     $sign = hash_hmac('sha1', $formatString, $key);
     $sign = base64_encode(_hex2bin($sign));
     return $sign;
@@ -53,18 +53,17 @@ function getSignature($opt, $key, $method) {
 function getTempKeys() {
 
     global $config;
-
-    $ShortBucketName = substr($config['Bucket'],0, strripos($config['Bucket'], '-'));
-    $AppId = substr($config['Bucket'], 1 + strripos($config['Bucket'], '-'));
+    $ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
+    $AppId = substr($config['bucket'], 1 + strripos($config['bucket'], '-'));
     $policy = array(
         'version'=> '2.0',
         'statement'=> array(
             array(
-                'action'=> $config['AllowActions'],
+                'action'=> $config['allowActions'],
                 'effect'=> 'allow',
                 'principal'=> array('qcs'=> array('*')),
                 'resource'=> array(
-                    'qcs::cos:' . $config['Region'] . ':uid/' . $AppId . ':prefix//' . $AppId . '/' . $ShortBucketName . '/' . $config['AllowPrefix']
+                    'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':prefix//' . $AppId . '/' . $ShortBucketName . '/' . $config['allowPrefix']
                 )
             )
         )
@@ -73,24 +72,24 @@ function getTempKeys() {
     $policyStr = str_replace('\\/', '/', json_encode($policy));
     $Action = 'GetFederationToken';
     $Nonce = rand(10000, 20000);
-    $Timestamp = time() - 1;
+    $Timestamp = time();
     $Method = 'POST';
 
     $params = array(
         'Region'=> 'gz',
-        'SecretId'=> $config['SecretId'],
+        'SecretId'=> $config['secretId'],
         'Timestamp'=> $Timestamp,
         'Nonce'=> $Nonce,
         'Action'=> $Action,
-        'durationSeconds'=> $config['DurationSeconds'],
+        'durationSeconds'=> $config['durationSeconds'],
         'name'=> 'cos',
         'policy'=> urlencode($policyStr)
     );
-    $params['Signature'] = getSignature($params, $config['SecretKey'], $Method);
+    $params['Signature'] = getSignature($params, $config['secretKey'], $Method);
 
-    $url = $config['Url'];
+    $url = $config['url'];
     $ch = curl_init($url);
-    $config['Proxy'] && curl_setopt($ch, CURLOPT_PROXY, $config['Proxy']);
+    $config['proxy'] && curl_setopt($ch, CURLOPT_PROXY, $config['proxy']);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
     curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
@@ -104,7 +103,7 @@ function getTempKeys() {
     $result = json_decode($result, 1);
     if (isset($result['data'])) {
         $result = $result['data'];
-        $result['startTime'] = $result['expiredTime'] - $config['DurationSeconds'];
+        $result['startTime'] = $result['expiredTime'] - $config['durationSeconds'];
     }
 
     return $result;
