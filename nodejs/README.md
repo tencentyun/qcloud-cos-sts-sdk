@@ -107,7 +107,7 @@ STS.getCredential({
 | ---- | ---- | ---- |
 | policy | Object | 申请临时密钥所需的权限策略 |
 
-policy 具体格式请看 [文档](https://cloud.tencent.com/document/product/436/14048)
+policy 具体格式请看 [文档](https://cloud.tencent.com/document/product/436/31923)
 
 #### 使用示例
 

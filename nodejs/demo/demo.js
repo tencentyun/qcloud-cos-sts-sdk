@@ -14,7 +14,7 @@ var config = {
 
 
 // getCredential
-// 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
+// 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
 (function () {
     var shortBucketName = config.bucket.substr(0 , config.bucket.lastIndexOf('-'));
     var appId = config.bucket.substr(1 + config.bucket.lastIndexOf('-'));

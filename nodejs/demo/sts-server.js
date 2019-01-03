@@ -13,7 +13,7 @@ var config = {
     bucket: 'test-1250000000',
     region: 'ap-guangzhou',
     allowPrefix: '',
-    // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
+    // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     allowActions: [
         // 简单上传
         'name/cos:PutObject',
