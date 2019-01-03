@@ -28,7 +28,7 @@ var config = {
 
 // 判断是否允许获取密钥
 var allowScope = function (scope) {
-    // 这里自行定制判断放行逻辑
+    // TODO 这里自行定制判断放行逻辑
     var allow = (scope || []).every(function (item) {
         if (item.action === 'name/cos:GetService') {
             return config.allowActions.includes(item.action);
