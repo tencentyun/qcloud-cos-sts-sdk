@@ -49,7 +49,7 @@ try {
     // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
     config.put("allowPrefix", "*");
 
-    // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/14048
+    // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     String[] allowActions = new String[] {
             // 简单上传
             "name/cos:PutObject",
