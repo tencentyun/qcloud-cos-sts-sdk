@@ -25,3 +25,4 @@ getCredential 和 getPolicy 其他字段详细说明可以看 [STS nodejs 接口
 
 以下是 server 例子：
 [sts nodejs scope demo](nodejs/sts-server-scope.js)
+其他语言有待完善，可以参考 ndoejs 例子逻辑自行实现
