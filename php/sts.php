@@ -3,8 +3,8 @@
 
 // 配置参数
 $config = array(
-    'url' => 'https://sts.api.qcloud.com/v2/index.php',
-    'domain' => 'sts.api.qcloud.com',
+    'url' => 'https://sts.tencentcloudapi.com/',
+    'domain' => 'sts.tencentcloudapi.com',
     'proxy' => '',
     'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
     'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
@@ -43,10 +43,19 @@ function json2str($obj, $notEncode = false) {
 // 计算临时密钥用的签名
 function getSignature($opt, $key, $method) {
     global $config;
-    $formatString = $method . $config['domain'] . '/v2/index.php?' . json2str($opt, 1);
+    $formatString = $method . $config['domain'] . '/?' . json2str($opt, 1);
     $sign = hash_hmac('sha1', $formatString, $key);
     $sign = base64_encode(_hex2bin($sign));
     return $sign;
+}
+
+// v2接口的key首字母小写，v3改成大写，此处做了向下兼容
+function backwardCompat($result) {
+    return array_map(function($item){
+        if(is_array($item))
+            $item = backwardCompat($item);
+        return $item;
+    }, array_change_key_case($result, CASE_LOWER));
 }
 
 // 获取临时密钥
@@ -76,14 +85,14 @@ function getTempKeys() {
     $Method = 'POST';
 
     $params = array(
-        'Region'=> 'gz',
         'SecretId'=> $config['secretId'],
         'Timestamp'=> $Timestamp,
         'Nonce'=> $Nonce,
         'Action'=> $Action,
-        'durationSeconds'=> $config['durationSeconds'],
-        'name'=> 'cos',
-        'policy'=> urlencode($policyStr)
+        'DurationSeconds'=> $config['durationSeconds'],
+        'Version'=>'2018-08-13',
+        'Name'=> 'cos',
+        'Policy'=> urlencode($policyStr)
     );
     $params['Signature'] = getSignature($params, $config['secretKey'], $Method);
 
@@ -101,10 +110,11 @@ function getTempKeys() {
     curl_close($ch);
 
     $result = json_decode($result, 1);
-    if (isset($result['data'])) {
-        $result = $result['data'];
-        $result['startTime'] = $result['expiredTime'] - $config['durationSeconds'];
+    if (isset($result['Response'])) {
+        $result = $result['Response'];
+        $result['startTime'] = $result['ExpiredTime'] - $config['durationSeconds'];
     }
+    $result = backwardCompat($result);
 
     return $result;
 }
@@ -116,4 +126,4 @@ $tempKeys = getTempKeys();
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: http://127.0.0.1'); // 这里修改允许跨域访问的网站
 header('Access-Control-Allow-Headers: origin,accept,content-type');
-echo json_encode($tempKeys);
+echo json_encode($tempKeys) . "\n";
