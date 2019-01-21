@@ -4,9 +4,9 @@
 
 ```
 <dependency>
-   <groupId>com.qcloud</groupId>
-   <artifactId>qcloud-java-sdk</artifactId>
-   <version>2.0.6</version>
+   <groupId>org.json</groupId>
+   <artifactId>json</artifactId>
+   <version>20180130</version>
    <scope>compile</scope>
 </dependency>
 ```
