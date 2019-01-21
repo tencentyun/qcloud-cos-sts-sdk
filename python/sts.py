@@ -3,27 +3,30 @@
 import hashlib
 import hmac
 import time
-import urllib2
-import urllib
+try:
+    from urllib import quote  # Python 2.X
+except ImportError:
+    from urllib.parse import quote  # Python 3+
+from functools import reduce
 import json
+import base64
 import requests
 import random
 
 class Sts:
 
     def __init__(self, config = {}):
-        if config.has_key('allow_actions'):
+        if 'allow_actions' in config:
             self.allow_actions = config.get('allow_actions')
         else:
             raise ValueError('missing allow_actions')
 
-        if config.has_key('duration_seconds'):
+        if 'duration_seconds' in config:
             self.duration = config.get('duration_seconds')
         else:
             self.duration = 1800
 
-        self.sts_domain = 'sts.api.qcloud.com'
-        self.sts_url = 'sts.api.qcloud.com/v2/index.php'
+        self.sts_url = 'sts.tencentcloudapi.com/'
         self.sts_scheme = 'https://'
 
         self.secret_id = config.get('secret_id')
@@ -44,7 +47,7 @@ class Sts:
     def get_credential(self):
         try:
             import ssl
-        except ImportError, e:
+        except ImportError as e:
             raise e
 
         policy = {
@@ -56,17 +59,17 @@ class Sts:
                 'resource': self.resource
             }
         }
-        policy_encode = urllib.quote(json.dumps(policy))
+        policy_encode = quote(json.dumps(policy))
 
         data = {
-            'Region':'',
             'SecretId':self.secret_id,
             'Timestamp':int(time.time()),
             'Nonce':random.randint(100000, 200000),
             'Action':'GetFederationToken',
-            'durationSeconds':self.duration,
-            'name':'cos-sts-python',
-            'policy':policy_encode
+            'Version': '2018-08-13',
+            'DurationSeconds':self.duration,
+            'Name':'cos-sts-python',
+            'Policy':policy_encode
         }
         data['Signature'] = self.__encrypt('POST', self.sts_url, data)
 
@@ -74,20 +77,38 @@ class Sts:
             response = requests.post(self.sts_scheme + self.sts_url, proxies=self.proxy, data=data)
             result_json = response.json()
             
-            if isinstance(result_json['data'], dict):
-                result_json = result_json['data']          
-            result_json['startTime'] = result_json['expiredTime'] - self.duration
+            if isinstance(result_json['Response'], dict):
+                result_json = result_json['Response']
+       
+            result_json['startTime'] = result_json['ExpiredTime'] - self.duration
             
-            return result_json
-        except urllib2.HTTPError, e:
+            return self._backwardCompat(result_json)
+        except requests.exceptions.HTTPError as e:
             raise e
 
     def __encrypt(self, method, url, key_values):
         source = Tools.flat_params(key_values)
         source = method + url + '?' + source
-        sign = hmac.new(self.secret_key, source, hashlib.sha1).digest().encode('base64').rstrip()
+        try:
+            key = bytes(self.secret_key) # Python 2.X
+            source = bytes(source)
+        except TypeError:
+            key = bytes(self.secret_key, encoding='utf-8') # Python 3.X
+            source = bytes(source, encoding='utf-8')
+        sign = hmac.new(key, source, hashlib.sha1).digest()
+        sign = base64.b64encode(sign).rstrip()
         return sign
 
+    # v2接口的key首字母小写，v3改成大写，此处做了向下兼容
+    def _backwardCompat(self, result_json):
+        bc_json = dict()
+        for k,v in result_json.items():
+            if isinstance(v, dict):
+                bc_json[k.lower()] = dict((m.lower(), n) for m,n in v.items())
+            else:
+                bc_json[k.lower()] = v
+        
+        return bc_json
 
 class Tools(object):
 
@@ -101,5 +122,5 @@ class Tools(object):
 
     @staticmethod
     def flat_params(key_values):
-        key_values = sorted(key_values.iteritems(), key=lambda d: d[0])
+        key_values = sorted(key_values.items(), key=lambda d: d[0])
         return reduce(Tools._link_key_values, map(Tools._flat_key_values, key_values))

@@ -1,8 +1,8 @@
 var request= require('request');
 var crypto= require('crypto');
 
-var StsDomain = 'sts.api.qcloud.com';
-var StsUrl = 'https://{host}/v2/index.php';
+var StsDomain = 'sts.tencentcloudapi.com';
+var StsUrl = 'https://{host}/';
 
 var util = {
     // 获取随机数
@@ -20,10 +20,23 @@ var util = {
     },
     // 计算签名
     getSignature: function (opt, key, method) {
-        var formatString = method + StsDomain + '/v2/index.php?' + util.json2str(opt);
+        var formatString = method + StsDomain + '/?' + util.json2str(opt);
         var hmac = crypto.createHmac('sha1', key);
         var sign = hmac.update(Buffer.from(formatString, 'utf8')).digest('base64');
         return sign;
+    },
+    // v2接口的key首字母小写，v3改成大写，此处做了向下兼容
+    lowercaseKey: function (data) {
+        var mapped = {};
+        for (var key in data) {
+            if (typeof(data[key]) == 'object') {
+                mapped[key.toLowerCase()] = this.lowercaseKey(data[key])
+            } else {
+                mapped[key.toLowerCase()] = data[key];
+            }
+        }
+          
+        return mapped;
     },
 };
 
@@ -48,20 +61,20 @@ var getCredential = function (options, callback) {
     var method = 'POST';
 
     var params = {
-        Region: '',
         SecretId: secretId,
         Timestamp: timestamp,
         Nonce: nonce,
         Action: action,
-        durationSeconds: durationSeconds,
-        name: 'cos',
-        policy: encodeURIComponent(policyStr),
+        DurationSeconds: durationSeconds,
+        Name: 'cos-sts-nodejs',
+        Version: '2018-08-13',
+        Policy: encodeURIComponent(policyStr),
     };
     params.Signature = util.getSignature(params, secretKey, method);
 
     var opt = {
         method: method,
-        url: StsUrl.replace('{host}', host || 'sts.api.qcloud.com'),
+        url: StsUrl.replace('{host}', host || StsDomain),
         strictSSL: false,
         json: true,
         form: params,
@@ -71,9 +84,10 @@ var getCredential = function (options, callback) {
         proxy: proxy,
     };
     request(opt, function (err, response, body) {
-        var data = body && body.data;
+        var data = body && body.Response;
         if (data) {
-            data.startTime = data.expiredTime - durationSeconds;
+            data.startTime = data.ExpiredTime - durationSeconds;
+            data = util.lowercaseKey(data);
             callback(null, data);
         } else {
             callback(body);

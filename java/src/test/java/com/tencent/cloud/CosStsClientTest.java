@@ -1,6 +1,6 @@
 package com.tencent.cloud;
 
-import com.qcloud.Utilities.Json.JSONObject;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.File;
