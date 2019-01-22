@@ -30,7 +30,7 @@ public class CosStsClient {
         params.put("Name", "cos-sts-java");
         params.put("Action", "GetFederationToken");
         params.put("Version", "2018-08-13");
-        params.put("Region", config.get("region"));
+        params.put("Region", "ap-guangzhou");
 
         String host = "sts.tencentcloudapi.com";
         String path = "/";

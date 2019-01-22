@@ -92,6 +92,7 @@ function getTempKeys() {
         'DurationSeconds'=> $config['durationSeconds'],
         'Version'=>'2018-08-13',
         'Name'=> 'cos',
+        'Region'=> 'ap-guangzhou',
         'Policy'=> urlencode($policyStr)
     );
     $params['Signature'] = getSignature($params, $config['secretKey'], $Method);

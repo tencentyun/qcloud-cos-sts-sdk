@@ -69,7 +69,8 @@ class Sts:
             'Version': '2018-08-13',
             'DurationSeconds':self.duration,
             'Name':'cos-sts-python',
-            'Policy':policy_encode
+            'Policy':policy_encode,
+            'Region':'ap-guangzhou'
         }
         data['Signature'] = self.__encrypt('POST', self.sts_url, data)
 
