@@ -105,9 +105,11 @@ class Sts:
         bc_json = dict()
         for k,v in result_json.items():
             if isinstance(v, dict):
-                bc_json[k.lower()] = dict((m.lower(), n) for m,n in v.items())
+                bc_json[k[0].lower() + k[1:]] = self._backwardCompat(v)
+            elif k == 'Token':
+                bc_json['sessionToken'] = v
             else:
-                bc_json[k.lower()] = v
+                bc_json[k[0].lower() + k[1:]] = v
         
         return bc_json
 

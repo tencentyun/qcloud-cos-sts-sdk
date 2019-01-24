@@ -61,13 +61,18 @@ public class CosStsClient {
         for (String key : resultJson.keySet()) {
             Object value = resultJson.get(key);
             if (value instanceof JSONObject) {
-                dcJson.put(key.toLowerCase(), downCompat((JSONObject) value));
+                dcJson.put(headerToLowerCase(key), downCompat((JSONObject) value));
             } else {
-                dcJson.put(key.toLowerCase(), resultJson.get(key));
+                String newKey = "Token".equals(key) ? "sessionToken" : headerToLowerCase(key);
+                dcJson.put(newKey, resultJson.get(key));
             }
         }
 
         return dcJson;
+    }
+
+    private static String headerToLowerCase(String source) {
+        return Character.toLowerCase(source.charAt(0)) + source.substring(1);
     }
 
     private static JSONObject getPolicy(TreeMap<String, Object> config) {

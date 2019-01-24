@@ -26,18 +26,23 @@ var util = {
         return sign;
     },
     // v2接口的key首字母小写，v3改成大写，此处做了向下兼容
-    lowercaseKey: function (data) {
-        var mapped = {};
+    backwardCompat: function (data) {
+        var compat = {};
         for (var key in data) {
             if (typeof(data[key]) == 'object') {
-                mapped[key.toLowerCase()] = this.lowercaseKey(data[key])
+                compat[this.lowerFirstLetter(key)] = this.backwardCompat(data[key])
+            } else if (key === 'Token') {
+                compat['sessionToken'] = data[key];
             } else {
-                mapped[key.toLowerCase()] = data[key];
+                compat[this.lowerFirstLetter(key)] = data[key];
             }
         }
           
-        return mapped;
+        return compat;
     },
+    lowerFirstLetter: function (source) {
+        return source.charAt(0).toLowerCase() + source.slice(1);
+    }
 };
 
 // 拼接获取临时密钥的参数
@@ -88,7 +93,7 @@ var getCredential = function (options, callback) {
         var data = body && body.Response;
         if (data) {
             data.startTime = data.ExpiredTime - durationSeconds;
-            data = util.lowercaseKey(data);
+            data = util.backwardCompat(data);
             callback(null, data);
         } else {
             callback(body);

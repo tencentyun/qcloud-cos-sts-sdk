@@ -51,11 +51,17 @@ function getSignature($opt, $key, $method) {
 
 // v2接口的key首字母小写，v3改成大写，此处做了向下兼容
 function backwardCompat($result) {
-    return array_map(function($item){
-        if(is_array($item))
-            $item = backwardCompat($item);
-        return $item;
-    }, array_change_key_case($result, CASE_LOWER));
+    $compat = array();
+    foreach ($result as $key => $value) {
+        if(is_array($value)) {
+            $compat[lcfirst($key)] = backwardCompat($value);
+        } elseif ($key == 'Token') {
+            $compat['sessionToken'] = $value;
+        } else {
+            $compat[lcfirst($key)] = $value;
+        }
+    }
+    return $compat;
 }
 
 // 获取临时密钥
