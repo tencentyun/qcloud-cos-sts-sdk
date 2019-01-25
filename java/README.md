@@ -53,6 +53,7 @@ try {
     String[] allowActions = new String[] {
             // 简单上传
             "name/cos:PutObject",
+            "name/cos:PostObject",
             // 分片上传
             "name/cos:InitiateMultipartUpload",
             "name/cos:ListMultipartUploads",
