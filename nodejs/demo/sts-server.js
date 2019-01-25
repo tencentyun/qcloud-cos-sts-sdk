@@ -59,7 +59,7 @@ app.all('/sts', function (req, res, next) {
             'effect': 'allow',
             'principal': {'qcs': ['*']},
             'resource': [
-                'qcs::cos:' + config.region + 'uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
+                'qcs::cos:' + config.region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
             ],
         }],
     };
