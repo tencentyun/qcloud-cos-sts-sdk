@@ -42,9 +42,9 @@ class Sts
             'Action': 'GetFederationToken',
             'Version': '2018-08-13',
             'DurationSeconds': @duration,
-            'Name': 'cos-sts-python',
+            'Name': 'cos-sts-ruby',
             'Policy': policy_encode,
-            'Region': 'ap-guangzhou'
+            'Region': @region
         }
 
         data['Signature'] = encrypt('POST', @sts_url, data)
