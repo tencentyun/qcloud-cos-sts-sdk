@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.TreeMap;
 
 public class CosStsClient {
@@ -52,6 +53,13 @@ public class CosStsClient {
             e.printStackTrace();
             throw new IOException("result = " + result, e);
         }
+    }
+    
+    public static String getPolicy(List<Scope> scopes) {
+    	if(scopes == null || scopes.size() == 0)return null;
+    	STSPolicy stsPolicy = new STSPolicy();
+    	stsPolicy.addScope(scopes);
+    	return stsPolicy.toString();
     }
 
     // v2接口的key首字母小写，v3改成大写，此处做了向下兼容

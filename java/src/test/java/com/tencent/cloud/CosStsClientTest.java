@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -60,5 +62,50 @@ public class CosStsClientTest {
         } catch (Exception e) {
             throw new IllegalArgumentException("no valid secret !");
         }
+    }
+    
+    @Test
+    public void testGetPolicy() {
+    	List<Scope> scopes = new ArrayList<Scope>();
+    	Scope scope = new Scope("name/cos:PutObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt");
+    	scopes.add(scope);
+    	System.out.println(CosStsClient.getPolicy(scopes));
+    	
+    }
+    
+    @Test 
+    public void testGetCredential2() {
+    	 TreeMap<String, Object> config = new TreeMap<String, Object>();
+
+         try {
+             Properties properties = new Properties();
+             File configFile = new File("local.properties");
+             properties.load(new FileInputStream(configFile));
+
+             // 固定密钥
+             config.put("SecretId", properties.getProperty("SecretId"));
+             // 固定密钥
+             config.put("SecretKey", properties.getProperty("SecretKey"));
+
+             if (properties.containsKey("https.proxyHost")) {
+                 System.setProperty("https.proxyHost", properties.getProperty("https.proxyHost"));
+                 System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
+             }
+
+             // 临时密钥有效时长，单位是秒
+             config.put("durationSeconds", 1800);
+             
+             //设置 policy
+             List<Scope> scopes = new ArrayList<Scope>();
+             Scope scope = new Scope("name/cos:PutObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt");
+         	 scopes.add(scope);
+             config.put("policy", CosStsClient.getPolicy(scopes));
+
+             JSONObject credential = CosStsClient.getCredential(config);
+             System.out.println(credential);
+         } catch (Exception e) {
+             throw new IllegalArgumentException("no valid secret !");
+         }
+    	
     }
 }
