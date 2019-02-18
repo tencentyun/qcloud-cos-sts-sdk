@@ -131,19 +131,12 @@ console.log(policy);
     "version": "2.0",
     "statement": [{
         "action": [
-            // 简单上传
             "name/cos:PutObject",
-            // 分片上传
-            "name/cos:InitiateMultipartUpload",
-            "name/cos:ListMultipartUploads",
-            "name/cos:ListParts",
-            "name/cos:UploadPart",
-            "name/cos:CompleteMultipartUpload"
         ],
         "effect": "allow",
         "principal": {"qcs": ["*"]},
         "resource": [
-            "qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/dir/*"
+            "qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/1.txt"
         ]
     }]
 }
