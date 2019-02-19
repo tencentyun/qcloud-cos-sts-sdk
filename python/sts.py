@@ -15,11 +15,11 @@ import random
 
 class Sts:
 
-    def __init__(self, config = {}):
+    def __init__(self, config={}):
         if 'allow_actions' in config:
             self.allow_actions = config.get('allow_actions')
-        else:
-            raise ValueError('missing allow_actions')
+        # else:
+        #     raise ValueError('missing allow_actions')
 
         if 'duration_seconds' in config:
             self.duration = config.get('duration_seconds')
@@ -33,16 +33,49 @@ class Sts:
         self.secret_key = config.get('secret_key')
         self.proxy = config.get('proxy')
         self.region = config.get('region')
+        self.policy = config.get('policy')
+        bucket = config.get('bucket')
+        if bucket is not None:
+            split_index = bucket.rfind('-')
+            short_bucket_name = bucket[:split_index]
+            appid = bucket[(split_index+1):]
+            self.resource = "qcs::cos:{region}:uid/{appid}:prefix//{appid}/{short_bucket_name}/{allow_prefix}".format(
+                region=config['region'],appid=appid,short_bucket_name=short_bucket_name,
+                allow_prefix=config['allow_prefix']
+            )
 
-        bucket = config['bucket']
+    @staticmethod
+    def get_policy(scope):
+        if not isinstance(scope, Scope):
+            return None
+        bucket = scope.get_bucket()
+        region = scope.get_region()
         split_index = bucket.rfind('-')
-        short_bucket_name = bucket[:split_index]
-        appid = bucket[(split_index+1):]
-
-        self.resource = "qcs::cos:{region}:uid/{appid}:prefix//{appid}/{short_bucket_name}/{allow_prefix}".format(
-            region=config['region'],appid=appid,short_bucket_name=short_bucket_name,
-            allow_prefix=config['allow_prefix']
-        )
+        bucket_name = str(bucket[:split_index]).strip()
+        appid = str(bucket[(split_index+1):]).strip()
+        policy = dict()
+        policy['version'] = '2.0'
+        statement = list()
+        statement_element = dict()
+        statement_element['action'] = scope.get_actions()
+        statement_element['effect'] = 'allow'
+        principal = dict()
+        principal['qcs'] = list('*')
+        statement_element['principal'] = principal
+        resources = list()
+        for prefix in scope.get_resource_prefixs():
+            if not str(prefix).startswith('/'):
+                prefix = '/' + prefix
+            resource = "qcs::cos:{region}:uid/{appid}:" \
+                       "prefix//{appid}/{bucket_name}/{prefix}".format(region=region,
+                                                                       appid=appid,
+                                                                       bucket_name=bucket_name,
+                                                                       prefix=prefix)
+            resources.append(resource)
+        statement_element['resource'] = resources
+        statement.append(statement_element)
+        policy['statement'] = statement
+        return policy
 
     def get_credential(self):
         try:
@@ -50,27 +83,30 @@ class Sts:
         except ImportError as e:
             raise e
 
-        policy = {
-            'version': '2.0',
-            'statement': {
-                'action': self.allow_actions,
-                'effect': 'allow',
-                'principal': {'qcs': '*'},
-                'resource': self.resource
+        if self.policy is None:
+            policy = {
+                'version': '2.0',
+                'statement': {
+                    'action': self.allow_actions,
+                    'effect': 'allow',
+                    'principal': {'qcs': '*'},
+                    'resource': self.resource
+                }
             }
-        }
+        else:
+            policy = self.policy
         policy_encode = quote(json.dumps(policy))
 
         data = {
-            'SecretId':self.secret_id,
-            'Timestamp':int(time.time()),
-            'Nonce':random.randint(100000, 200000),
-            'Action':'GetFederationToken',
+            'SecretId': self.secret_id,
+            'Timestamp': int(time.time()),
+            'Nonce': random.randint(100000, 200000),
+            'Action': 'GetFederationToken',
             'Version': '2018-08-13',
             'DurationSeconds':self.duration,
-            'Name':'cos-sts-python',
-            'Policy':policy_encode,
-            'Region':'ap-guangzhou'
+            'Name': 'cos-sts-python',
+            'Policy': policy_encode,
+            'Region': 'ap-guangzhou'
         }
         data['Signature'] = self.__encrypt('POST', self.sts_url, data)
 
@@ -113,6 +149,7 @@ class Sts:
         
         return bc_json
 
+
 class Tools(object):
 
     @staticmethod
@@ -127,3 +164,43 @@ class Tools(object):
     def flat_params(key_values):
         key_values = sorted(key_values.items(), key=lambda d: d[0])
         return reduce(Tools._link_key_values, map(Tools._flat_key_values, key_values))
+
+
+class Scope(object):
+    actions = []
+    bucket = None
+    region = None
+    resource_prefixs = []
+
+    def __init__(self, action=None, bucket=None, region=None, resource_prefix=None):
+        if action is not None:
+            self.actions.append(action)
+        self.bucket = bucket
+        self.region = region
+        if resource_prefix is not None:
+            self.resource_prefixs.append(resource_prefix)
+
+    def set_bucket(self, bucket):
+        self.bucket = bucket;
+
+    def set_region(self, region):
+        self.region = region;
+
+    def add_action(self, action):
+        self.actions.append(action)
+
+    def add_resource_prefix(self, resource_prefix):
+        self.resource_prefixs.append(resource_prefix)
+
+    def get_bucket(self):
+        return self.bucket
+
+    def get_region(self):
+        return self.region
+
+    def get_actions(self):
+        return self.actions
+
+    def get_resource_prefixs(self):
+        return self.resource_prefixs
+
