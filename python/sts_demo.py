@@ -8,10 +8,9 @@ if __name__ == '__main__':
     config = {
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
+        'secret_id': 'AKIDXXXX',
         # 固定密钥
-        'secret_id': 'AKIDPiqmW3qcgXVSKN8jngPzRhvxzYyDL5qP',
-        # 固定密钥
-        'secret_key': 'EH8oHoLgpmJmBQUM1Uoywjmv7EFzd5OJ',
+        'secret_key': 'EH8oXXX',
         'proxy': {
             'http': 'web-proxy.tencent.com:8080',
             'https': 'web-proxy.tencent.com:8080'
