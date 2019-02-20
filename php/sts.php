@@ -83,8 +83,10 @@ class Scope{
 		$index = strripos($this->bucket, '-');
 		$bucketName = substr($this->bucket, 0, $index);
 		$appid = substr($this->bucket, $index + 1);
-		
-		return 'qcs::cos:' . $this->region . ':uid/' . $appid . ':prefix//' . $appid . '/' . $bucketName . '/' . $this->resourcePrefix;
+		if(!(strpos($this->resourcePrefix, '/') === 0)){
+			$this->resourcePrefix = '/' . $this->resourcePrefix;
+		}
+		return 'qcs::cos:' . $this->region . ':uid/' . $appid . ':prefix//' . $appid . '/' . $bucketName . $this->resourcePrefix;
 	}
 }
 
