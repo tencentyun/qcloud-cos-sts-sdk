@@ -45,33 +45,26 @@ class Sts:
             )
 
     @staticmethod
-    def get_policy(scope):
-        if not isinstance(scope, Scope):
+    def get_policy(scopes=[]):
+        if not isinstance(scopes, list):
             return None
-        bucket = scope.get_bucket()
-        region = scope.get_region()
-        split_index = bucket.rfind('-')
-        bucket_name = str(bucket[:split_index]).strip()
-        appid = str(bucket[(split_index+1):]).strip()
         policy = dict()
         policy['version'] = '2.0'
         statement = list()
         statement_element = dict()
-        statement_element['action'] = scope.get_actions()
+        actions = list()
+        resources = list()
+        for scope in scopes:
+            actions.append(scope.get_action())
+            resources.append(scope.get_resource())
+
+        statement_element['action'] = actions
         statement_element['effect'] = 'allow'
+
         principal = dict()
         principal['qcs'] = list('*')
         statement_element['principal'] = principal
-        resources = list()
-        for prefix in scope.get_resource_prefixs():
-            if not str(prefix).startswith('/'):
-                prefix = '/' + prefix
-            resource = "qcs::cos:{region}:uid/{appid}:" \
-                       "prefix//{appid}/{bucket_name}/{prefix}".format(region=region,
-                                                                       appid=appid,
-                                                                       bucket_name=bucket_name,
-                                                                       prefix=prefix)
-            resources.append(resource)
+
         statement_element['resource'] = resources
         statement.append(statement_element)
         policy['statement'] = statement
@@ -113,7 +106,7 @@ class Sts:
         try:
             response = requests.post(self.sts_scheme + self.sts_url, proxies=self.proxy, data=data)
             result_json = response.json()
-            
+
             if isinstance(result_json['Response'], dict):
                 result_json = result_json['Response']
        
@@ -167,40 +160,42 @@ class Tools(object):
 
 
 class Scope(object):
-    actions = []
+    action = None
     bucket = None
     region = None
-    resource_prefixs = []
+    resource_prefix = None
 
     def __init__(self, action=None, bucket=None, region=None, resource_prefix=None):
-        if action is not None:
-            self.actions.append(action)
+        self.action = action
         self.bucket = bucket
         self.region = region
-        if resource_prefix is not None:
-            self.resource_prefixs.append(resource_prefix)
+        self.resource_prefix = resource_prefix
 
     def set_bucket(self, bucket):
-        self.bucket = bucket;
+        self.bucket = bucket
 
     def set_region(self, region):
-        self.region = region;
+        self.region = region
 
-    def add_action(self, action):
-        self.actions.append(action)
+    def set_action(self, action):
+        self.action = action
 
-    def add_resource_prefix(self, resource_prefix):
-        self.resource_prefixs.append(resource_prefix)
+    def set_resource_prefix(self, resource_prefix):
+        self.resource_prefix = resource_prefix
 
-    def get_bucket(self):
-        return self.bucket
+    def get_action(self):
+        return self.action
 
-    def get_region(self):
-        return self.region
-
-    def get_actions(self):
-        return self.actions
-
-    def get_resource_prefixs(self):
-        return self.resource_prefixs
+    def get_resource(self):
+        split_index = self.bucket.rfind('-')
+        bucket_name = str(self.bucket[:split_index]).strip()
+        appid = str(self.bucket[(split_index + 1):]).strip()
+        if not str(self.resource_prefix).startswith('/'):
+            self.resource_prefix = '/' + self.resource_prefix
+        resource = "qcs::cos:{region}:uid/{appid}:" \
+                   "prefix//{appid}/{bucket_name}{prefix}".format(region=self.region,
+                                                                  appid=appid,
+                                                                  bucket_name=bucket_name,
+                                                                  prefix=self.resource_prefix)
+        return resource
 

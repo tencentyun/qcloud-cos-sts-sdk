@@ -5,50 +5,43 @@ from sts import Sts, Scope
 
 def test_policy():
     scope = Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', 'dir/*')
-    print(Sts.get_policy(scope=scope))
+    scopes = list()
+    scopes.append(scope)
+    print(Sts.get_policy(scopes=scopes))
 
 
 def test_policy2():
-    scope = Scope()
-    scope.set_bucket('test-1250000000')
-    scope.set_region('ap-guangzhou')
-    scope.add_action('name/cos:PutObject')
-    scope.add_action('name/cos:GetObject')
-    scope.add_action('name/cos:InitiateMultipartUpload')
-    scope.add_action('name/cos:ListMultipartUploads')
-    scope.add_action('name/cos:ListParts')
-    scope.add_action('name/cos:UploadPart')
-    scope.add_action('name/cos:CompleteMultipartUpload')
-    scope.add_resource_prefix('1/test.txt')
-    scope.add_resource_prefix('test/*')
-    print(Sts.get_policy(scope))
+    scopes = list()
+    scopes.append(Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:ListParts', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:UploadPart', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', '1/test.txt'))
+    print(Sts.get_policy(scopes))
 
 
 def test_sts():
-    scope = Scope()
-    scope.set_bucket('android-ut-persist-bucket-1253653367')
-    scope.set_region('ap-guangzhou')
-    scope.add_action('name/cos:PutObject')
-    scope.add_action('name/cos:GetObject')
-    scope.add_action('name/cos:InitiateMultipartUpload')
-    scope.add_action('name/cos:ListMultipartUploads')
-    scope.add_action('name/cos:ListParts')
-    scope.add_action('name/cos:UploadPart')
-    scope.add_action('name/cos:CompleteMultipartUpload')
-    scope.add_resource_prefix('1/test.txt')
-    scope.add_resource_prefix('test/*')
+    scopes = list()
+    scopes.append(Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:ListParts', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:UploadPart', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', '1/test.txt'))
     config = {
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
-        # 固定密钥
-        'secret_id': 'AKIDXXXX',
+        'secret_id': 'AKIDXXX',
         # 固定密钥
         'secret_key': 'EH8oXXX',
         'proxy': {
-            'http': 'web-proxy.tencent.com:8080',
-            'https': 'web-proxy.tencent.com:8080'
+            'http': 'XXX',
+            'https': 'XXX'
         },
-        'policy': Sts.get_policy(scope)
+        'policy': Sts.get_policy(scopes)
     }
 
     sts = Sts(config)
