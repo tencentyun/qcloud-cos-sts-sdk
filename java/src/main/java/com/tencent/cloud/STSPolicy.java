@@ -26,12 +26,14 @@ public class STSPolicy {
 		this.scopes.add(scope);
 	}
 	
-	private JSONObject createElement(Scope scope) {
+	private JSONObject createElement(List<Scope> scopes) {
 		JSONObject element = new JSONObject();
 		
 		JSONArray actions = new JSONArray();
-		for(String action : scope.getAction()) {
-			actions.put(action);
+		JSONArray resources = new JSONArray();
+		for(Scope scope : scopes) {
+			actions.put(scope.getAction());
+			resources.put(scope.getResource());
 		}
 		element.put("action", actions);
 		
@@ -43,28 +45,6 @@ public class STSPolicy {
 		principal.put("qcs", qcs);
 		element.put("principal", principal);
 		
-		JSONArray resources = new JSONArray();
-		String region = scope.getRegion();
-		String bucket = scope.getBucket();
-		int index = bucket.lastIndexOf('-');
-		String appid = bucket.substring(index + 1).trim();
-		String bucketName = bucket.substring(0, index).trim();
-		for(String prefix : scope.getResourcefix()) {
-			if(!prefix.startsWith("/")) {
-				prefix = '/' + prefix;
-			}
-			StringBuilder resource = new StringBuilder();
-			resource.append("qcs::cos")
-			.append(':')
-			.append(region)
-			.append(':')
-			.append("uid/").append(appid)
-			.append(':')
-			.append("prefix//").append(appid).append('/').append(bucketName)
-			.append(prefix);
-			
-			resources.put(resource);
-		}
 		element.put("resource", resources);
 		
 		return element;
@@ -74,11 +54,9 @@ public class STSPolicy {
 	public String toString() {
 		JSONObject policy = new JSONObject();
     	policy.put("version", "2.0");
+    	JSONArray statement = new JSONArray();
     	if(scopes.size() > 0) {
-    		JSONArray statement = new JSONArray();
-    		for(Scope scope : scopes) {
-    			statement.put(createElement(scope));
-    		}
+    		statement.put(createElement(scopes));
     		policy.put("statement", statement);
     	}
     	return policy.toString();

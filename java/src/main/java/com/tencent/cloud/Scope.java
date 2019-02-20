@@ -1,17 +1,12 @@
 package com.tencent.cloud;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class Scope {
 
-	private List<String> action = new ArrayList<String>(); 
+	private String action;
 	private String bucket; 
 	private String region;
-	private List<String> sourcePrefix = new ArrayList<String>(); 
-	
-	public Scope() {}
+	private String sourcePrefix;
 	
 	/**
 	 * 
@@ -21,10 +16,10 @@ public class Scope {
 	 * @param prefix 拼接 resource 字段所需的 key 前缀，客户端 SDK 默认传固定文件名如 "dir/1.txt"，支持 * 结尾如 "dir/*"
 	 */
 	public Scope(String action, String bucket, String region, String sourcePrefix) {
-		this.action.add(action);
+		this.action = action;
 		this.bucket = bucket;
 		this.region = region;
-		this.sourcePrefix.add(sourcePrefix);
+		this.sourcePrefix = sourcePrefix;
 	}
 	
 	public void setBucket(String bucket) {
@@ -35,28 +30,35 @@ public class Scope {
 		this.region = region;
 	}
 	
-	public void addAction(String action) {
-		this.action.add(action);
+	public void setAction(String action) {
+		this.action = action;
 	}
 	
-	public void addResourcePrefix(String sourcePrefix) {
-		this.sourcePrefix.add(sourcePrefix);
+	public void setResourcePrefix(String sourcePrefix) {
+		this.sourcePrefix = sourcePrefix;
 	}
 	
-	public List<String> getAction() {
-		return action;
+	public String getAction() {
+		return this.action;
 	}
 	
-	public List<String> getResourcefix() {
-		return sourcePrefix;
-	}
-	
-	public String getBucket() {
-		return bucket;
-	}
-	
-	public String getRegion() {
-		return region;
+	public String getResource() {
+		int index = bucket.lastIndexOf('-');
+		String appid = bucket.substring(index + 1).trim();
+		String bucketName = bucket.substring(0, index).trim();
+		if(!sourcePrefix.startsWith("/")) {
+			sourcePrefix = '/' + sourcePrefix;
+		}
+		StringBuilder resource = new StringBuilder();
+		resource.append("qcs::cos")
+		.append(':')
+		.append(region)
+		.append(':')
+		.append("uid/").append(appid)
+		.append(':')
+		.append("prefix//").append(appid).append('/').append(bucketName)
+		.append(sourcePrefix);
+		return resource.toString();
 	}
 	
 }

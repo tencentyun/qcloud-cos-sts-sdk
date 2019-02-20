@@ -99,6 +99,7 @@ public class CosStsClientTest {
              List<Scope> scopes = new ArrayList<Scope>();
              Scope scope = new Scope("name/cos:PutObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt");
          	 scopes.add(scope);
+         	 scopes.add(new Scope("name/cos:GetObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt"));
              config.put("policy", CosStsClient.getPolicy(scopes));
 
              JSONObject credential = CosStsClient.getCredential(config);
