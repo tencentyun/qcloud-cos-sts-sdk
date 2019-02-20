@@ -64,25 +64,55 @@ function backwardCompat($result) {
     return $compat;
 }
 
+function getPolicy($actions, $bucket, $region, $resourcePrefixs){
+	$index = strripos($bucket, '-');
+	$bucketName = substr($bucket, 0, $index);
+	$appid = substr($bucket, $index + 1);
+	$principal = array(
+		'qcs' => array('*')
+	);
+
+	$resources = array();
+	for($i=0, $counts = count($resourcePrefixs); $i < $counts; $i++){
+		array_push($resources, 'qcs::cos:' . $region . ':uid/' . $appid . ':prefix//' . $appid . '/' . $bucketName . '/' . $resourcePrefixs[$i]);
+	} 
+	$statements = array(array(
+		'actions' => $actions,
+		'effect' => 'allow',
+		'principal' => $principal,
+		'resource' => $resources
+	));
+		
+	$policy = array(
+		'version' => '2.0',
+		'statement' => $statements
+	);
+	return $policy;
+}
+
 // 获取临时密钥
 function getTempKeys() {
 
     global $config;
     $ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
     $AppId = substr($config['bucket'], 1 + strripos($config['bucket'], '-'));
-    $policy = array(
-        'version'=> '2.0',
-        'statement'=> array(
-            array(
-                'action'=> $config['allowActions'],
-                'effect'=> 'allow',
-                'principal'=> array('qcs'=> array('*')),
-                'resource'=> array(
-                    'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':prefix//' . $AppId . '/' . $ShortBucketName . '/' . $config['allowPrefix']
-                )
-            )
-        )
-    );
+	if(array_key_exists('policy', $config)){
+		$policy = $config['policy'];
+	}else{
+	    $policy = array(
+			'version'=> '2.0',
+			'statement'=> array(
+				array(
+					'action'=> $config['allowActions'],
+					'effect'=> 'allow',
+					'principal'=> array('qcs'=> array('*')),
+					'resource'=> array(
+						'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':prefix//' . $AppId . '/' . $ShortBucketName . '/' . $config['allowPrefix']
+					)
+				)
+			)
+		);	
+	}
 
     $policyStr = str_replace('\\/', '/', json_encode($policy));
     $Action = 'GetFederationToken';
