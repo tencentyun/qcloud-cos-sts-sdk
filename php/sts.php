@@ -64,18 +64,45 @@ function backwardCompat($result) {
     return $compat;
 }
 
-function getPolicy($actions, $bucket, $region, $resourcePrefixs){
-	$index = strripos($bucket, '-');
-	$bucketName = substr($bucket, 0, $index);
-	$appid = substr($bucket, $index + 1);
+class Scope{
+	var $action;
+	var $bucket;
+	var $region;
+	var $resourcePrefix;
+	function __construct($action, $bucket, $region, $resourcePrefix){
+		$this->action = $action;
+		$this->bucket = $bucket;
+		$this->region = $region;
+		$this->resourcePrefix = $resourcePrefix;
+	}
+	function get_action(){
+		return $this->action;
+	}
+	
+	function get_resource(){
+		$index = strripos($this->bucket, '-');
+		$bucketName = substr($this->bucket, 0, $index);
+		$appid = substr($this->bucket, $index + 1);
+		
+		return 'qcs::cos:' . $this->region . ':uid/' . $appid . ':prefix//' . $appid . '/' . $bucketName . '/' . $this->resourcePrefix;
+	}
+}
+
+function getPolicy($scopes){
+	if (!is_array($scopes)){
+		return null;
+	}
+	$actions=array();
+	$resources = array();
+	for($i=0, $counts=count($scopes); $i < $counts; $i++){
+		array_push($actions, $scopes[$i]->get_action());
+		array_push($resources, $scopes[$i]->get_resource());
+	}
+	
 	$principal = array(
 		'qcs' => array('*')
 	);
 
-	$resources = array();
-	for($i=0, $counts = count($resourcePrefixs); $i < $counts; $i++){
-		array_push($resources, 'qcs::cos:' . $region . ':uid/' . $appid . ':prefix//' . $appid . '/' . $bucketName . '/' . $resourcePrefixs[$i]);
-	} 
 	$statements = array(array(
 		'actions' => $actions,
 		'effect' => 'allow',
