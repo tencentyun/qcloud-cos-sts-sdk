@@ -22,6 +22,7 @@
 获取临时密钥接口
 
 ### 参数说明
+
 |字段|类型|描述|
 |SecretId|String| 云 API 密钥 Id|
 |SecretKey|String| 云 API 密钥 key|
@@ -33,6 +34,7 @@
 |policy|String| 策略：由 allowActions、bucket、region、allowPrefix字段组成的描述授权的具体信息|
 
 ### 返回值说明
+
 |字段|类型|描述|
 |credentials | String | 临时密钥信息 |
 |tmpSecretId | String | 临时密钥 Id，可用于计算签名 |
@@ -145,6 +147,7 @@ try {
 获取策略(policy)接口。本接口适用于接收 Web、iOS、Android 客户端 SDK 提供的 Scope 参数。推荐您把 Scope 参数放在请求的 Body 里面，通过 POST 方式传到后台。
 
 ### 参数说明
+
 |字段|类型|描述|
 |bucket|String| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
@@ -172,7 +175,7 @@ String policy = CosStsClient.getPolicy(scopes);
 		"actions":["name/cos:putobject"，"name/cos:GetObject" ],
 		"effect":"allow",
 		"principal":{"qcs":["*"]},
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/test/1.txt"，"qcs::cos:ap-	guangzhou:uid/12500000:prefix//12500000/test/dir/*" ]
+		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/test/1.txt"，"qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/dir/*" ]
 	}
 ]
 }
