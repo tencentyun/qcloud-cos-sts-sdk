@@ -24,6 +24,7 @@
 ### 参数说明
 
 |字段|类型|描述|
+| ---- | ---- | ---- |
 |SecretId|String| 云 API 密钥 Id|
 |SecretKey|String| 云 API 密钥 key|
 |durationSeconds|long| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
@@ -36,6 +37,7 @@
 ### 返回值说明
 
 |字段|类型|描述|
+| ---- | ---- | ---- |
 |credentials | String | 临时密钥信息 |
 |tmpSecretId | String | 临时密钥 Id，可用于计算签名 |
 |tmpSecretKey | String | 临时密钥 Key，可用于计算签名 |
@@ -149,6 +151,7 @@ try {
 ### 参数说明
 
 |字段|类型|描述|
+| ---- | ---- | ---- |
 |bucket|String| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
 |sourcePrefix|String|资源的前缀，如* 或者 a/* 或者 a.jpg|
@@ -157,6 +160,7 @@ try {
 
 ### 返回值说明
 |字段|类型|描述|
+| ---- | ---- | ---- |
 |policy | String | 申请临时密钥所需的权限策略 |
 
 ### 使用示例
