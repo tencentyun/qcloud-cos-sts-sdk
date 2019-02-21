@@ -120,7 +120,7 @@ print ('get data : ' + response.content.decode("unicode-escape"))
   startTime: 1545304817 }
 ```
 
-### getPolicy
+### get_policy
 
 获取策略(policy)接口。本接口适用于接收 Web、iOS、Android 客户端 SDK 提供的 Scope 参数。推荐您把 Scope 参数放在请求的 Body 里面，通过 POST 方式传到后台。
 
