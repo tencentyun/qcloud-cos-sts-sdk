@@ -51,22 +51,27 @@ class Sts:
         policy = dict()
         policy['version'] = '2.0'
         statement = list()
-        statement_element = dict()
-        actions = list()
-        resources = list()
+
         for scope in scopes:
+            statement_element = dict()
+            actions = list()
+            resources = list()
+
             actions.append(scope.get_action())
+
+            statement_element['action'] = actions
+
+            statement_element['effect'] = 'allow'
+
+            principal = dict()
+            principal['qcs'] = list('*')
+            statement_element['principal'] = principal
+
             resources.append(scope.get_resource())
+            statement_element['resource'] = resources
 
-        statement_element['action'] = actions
-        statement_element['effect'] = 'allow'
+            statement.append(statement_element)
 
-        principal = dict()
-        principal['qcs'] = list('*')
-        statement_element['principal'] = principal
-
-        statement_element['resource'] = resources
-        statement.append(statement_element)
         policy['statement'] = statement
         return policy
 
@@ -198,4 +203,12 @@ class Scope(object):
                                                                   bucket_name=bucket_name,
                                                                   prefix=self.resource_prefix)
         return resource
+
+    def get_dict(self):
+        result = dict()
+        result['action'] = self.action;
+        result['bucket'] = self.bucket
+        result['region'] = self.region
+        result['prefix'] = self.resource_prefix
+        return result
 
