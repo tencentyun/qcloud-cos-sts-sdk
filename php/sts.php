@@ -5,10 +5,10 @@
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
     'domain' => 'sts.tencentcloudapi.com',
-    'proxy' => '',
-    'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
-    'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
-    'bucket' => 'test-1250000000', // 换成你的 bucket
+    'proxy' => 'http://web-proxy.tencent.com:8080',
+    'secretId' => 'AKIDwqaGoCIWIG4hDWdJUTL5e3hn04xiD5kI', // 固定密钥
+    'secretKey' => 'pV0KVceWSEuOLCsNzIzb3KTUM7iDXhgW', // 固定密钥
+    'bucket' => 'test-1251902136', // 换成你的 bucket
     'region' => 'ap-guangzhou', // 换成 bucket 所在园区
     'durationSeconds' => 1800, // 密钥有效期
     'allowPrefix' => '*', // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
@@ -41,9 +41,8 @@ function json2str($obj, $notEncode = false) {
 }
 
 // 计算临时密钥用的签名
-function getSignature($opt, $key, $method) {
-    global $config;
-    $formatString = $method . $config['domain'] . '/?' . json2str($opt, 1);
+function getSignature($opt, $key, $method, $domain) {
+    $formatString = $method . $domain . '/?' . json2str($opt, 1);
     $sign = hash_hmac('sha1', $formatString, $key);
     $sign = base64_encode(_hex2bin($sign));
     return $sign;
@@ -121,9 +120,8 @@ function getPolicy($scopes){
 }
 
 // 获取临时密钥
-function getTempKeys() {
+function getTempKeys($config) {
 
-    global $config;
     $ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
     $AppId = substr($config['bucket'], 1 + strripos($config['bucket'], '-'));
 	if(array_key_exists('policy', $config)){
@@ -161,7 +159,7 @@ function getTempKeys() {
         'Region'=> 'ap-guangzhou',
         'Policy'=> urlencode($policyStr)
     );
-    $params['Signature'] = getSignature($params, $config['secretKey'], $Method);
+    $params['Signature'] = getSignature($params, $config['secretKey'], $Method, $config['domain']);
 
     $url = $config['url'];
     $ch = curl_init($url);
@@ -187,7 +185,7 @@ function getTempKeys() {
 }
 
 // 获取临时密钥，计算签名
-$tempKeys = getTempKeys();
+$tempKeys = getTempKeys($config);
 
 // 返回数据给前端
 header('Content-Type: application/json');
