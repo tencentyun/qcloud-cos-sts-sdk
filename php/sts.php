@@ -94,23 +94,24 @@ function getPolicy($scopes){
 	if (!is_array($scopes)){
 		return null;
 	}
-	$actions=array();
-	$resources = array();
+	$statements = array();
+	
 	for($i=0, $counts=count($scopes); $i < $counts; $i++){
+		$actions=array();
+		$resources = array();
 		array_push($actions, $scopes[$i]->get_action());
 		array_push($resources, $scopes[$i]->get_resource());
-	}
-	
-	$principal = array(
+		$principal = array(
 		'qcs' => array('*')
-	);
-
-	$statements = array(array(
+		);
+		$statement = array(
 		'actions' => $actions,
 		'effect' => 'allow',
 		'principal' => $principal,
 		'resource' => $resources
-	));
+		);
+		array_push($statements, $statement);
+	}
 		
 	$policy = array(
 		'version' => '2.0',
