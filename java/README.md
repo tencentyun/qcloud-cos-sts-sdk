@@ -176,10 +176,16 @@ String policy = CosStsClient.getPolicy(scopes);
 "version":"2.0",
 "statement":[
 	{
-		"actions":["name/cos:putobject"，"name/cos:GetObject" ],
+		"actions":["name/cos:PutObject"],
 		"effect":"allow",
 		"principal":{"qcs":["*"]},
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/test/1.txt"，"qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/dir/*" ]
+		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/test/1.txt"]
+	},
+	{
+		"actions":["name/cos:GetObject" ],
+		"effect":"allow",
+		"principal":{"qcs":["*"]},
+		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/dir/*" ]
 	}
 ]
 }
