@@ -26,15 +26,11 @@ public class STSPolicy {
 		this.scopes.add(scope);
 	}
 	
-	private JSONObject createElement(List<Scope> scopes) {
+	private JSONObject createElement(Scope scope) {
 		JSONObject element = new JSONObject();
 		
 		JSONArray actions = new JSONArray();
-		JSONArray resources = new JSONArray();
-		for(Scope scope : scopes) {
-			actions.put(scope.getAction());
-			resources.put(scope.getResource());
-		}
+		actions.put(scope.getAction());
 		element.put("action", actions);
 		
 		element.put("effect", "allow");
@@ -45,6 +41,8 @@ public class STSPolicy {
 		principal.put("qcs", qcs);
 		element.put("principal", principal);
 		
+		JSONArray resources = new JSONArray();
+		resources.put(scope.getResource());
 		element.put("resource", resources);
 		
 		return element;
@@ -56,7 +54,9 @@ public class STSPolicy {
     	policy.put("version", "2.0");
     	JSONArray statement = new JSONArray();
     	if(scopes.size() > 0) {
-    		statement.put(createElement(scopes));
+    		for(Scope scope : scopes) {
+    			statement.put(createElement(scope));
+    		}
     		policy.put("statement", statement);
     	}
     	return policy.toString();
