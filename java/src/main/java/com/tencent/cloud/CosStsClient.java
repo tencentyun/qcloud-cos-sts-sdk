@@ -1,54 +1,86 @@
 package com.tencent.cloud;
 
-import com.qcloud.Module.Sts;
-import com.qcloud.QcloudApiModuleCenter;
-import com.qcloud.Utilities.Json.JSONArray;
-import com.qcloud.Utilities.Json.JSONObject;
+import com.tencent.cloud.cos.util.Request;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.TreeMap;
 
 public class CosStsClient {
 
     private static final int DEFAULT_DURATION_SECONDS = 1800;
 
-    public static JSONObject getCredential(TreeMap<String, Object> config) throws Exception {
-        config.put("RequestMethod", "GET");
-
-        QcloudApiModuleCenter module = new QcloudApiModuleCenter(new Sts(), config);
-
+    public static JSONObject getCredential(TreeMap<String, Object> config) throws IOException {
         TreeMap<String, Object> params = new TreeMap<String, Object>();
 
-        params.put("name", "cos-sts-java");
         String policy = (String) config.get("policy");
-
         if (policy != null) {
-            params.put("policy", policy);
+            params.put("Policy", policy);
         } else {
-            params.put("policy", getPolicy(config).toString());
+            params.put("Policy", getPolicy(config).toString());
         }
 
         int durationSeconds = DEFAULT_DURATION_SECONDS;
         if (config.get("durationSeconds") != null) {
             durationSeconds = (Integer) config.get("durationSeconds");
         }
-        params.put("durationSeconds", durationSeconds);
+        params.put("DurationSeconds", durationSeconds);
 
+        params.put("Name", "cos-sts-java");
+        params.put("Action", "GetFederationToken");
+        params.put("Version", "2018-08-13");
+        params.put("Region", "ap-guangzhou");
+
+        String host = "sts.tencentcloudapi.com";
+        String path = "/";
+
+        String result = null;
         try {
-            String result = module.call("GetFederationToken", params);
+            result = Request.send(params, (String) config.get("SecretId"),
+                    (String) config.get("SecretKey"),
+                    "POST", host, path);
             JSONObject jsonResult = new JSONObject(result);
-            JSONObject data = jsonResult.optJSONObject("data");
+            JSONObject data = jsonResult.optJSONObject("Response");
             if (data == null) {
                 data = jsonResult;
             }
-            long expiredTime = data.getLong("expiredTime");
+            long expiredTime = data.getLong("ExpiredTime");
             data.put("startTime", expiredTime - durationSeconds);
-            return data;
+            return downCompat(data);
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
+            throw new IOException("result = " + result, e);
+        }
+    }
+    
+    public static String getPolicy(List<Scope> scopes) {
+    	if(scopes == null || scopes.size() == 0)return null;
+    	STSPolicy stsPolicy = new STSPolicy();
+    	stsPolicy.addScope(scopes);
+    	return stsPolicy.toString();
+    }
+
+    // v2接口的key首字母小写，v3改成大写，此处做了向下兼容
+    private static JSONObject downCompat(JSONObject resultJson) {
+        JSONObject dcJson = new JSONObject();
+
+        for (String key : resultJson.keySet()) {
+            Object value = resultJson.get(key);
+            if (value instanceof JSONObject) {
+                dcJson.put(headerToLowerCase(key), downCompat((JSONObject) value));
+            } else {
+                String newKey = "Token".equals(key) ? "sessionToken" : headerToLowerCase(key);
+                dcJson.put(newKey, resultJson.get(key));
+            }
         }
 
+        return dcJson;
+    }
+
+    private static String headerToLowerCase(String source) {
+        return Character.toLowerCase(source.charAt(0)) + source.substring(1);
     }
 
     private static JSONObject getPolicy(TreeMap<String, Object> config) {

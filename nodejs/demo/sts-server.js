@@ -12,7 +12,7 @@ var config = {
     // 放行判断相关参数
     bucket: 'test-1250000000',
     region: 'ap-guangzhou',
-    allowPrefix: '',
+    allowPrefix: '*',
     // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     allowActions: [
         // 简单上传
@@ -59,7 +59,7 @@ app.all('/sts', function (req, res, next) {
             'effect': 'allow',
             'principal': {'qcs': ['*']},
             'resource': [
-                'qcs::cos:' + config.region + 'uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
+                'qcs::cos:' + config.region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
             ],
         }],
     };
