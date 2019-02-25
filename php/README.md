@@ -1,6 +1,11 @@
 ## 获取 SDK
+- 源码安装
 
-拷贝 `sts.php` 文件到您的 php 工程中。
+	拷贝 `sts/sts.php` 文件到您的 php 工程中。
+
+## 查看示例
+
+请查看 `demo/sts_test.php` 文件，里面描述了如何调用SDK。
 
 ## 接口说明
 
