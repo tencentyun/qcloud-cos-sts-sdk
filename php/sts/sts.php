@@ -1,6 +1,5 @@
 <?php
 // 临时密钥计算样例
-
 // 配置参数
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
@@ -24,12 +23,10 @@ $config = array(
         'name/cos:CompleteMultipartUpload'
     )
 );
-
 function _hex2bin($data) {
     $len = strlen($data);
     return pack("H" . $len, $data);
 }
-
 // obj 转 query string
 function json2str($obj, $notEncode = false) {
     ksort($obj);
@@ -39,7 +36,6 @@ function json2str($obj, $notEncode = false) {
     }
     return join('&', $arr);
 }
-
 // 计算临时密钥用的签名
 function getSignature($opt, $key, $method) {
     global $config;
@@ -48,7 +44,6 @@ function getSignature($opt, $key, $method) {
     $sign = base64_encode(_hex2bin($sign));
     return $sign;
 }
-
 // v2接口的key首字母小写，v3改成大写，此处做了向下兼容
 function backwardCompat($result) {
     $compat = array();
@@ -63,7 +58,6 @@ function backwardCompat($result) {
     }
     return $compat;
 }
-
 class Scope{
 	var $action;
 	var $bucket;
@@ -89,7 +83,6 @@ class Scope{
 		return 'qcs::cos:' . $this->region . ':uid/' . $appid . ':prefix//' . $appid . '/' . $bucketName . $this->resourcePrefix;
 	}
 }
-
 function getPolicy($scopes){
 	if (!is_array($scopes)){
 		return null;
@@ -119,10 +112,8 @@ function getPolicy($scopes){
 	);
 	return $policy;
 }
-
 // 获取临时密钥
 function getTempKeys() {
-
     global $config;
     if(array_key_exists('bucket', $config)){
 		$ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
@@ -145,13 +136,11 @@ function getTempKeys() {
 			)
 		);	
 	}
-
     $policyStr = str_replace('\\/', '/', json_encode($policy));
     $Action = 'GetFederationToken';
     $Nonce = rand(10000, 20000);
     $Timestamp = time();
     $Method = 'POST';
-
     $params = array(
         'SecretId'=> $config['secretId'],
         'Timestamp'=> $Timestamp,
@@ -164,7 +153,6 @@ function getTempKeys() {
         'Policy'=> urlencode($policyStr)
     );
     $params['Signature'] = getSignature($params, $config['secretKey'], $Method);
-
     $url = $config['url'];
     $ch = curl_init($url);
     $config['proxy'] && curl_setopt($ch, CURLOPT_PROXY, $config['proxy']);
@@ -177,14 +165,12 @@ function getTempKeys() {
     $result = curl_exec($ch);
     if(curl_errno($ch)) $result = curl_error($ch);
     curl_close($ch);
-
     $result = json_decode($result, 1);
     if (isset($result['Response'])) {
         $result = $result['Response'];
         $result['startTime'] = $result['ExpiredTime'] - $config['durationSeconds'];
     }
     $result = backwardCompat($result);
-
     return $result;
 }
 ?>
