@@ -2,7 +2,7 @@
 import json
 
 from flask import Flask, request
-from sts import Sts, Scope
+from sts.sts import Sts, Scope
 
 app = Flask(__name__)
 

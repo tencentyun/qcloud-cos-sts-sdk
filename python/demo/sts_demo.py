@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from sts import Sts
+from sts.sts import Sts
+
 
 if __name__ == '__main__':
 

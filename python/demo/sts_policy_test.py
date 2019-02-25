@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from sts import Sts, Scope
+from sts.sts import Sts, Scope
 
 
 def test_policy():

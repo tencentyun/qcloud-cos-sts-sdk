@@ -3,7 +3,7 @@ import json
 
 import requests
 
-from sts import Scope
+from sts.sts import Scope
 
 
 def request_sts():

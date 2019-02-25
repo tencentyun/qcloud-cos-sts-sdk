@@ -13,6 +13,7 @@ import base64
 import requests
 import random
 
+
 class Sts:
 
     def __init__(self, config={}):

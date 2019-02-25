@@ -1,10 +1,15 @@
 ## 获取 SDK
+- 使用 pip 安装
+    
+    pip install -U qcloud-python-sts
+   
+- 源码安装
 
-拷贝 `sts.py` 文件到您的 python 工程中。
+    拷贝 `sts/sts.py` 文件到您的 python 工程中。
 
 ## 查看示例
 
-请查看 `sts_demo.py` 文件，里面描述了如何调用SDK。
+请查看 `demo/sts_demo.py` 文件，里面描述了如何调用SDK。
 
 ## 接口说明
 
@@ -40,9 +45,9 @@
 
 调用代码如下：
 
-```
+```python
 # 方式 一
-from sts import Sts
+from sts.sts import Sts
 
 config = {
     # 临时密钥有效时长，单位是秒
@@ -82,9 +87,8 @@ response = sts.get_credential()
 print ('get data : ' + response.content.decode("unicode-escape"))
 
 # 方式 二
-policy = {'version': '2.0', 'statement': [{'action': ['name/cos:PutObject'], 'effect': 'a
-llow', 'principal': {'qcs': ['*']}, 'resource': ['qcs::cos:ap-guangzhou:uid/1250
-000000:prefix//1250000000/test/*']}]}
+policy = {'version': '2.0', 'statement': [{'action': ['name/cos:PutObject'], 'effect': 'allow', 
+'principal': {'qcs': ['*']}, 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/*']}]}
 config = {
     # 临时密钥有效时长，单位是秒
     'duration_seconds': 1800,
@@ -141,6 +145,7 @@ print ('get data : ' + response.content.decode("unicode-escape"))
 
 ### 使用示例
 ```python
+from sts.sts import Sts, Scope
 scopes = list()
 scopes.append(Scope("name/cos:PutObject", "test-12500000", "ap-guangzhou", "/1.txt"));
 scopes.append(Scope("name/cos:GetObject", "test-12500000", "ap-guangzhou", "/dir/*"));

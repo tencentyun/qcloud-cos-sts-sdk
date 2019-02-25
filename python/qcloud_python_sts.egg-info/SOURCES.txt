@@ -1,0 +1,9 @@
+README.md
+setup.py
+qcloud_python_sts.egg-info/PKG-INFO
+qcloud_python_sts.egg-info/SOURCES.txt
+qcloud_python_sts.egg-info/dependency_links.txt
+qcloud_python_sts.egg-info/requires.txt
+qcloud_python_sts.egg-info/top_level.txt
+sts/__init__.py
+sts/sts.py
