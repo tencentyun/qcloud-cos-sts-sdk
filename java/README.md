@@ -5,7 +5,7 @@
 	
 	1) 添加 指定的 maven 仓库地址
 
-    		<repositories>
+    	<repositories>
     		<repository>
     			<id>bintray-qcloud-maven-repo</id>
     			<name>qcloud-maven-repo</name>
