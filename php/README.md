@@ -1,5 +1,4 @@
 ## 获取 SDK
-
 - composer 安装
 
     	
@@ -52,6 +51,8 @@
 
 ### 使用示例
 ```php
+include 'sts.php'
+
 //方法一
 // 配置参数
 $config = array(
@@ -78,22 +79,22 @@ $config = array(
     )
 );
 
-// 获取临时密钥，计算签名
-$tempKeys = getTempKeys();
+//创建 sts
+$sts = new STS();
 
-// 返回数据给前端
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: http://127.0.0.1'); // 这里修改允许跨域访问的网站
-header('Access-Control-Allow-Headers: origin,accept,content-type');
+// 获取临时密钥，计算签名
+$tempKeys = $sts->getTempKeys($config);
+
 echo json_encode($tempKeys);
 
 //方法二
-//设置策略 policy，可通过 getPolicy($scopes)获取
+//设置策略 policy，可通过 STS 的 getPolicy($scopes)获取
 $actions=array('name/cos:PutObject');
 $resources = array("qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/*");
 $principal = array(
 	'qcs' => array('*')
 );
+
 $statements = array(array(
 		'actions' => $actions,
 		'effect' => 'allow',
@@ -116,13 +117,12 @@ $config = array(
     )
 );
 
-// 获取临时密钥，计算签名
-$tempKeys = getTempKeys();
+//创建 sts
+$sts = new STS();
 
-// 返回数据给前端
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: http://127.0.0.1'); // 这里修改允许跨域访问的网站
-header('Access-Control-Allow-Headers: origin,accept,content-type');
+// 获取临时密钥，计算签名
+$tempKeys = $sts->getTempKeys($config);
+
 echo json_encode($tempKeys);
 ```
 
@@ -130,7 +130,7 @@ echo json_encode($tempKeys);
 
 成功的话，可以拿到包含密钥的 JSON 文本：
 
-```
+```php
 { credentials:
    { sessionToken: 'd88109ab2794fc4e8c9491353face398c240441030001',
      tmpSecretId: 'AKIDq9bhO815EteWwntqvvzOeSTONZ4knQgr',
@@ -160,15 +160,21 @@ echo json_encode($tempKeys);
 |policy | array | 申请临时密钥所需的权限策略 |
 
 ### 使用示例
-```java
+```php
+include 'sts.php'
+
 $scopes = array();
 array_push($scopes,new Scope("name/cos:PutObject", "test-12500000", "ap-guangzhou", "/1.txt"));
 array_push($scopes, new Scope("name/cos:GetObject", "test-12500000", "ap-guangzhou", "/dir/*"));
-$policy = getPolicy($scopes);
+
+//创建 sts
+$sts = new STS();
+//获取policy
+$policy= $sts->getPolicy($scopes);
 echo str_replace('\\/', '/', json_encode($policy));
 ```
 ### 返回结果
-```java
+```php
 {
 "version":"2.0",
 "statement":[
