@@ -1,31 +1,35 @@
 ## 获取 SDK
 - 使用 maven 集成方式
-- 
+
 	在 java 工程中的 pom.xml 文件中添加如下：
-	1）添加 maven 仓库地址
-	<repositories>
-		<repository>
-			<id>bintray-qcloud-maven-repo</id>
-			<name>qcloud-maven-repo</name>
-			<url>https://dl.bintray.com/qcloud/maven-repo/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+	
+	1) 添加 指定的 maven 仓库地址
+
+    		<repositories>
+    		<repository>
+    			<id>bintray-qcloud-maven-repo</id>
+    			<name>qcloud-maven-repo</name>
+    			<url>https://dl.bintray.com/qcloud/maven-repo/</url>
+    			<layout>default</layout>
+    			<releases>
+    				<enabled>true</enabled>
+    			</releases>
+    			<snapshots>
+    				<enabled>false</enabled>
+    			</snapshots>
+    		</repository>
+    	</repositories>
+	
 	2）添加 sdk 依赖
-    <dependency>
-      <groupId>com.tencent.cloud</groupId>
-      <artifactId>cos-sts-java</artifactId>
-      <version>3.0.0</version>
-    </dependency>
+
+    	<dependency>
+    		<groupId>com.tencent.cloud</groupId>
+    		<artifactId>cos-sts-java</artifactId>
+    		<version>3.0.0</version>
+    	</dependency>
 
 - 源码安装
-- 
+
 	拷贝 `src\main\java` 中的代码到您的工程中，并根据 pom.xml文件添加依赖项.
 
 ## 查看示例
