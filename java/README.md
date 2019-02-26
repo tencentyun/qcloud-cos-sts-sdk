@@ -2,7 +2,7 @@
 - 使用 maven 集成方式
 
 	在 java 工程中的 pom.xml 文件中添加如下：
-	
+
 	1) 添加 指定的 maven 仓库地址
 
     	<repositories>
