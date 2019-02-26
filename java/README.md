@@ -1,5 +1,6 @@
 ## 获取 SDK
 - 使用 maven 集成方式
+- 
 	在 java 工程中的 pom.xml 文件中添加如下：
 	1）添加 maven 仓库地址
 	<repositories>
@@ -24,6 +25,7 @@
     </dependency>
 
 - 源码安装
+- 
 	拷贝 `src\main\java` 中的代码到您的工程中，并根据 pom.xml文件添加依赖项.
 
 ## 查看示例
