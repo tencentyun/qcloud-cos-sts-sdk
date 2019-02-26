@@ -21,6 +21,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+	<distributionManagement>
+        <repository>
+            <id>bintray-qcloud-maven-repo</id>
+            <name>qcloud-maven-repo</name>
+            <url>
+               https://api.bintray.com/maven/qcloud/maven-repo/QCloud_STS_Java/;publish=1;
+            </url>
+        </repository>
+    </distributionManagement>
 
 </project>
