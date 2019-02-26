@@ -1,4 +1,17 @@
 ## 获取 SDK
+
+- composer 安装
+
+    	
+    	创建composer.json的文件，内容如下：
+    	{
+    	"require":{
+    		"qcloud_sts/qcloud-sts-sdk": "1.3.*"
+    		}
+    	}
+	
+	执行如下命令 `composer install`,安装sdk。使用该命令后会在当前目录中创建一个 vendor 文件夹，里面包含 SDK 的依赖库和一个 autoload.php 脚本，方便在项目中调用.
+
 - 源码安装
 
 	拷贝 `sts/sts.php` 文件到您的 php 工程中。
