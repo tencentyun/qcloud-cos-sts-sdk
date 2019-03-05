@@ -85,7 +85,9 @@ class STS{
 		$params['Signature'] = $this->getSignature($params, $config['secretKey'], $Method, $config);
 		$url = $config['url'];
 		$ch = curl_init($url);
-		$config['proxy'] && curl_setopt($ch, CURLOPT_PROXY, $config['proxy']);
+		if(array_key_exists('proxy', $config)){
+			$config['proxy'] && curl_setopt($ch, CURLOPT_PROXY, $config['proxy']);
+		}
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
 		curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
