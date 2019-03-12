@@ -15,6 +15,7 @@ $config = array(
     'allowActions' => array (
         // 简单上传
         'name/cos:PutObject',
+        'name/cos:PostObject',
         // 分片上传
         'name/cos:InitiateMultipartUpload',
         'name/cos:ListMultipartUploads',
