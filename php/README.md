@@ -1,15 +1,15 @@
 ## 获取 SDK
 - composer 安装
-
-    	
-    	创建composer.json的文件，内容如下：
-    	{
+   ```
+   创建composer.json的文件，内容如下：
+   {
     	"require":{
     		"qcloud_sts/qcloud-sts-sdk": "1.3.*"
-    		}
     	}
+    }
+    ```
 	
-	执行如下命令 `composer install`,安装sdk。使用该命令后会在当前目录中创建一个 vendor 文件夹，里面包含 SDK 的依赖库和一个 autoload.php 脚本，方便在项目中调用.
+   执行如下命令 `composer install`,安装sdk。使用该命令后会在当前目录中创建一个 vendor 文件夹，里面包含 SDK 的依赖库和一个 autoload.php 脚本，方便在项目中调用.
 
 - 源码安装
 
@@ -56,8 +56,8 @@ include 'sts.php'
 //方法一
 // 配置参数
 $config = array(
-    'Url' => 'https://sts.api.qcloud.com/v2/index.php',
-    'Domain' => 'sts.api.qcloud.com',
+    'url' => 'https://sts.tencentcloudapi.com/',
+    'domain' => 'sts.tencentcloudapi.com',
     //'Proxy' => null,  //设置网络请求代理
     'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
     'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
@@ -108,8 +108,8 @@ $policy = array(
 
 // 配置参数
 $config = array(
-    'Url' => 'https://sts.api.qcloud.com/v2/index.php',
-    'Domain' => 'sts.api.qcloud.com',
+    'url' => 'https://sts.tencentcloudapi.com/',
+    'domain' => 'sts.tencentcloudapi.com',
     //'Proxy' => null,  //设置网络请求代理
     'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
     'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
