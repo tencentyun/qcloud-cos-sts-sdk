@@ -25,7 +25,7 @@
     	<dependency>
     	    <groupId>com.tencent.cloud</groupId>
     	    <artifactId>cos-sts-java</artifactId>
-    	    <version>3.0.0</version>
+    	    <version>3.0.1</version>
     	</dependency>
 
 - 源码安装
