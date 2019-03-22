@@ -50,7 +50,6 @@ public class CosStsClient {
             data.put("startTime", expiredTime - durationSeconds);
             return downCompat(data);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new IOException("result = " + result, e);
         }
     }
@@ -62,7 +61,7 @@ public class CosStsClient {
     	return stsPolicy.toString();
     }
 
-    // v2接口的key首字母小写，v3改成大写，此处做了向下兼容
+    // v2鎺ュ彛鐨刱ey棣栧瓧姣嶅皬鍐欙紝v3鏀规垚澶у啓锛屾澶勫仛浜嗗悜涓嬪吋瀹�
     private static JSONObject downCompat(JSONObject resultJson) {
         JSONObject dcJson = new JSONObject();
 
