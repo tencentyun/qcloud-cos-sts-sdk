@@ -23,33 +23,33 @@ public class CosStsClientTest {
             File configFile = new File("local.properties");
             properties.load(new FileInputStream(configFile));
 
-            // 鍥哄畾瀵嗛挜
-            config.put("SecretId", properties.getProperty("SecretId"));
-            // 鍥哄畾瀵嗛挜
-            config.put("SecretKey", properties.getProperty("SecretKey"));
+			 // 固定密钥 SecretId
+             config.put("SecretId", properties.getProperty("SecretId"));
+             // 固定密钥 SecretKey
+             config.put("SecretKey", properties.getProperty("SecretKey"));
 
             if (properties.containsKey("https.proxyHost")) {
                 System.setProperty("https.proxyHost", properties.getProperty("https.proxyHost"));
                 System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
             }
 
-            // 涓存椂瀵嗛挜鏈夋晥鏃堕暱锛屽崟浣嶆槸绉�
+            // 临时密钥有效时长，单位是秒
             config.put("durationSeconds", 1800);
 
-            // 鎹㈡垚浣犵殑 bucket
+            // 换成你的 bucket
             config.put("bucket", "android-ut-persist-bucket-1253653367");
-            // 鎹㈡垚 bucket 鎵�鍦ㄥ湴鍖�
+            // 换成 bucket 所在地区
             config.put("region", "ap-guangzhou");
 
-            // 杩欓噷鏀规垚鍏佽鐨勮矾寰勫墠缂�锛屽彲浠ユ牴鎹嚜宸辩綉绔欑殑鐢ㄦ埛鐧诲綍鎬佸垽鏂厑璁镐笂浼犵殑鐩綍锛屼緥瀛愶細* 鎴栬�� a/* 鎴栬�� a.jpg
+            // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
             config.put("allowPrefix", "*");
 
-            // 瀵嗛挜鐨勬潈闄愬垪琛ㄣ�傜畝鍗曚笂浼犲拰鍒嗙墖闇�瑕佷互涓嬬殑鏉冮檺锛屽叾浠栨潈闄愬垪琛ㄨ鐪� https://cloud.tencent.com/document/product/436/31923
+             // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
             String[] allowActions = new String[] {
-                    // 绠�鍗曚笂浼�
+                     // 简单上传
                     "name/cos:PutObject",
                     "name/cos:PostObject",
-                    // 鍒嗙墖涓婁紶
+                    // 分片上传
                     "name/cos:InitiateMultipartUpload",
                     "name/cos:ListMultipartUploads",
                     "name/cos:ListParts",
@@ -84,9 +84,9 @@ public class CosStsClientTest {
              File configFile = new File("local.properties");
              properties.load(new FileInputStream(configFile));
 
-             // 鍥哄畾瀵嗛挜
+             // 固定密钥 SecretId
              config.put("SecretId", properties.getProperty("SecretId"));
-             // 鍥哄畾瀵嗛挜
+             // 固定密钥 SecretKey
              config.put("SecretKey", properties.getProperty("SecretKey"));
 
              if (properties.containsKey("https.proxyHost")) {
@@ -94,10 +94,10 @@ public class CosStsClientTest {
                  System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
              }
 
-             // 涓存椂瀵嗛挜鏈夋晥鏃堕暱锛屽崟浣嶆槸绉�
+             // 临时密钥有效时长，单位是秒
              config.put("durationSeconds", 1800);
              
-             //璁剧疆 policy
+             //设置 policy
              List<Scope> scopes = new ArrayList<Scope>();
              Scope scope = new Scope("name/cos:PutObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt");
          	 scopes.add(scope);
