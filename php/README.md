@@ -29,13 +29,13 @@
 
 |字段|类型|描述|
 | ---- | ---- | ---- |
-|secretId|string| 云 API 密钥 Id|
-|secretKey|string| 云 API 密钥 key|
+|SecretId|string| 云 API 密钥 Id|
+|SecretKey|string| 云 API 密钥 key|
 |durationSeconds|long| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
 |bucket|string| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|string| 存储桶所属地域，如 ap-guangzhou|
-|allowPrefix|string|资源的前缀，如* 或者 a/* 或者 a.jpg|
-|allowActions|array| 授予 COS API 权限集合|
+|allowPrefix|string|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|allowActions|array| 授予 COS API 权限集合, 如简单上传操作：name/cos:PutObject|
 |policy|array| 策略：由 allowActions、bucket、region、allowPrefix字段组成的描述授权的具体信息|
 
 ### 返回值说明
@@ -58,24 +58,29 @@ include 'sts.php'
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
     'domain' => 'sts.tencentcloudapi.com',
-    //'Proxy' => null,  //设置网络请求代理
-    'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
-    'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
+    //'Proxy' => null,  //设置网络请求代理,若不需要设置，则为null
+    'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
+    'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
     'Bucket' => 'test-1250000000', // 换成你的 bucket
     'Region' => 'ap-guangzhou', // 换成 bucket 所在地区
     'DurationSeconds' => 1800, // 密钥有效期
-    'AllowPrefix' => '*', // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
+    'AllowPrefix' => '*', // 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
     // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     'allowActions' => array (
         // 简单上传
         'name/cos:PutObject',
+		// 表单上传
         'name/cos:PostObject',
-        // 分片上传
+        // 分片上传： 初始化分片
         'name/cos:InitiateMultipartUpload',
-        'name/cos:ListMultipartUploads',
-        'name/cos:ListParts',
-        'name/cos:UploadPart',
-        'name/cos:CompleteMultipartUpload'
+		// 分片上传： 查询 bucket 中未完成分片上传的UploadId
+        "name/cos:ListMultipartUploads",
+		// 分片上传： 查询已上传的分片
+        "name/cos:ListParts",
+		// 分片上传： 上传分片块
+        "name/cos:UploadPart",
+		// 分片上传： 完成分片上传
+        "name/cos:CompleteMultipartUpload"
     )
 );
 
@@ -89,8 +94,8 @@ echo json_encode($tempKeys);
 
 //方法二
 //设置策略 policy，可通过 STS 的 getPolicy($scopes)获取
-$actions=array('name/cos:PutObject');
-$resources = array("qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/*");
+$actions=array('name/cos:PutObject'); // 简单上传
+$resources = array("qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/*"); // 设置可操作的资源路径前缀，根据实际情况进行设置
 $principal = array(
 	'qcs' => array('*')
 );
@@ -110,10 +115,10 @@ $policy = array(
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
     'domain' => 'sts.tencentcloudapi.com',
-    //'Proxy' => null,  //设置网络请求代理
-    'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
-    'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
-    'policy' => $policy
+    //'Proxy' => null,  //设置网络请求代理,若不需要设置，则为null
+    'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
+    'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
+    'policy' => $policy //策略
     )
 );
 
@@ -150,8 +155,8 @@ echo json_encode($tempKeys);
 | ---- | ---- | ---- |
 |bucket|string| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|string| 存储桶所属地域，如 ap-guangzhou|
-|sourcePrefix|string|资源的前缀，如* 或者 a/* 或者 a.jpg|
-|action|string| 授予 COS API 权限，如 name/cos:PutObject |
+|sourcePrefix|string|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|action|string| 授予 COS API 权限，如简单上传操作 name/cos:PutObject |
 |scope|Scope| 构造policy的信息：由 action、bucket、region、sourcePrefix组成|
 
 ### 返回值说明

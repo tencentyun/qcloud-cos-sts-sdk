@@ -26,8 +26,8 @@
 |duration_seconds|long| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
 |bucket|String| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
-|allow_prefix|String|资源的前缀，如* 或者 a/* 或者 a.jpg|
-|allow_actions|list| 授予 COS API 权限集合|
+|allow_prefix|String|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|allow_actions|list| 授予 COS API 权限集合, 如简单上传操作：name/cos:PutObject|
 |policy|dict| 策略：由 allow_actions、bucket、allow_prefix字段组成的描述授权的具体信息|
 
 ### 返回值说明
@@ -65,19 +65,24 @@ config = {
     'bucket': 'test-1250000000', 
     # 换成 bucket 所在地区
     'region': 'ap-guangzhou',
-    # 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
+    # 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
     'allow_prefix': '*', 
     # 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     'allow_actions': [
-        # 简单上传
+        // 简单上传
         'name/cos:PutObject',
+		// 表单上传
         'name/cos:PostObject',
-        # 分片上传
+        // 分片上传： 初始化分片
         'name/cos:InitiateMultipartUpload',
-        'name/cos:ListMultipartUploads',
-        'name/cos:ListParts',
-        'name/cos:UploadPart',
-        'name/cos:CompleteMultipartUpload'
+		// 分片上传： 查询 bucket 中未完成分片上传的UploadId
+        "name/cos:ListMultipartUploads",
+		// 分片上传： 查询已上传的分片
+        "name/cos:ListParts",
+		// 分片上传： 上传分片块
+        "name/cos:UploadPart",
+		// 分片上传： 完成分片上传
+        "name/cos:CompleteMultipartUpload"
     ]
 
 }
@@ -134,8 +139,8 @@ print ('get data : ' + response.content.decode("unicode-escape"))
 | ---- | ---- | ---- |
 |bucket|String| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
-|resource_prefix|String|资源的前缀，如* 或者 a/* 或者 a.jpg|
-|action|String| 授予 COS API 权限，如 name/cos:PutObject |
+|resource_prefix|String|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|action|String| 授予 COS API 权限，, 如简单上传操作：name/cos:PutObject|
 |scope|Scope| 构造policy的信息：由 action、bucket、region、sourcePrefix组成|
 
 ### 返回值说明
