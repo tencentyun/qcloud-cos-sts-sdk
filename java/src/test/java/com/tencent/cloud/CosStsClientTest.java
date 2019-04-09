@@ -15,7 +15,6 @@ public class CosStsClientTest {
 
     @Test
     public void testGetCredential() {
-
         TreeMap<String, Object> config = new TreeMap<String, Object>();
 
         try {
@@ -23,9 +22,9 @@ public class CosStsClientTest {
             File configFile = new File("local.properties");
             properties.load(new FileInputStream(configFile));
 
-			 // 固定密钥 SecretId
+			 // 云 api 密钥 SecretId
              config.put("SecretId", properties.getProperty("SecretId"));
-             // 固定密钥 SecretKey
+             // 云 api 密钥 SecretKey
              config.put("SecretKey", properties.getProperty("SecretKey"));
 
             if (properties.containsKey("https.proxyHost")) {

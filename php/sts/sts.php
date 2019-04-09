@@ -71,6 +71,11 @@ class STS{
 		$Nonce = rand(10000, 20000);
 		$Timestamp = time();
 		$Method = 'POST';
+		if(array_key_exists('durationSeconds', $config)){
+			if(!(is_integer($config['durationSeconds']))){
+				throw new exception("durationSeconds must be a int type");
+			}
+		}
 		$params = array(
 			'SecretId'=> $config['secretId'],
 			'Timestamp'=> $Timestamp,

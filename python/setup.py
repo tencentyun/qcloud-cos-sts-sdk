@@ -1,8 +1,9 @@
-from setuptools import setup
 
+
+from setuptools import setup
 setup(
     name='qcloud-python-sts',
-    version='1.3.1',
+    version='1.3.2',
     description='this is sts for python on v3',
     url='https://github.com/tencentyun/qcloud-cos-sts-sdk',
     author='qcloudterminal',

@@ -29,8 +29,8 @@
 
 |字段|类型|描述|
 | ---- | ---- | ---- |
-|SecretId|string| 云 API 密钥 Id|
-|SecretKey|string| 云 API 密钥 key|
+|secretId|string| 云 API 密钥 Id|
+|secretKey|string| 云 API 密钥 key|
 |durationSeconds|long| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
 |bucket|string| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|string| 存储桶所属地域，如 ap-guangzhou|
@@ -58,13 +58,13 @@ include 'sts.php'
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
     'domain' => 'sts.tencentcloudapi.com',
-    //'Proxy' => null,  //设置网络请求代理,若不需要设置，则为null
-    'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
-    'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
-    'Bucket' => 'test-1250000000', // 换成你的 bucket
-    'Region' => 'ap-guangzhou', // 换成 bucket 所在地区
-    'DurationSeconds' => 1800, // 密钥有效期
-    'AllowPrefix' => '*', // 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
+    //'proxy' => null,  //设置网络请求代理,若不需要设置，则为null
+    'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
+    'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
+    'bucket' => 'test-1250000000', // 换成你的 bucket
+    'region' => 'ap-guangzhou', // 换成 bucket 所在地区
+    'durationSeconds' => 1800, // 密钥有效期
+    'allowPrefix' => '*', // 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
     // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     'allowActions' => array (
         // 简单上传
@@ -115,9 +115,9 @@ $policy = array(
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
     'domain' => 'sts.tencentcloudapi.com',
-    //'Proxy' => null,  //设置网络请求代理,若不需要设置，则为null
-    'SecretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
-    'SecretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
+    //'proxy' => null,  //设置网络请求代理,若不需要设置，则为null
+    'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
+    'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
     'policy' => $policy //策略
     )
 );
