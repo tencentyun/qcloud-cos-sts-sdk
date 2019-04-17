@@ -93,7 +93,7 @@ print ('get data : ' + response.content.decode("unicode-escape"))
 
 # 方式 二
 policy = {'version': '2.0', 'statement': [{'action': ['name/cos:PutObject'], 'effect': 'allow', 
-'principal': {'qcs': ['*']}, 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/*']}]}
+ 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/*']}]}
 config = {
     # 临时密钥有效时长，单位是秒
     'duration_seconds': 1800,
@@ -164,13 +164,11 @@ policy = Sts.get_policy(scopes)
 	{
 		"actions":["name/cos:PutObject"],
 		"effect":"allow",
-		"principal":{"qcs":["*"]},
 		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/1.txt"]
 	},
 	{
 		"actions":["name/cos:GetObject" ],
 		"effect":"allow",
-		"principal":{"qcs":["*"]},
 		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/dir/*" ]
 	}
 ]

@@ -96,14 +96,10 @@ echo json_encode($tempKeys);
 //设置策略 policy，可通过 STS 的 getPolicy($scopes)获取
 $actions=array('name/cos:PutObject'); // 简单上传
 $resources = array("qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/*"); // 设置可操作的资源路径前缀，根据实际情况进行设置
-$principal = array(
-	'qcs' => array('*')
-);
 
 $statements = array(array(
 		'actions' => $actions,
 		'effect' => 'allow',
-		'principal' => $principal,
 		'resource' => $resources
 ));
 $policy = array(
@@ -186,13 +182,11 @@ echo str_replace('\\/', '/', json_encode($policy));
 	{
 		"actions":["name/cos:PutObject"],
 		"effect":"allow",
-		"principal":{"qcs":["*"]},
 		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/1.txt"]
 	},
 	{
 		"actions":["name/cos:GetObject" ],
 		"effect":"allow",
-		"principal":{"qcs":["*"]},
 		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/dir/*" ]
 	}
 ]
