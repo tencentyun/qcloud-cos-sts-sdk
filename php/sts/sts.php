@@ -49,6 +49,12 @@ class STS{
 			$ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
 			$AppId = substr($config['bucket'], 1 + strripos($config['bucket'], '-'));
 		}
+		if(array_key_exists('allowPrefix', $config)){
+			if(!(strpos($config['allowPrefix'], '/') === 0)){
+			$config['allowPrefix'] = '/' . $config['allowPrefix'];
+			}
+		}
+
 		if(array_key_exists('policy', $config)){
 			$policy = $config['policy'];
 		}else{
@@ -60,7 +66,7 @@ class STS{
 						'effect'=> 'allow',
 						'principal'=> array('qcs'=> array('*')),
 						'resource'=> array(
-							'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':prefix//' . $AppId . '/' . $ShortBucketName . '/' . $config['allowPrefix']
+							'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':' . $config['bucket'] . $config['allowPrefix']
 						)
 					)
 				)
@@ -123,13 +129,10 @@ class STS{
 			$resources = array();
 			array_push($actions, $scopes[$i]->get_action());
 			array_push($resources, $scopes[$i]->get_resource());
-			$principal = array(
-			'qcs' => array('*')
-			);
+			
 			$statement = array(
 			'actions' => $actions,
-			'effect' => 'allow',
-			'principal' => $principal,
+			'effect' => $scopes[$i]->get_effect(),
 			'resource' => $resources
 			);
 			array_push($statements, $statement);
@@ -148,24 +151,49 @@ class Scope{
 	var $bucket;
 	var $region;
 	var $resourcePrefix;
+	var $effect = 'allow';
 	function __construct($action, $bucket, $region, $resourcePrefix){
 		$this->action = $action;
 		$this->bucket = $bucket;
 		$this->region = $region;
 		$this->resourcePrefix = $resourcePrefix;
 	}
+	
+	function set_effect($isAllow){
+		if($isAllow){
+			$this->effect = 'allow';
+		}else{
+			$this->effect = 'deny';
+		}
+	}
+	
 	function get_action(){
+		if($this->action == null){
+			throw new Exception("action == null");
+		}
 		return $this->action;
 	}
 	
 	function get_resource(){
+		if($this->bucket == null){
+			throw new Exception("bucket == null");
+		}
+		if($this->resourcePrefix == null){
+			throw new Exception("resourcePrefix == null");
+		}
 		$index = strripos($this->bucket, '-');
-		$bucketName = substr($this->bucket, 0, $index);
+		if($index < 0){
+			throw new Exception("bucket is invalid: " + $this->bucket);
+		}
 		$appid = substr($this->bucket, $index + 1);
 		if(!(strpos($this->resourcePrefix, '/') === 0)){
 			$this->resourcePrefix = '/' . $this->resourcePrefix;
 		}
-		return 'qcs::cos:' . $this->region . ':uid/' . $appid . ':prefix//' . $appid . '/' . $bucketName . $this->resourcePrefix;
+		return 'qcs::cos:' . $this->region . ':uid/' . $appid . ':' . $this->bucket . $this->resourcePrefix;
+	}
+	
+	function get_effect(){
+		return $this->effect;
 	}
 }
 ?>

@@ -61,7 +61,7 @@ $config = array(
     //'proxy' => null,  //设置网络请求代理,若不需要设置，则为null
     'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
     'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
-    'bucket' => 'test-1250000000', // 换成你的 bucket
+    'bucket' => 'example-1250000000', // 换成你的 bucket
     'region' => 'ap-guangzhou', // 换成 bucket 所在地区
     'durationSeconds' => 1800, // 密钥有效期
     'allowPrefix' => '*', // 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
@@ -95,7 +95,7 @@ echo json_encode($tempKeys);
 //方法二
 //设置策略 policy，可通过 STS 的 getPolicy($scopes)获取
 $actions=array('name/cos:PutObject'); // 简单上传
-$resources = array("qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/*"); // 设置可操作的资源路径前缀，根据实际情况进行设置
+$resources = array("qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/*"); // 设置可操作的资源路径前缀，根据实际情况进行设置
 $principal = array(
 	'qcs' => array('*')
 );
@@ -169,8 +169,8 @@ echo json_encode($tempKeys);
 include 'sts.php'
 
 $scopes = array();
-array_push($scopes,new Scope("name/cos:PutObject", "test-12500000", "ap-guangzhou", "/1.txt"));
-array_push($scopes, new Scope("name/cos:GetObject", "test-12500000", "ap-guangzhou", "/dir/*"));
+array_push($scopes,new Scope("name/cos:PutObject", "example-1250000000", "ap-guangzhou", "/1.txt"));
+array_push($scopes, new Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/dir/*"));
 
 //创建 sts
 $sts = new STS();
@@ -187,13 +187,13 @@ echo str_replace('\\/', '/', json_encode($policy));
 		"actions":["name/cos:PutObject"],
 		"effect":"allow",
 		"principal":{"qcs":["*"]},
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/test/1.txt"]
+		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/1.txt"]
 	},
 	{
 		"actions":["name/cos:GetObject" ],
 		"effect":"allow",
 		"principal":{"qcs":["*"]},
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/dir/*" ]
+		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/dir/*" ]
 	}
 ]
 }
