@@ -92,11 +92,19 @@ var getCredential = function (options, callback) {
     request(opt, function (err, response, body) {
         var data = body && body.Response;
         if (data) {
-            data.startTime = data.ExpiredTime - durationSeconds;
-            data = util.backwardCompat(data);
-            callback(null, data);
+            if (data.Error) {
+                callback(data.Error);
+            } else {
+                try {
+                    data.startTime = data.ExpiredTime - durationSeconds;
+                    data = util.backwardCompat(data);
+                    callback(null, data)
+                } catch (e) {
+                    callback(new Error(`Parse Response Error: ${JSON.stringify(data)}`))
+                }
+            } 
         } else {
-            callback(body);
+            callback(err || body);
         }
     });
 };
