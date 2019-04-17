@@ -39,7 +39,11 @@ if __name__ == '__main__':
 
     }
 
-    sts = Sts(config)
-    response = sts.get_credential()    
-    print('get data : ' + json.dumps(dict(response), indent=4))
+    try:
+        sts = Sts(config)
+        response = sts.get_credential()
+        print('get data : ' + json.dumps(dict(response), indent=4))
+    except Exception as e:
+        print(e)
+
 

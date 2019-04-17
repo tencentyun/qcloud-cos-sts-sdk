@@ -45,76 +45,92 @@ class STS{
 	}
 	// 获取临时密钥
 	function getTempKeys($config) {
-		if(array_key_exists('bucket', $config)){
-			$ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
-			$AppId = substr($config['bucket'], 1 + strripos($config['bucket'], '-'));
-		}
-		if(array_key_exists('allowPrefix', $config)){
-			if(!(strpos($config['allowPrefix'], '/') === 0)){
-			$config['allowPrefix'] = '/' . $config['allowPrefix'];
-			}
-		}
-
-		if(array_key_exists('policy', $config)){
-			$policy = $config['policy'];
-		}else{
-			$policy = array(
-				'version'=> '2.0',
-				'statement'=> array(
-					array(
-						'action'=> $config['allowActions'],
-						'effect'=> 'allow',
-						'principal'=> array('qcs'=> array('*')),
-						'resource'=> array(
-							'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':' . $config['bucket'] . $config['allowPrefix']
+				$result = null;
+		try{
+			if(array_key_exists('policy', $config)){
+				$policy = $config['policy'];
+			}else{
+				if(array_key_exists('bucket', $config)){
+					$ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
+					$AppId = substr($config['bucket'], 1 + strripos($config['bucket'], '-'));
+				}else{
+					throw new Exception("bucket== null");
+				}
+				if(array_key_exists('allowPrefix', $config)){
+					if(!(strpos($config['allowPrefix'], '/') === 0)){
+					$config['allowPrefix'] = '/' . $config['allowPrefix'];
+					}
+				}else{
+					throw new Exception("allowPrefix == null");
+				}
+				$policy = array(
+					'version'=> '2.0',
+					'statement'=> array(
+						array(
+							'action'=> $config['allowActions'],
+							'effect'=> 'allow',
+							'principal'=> array('qcs'=> array('*')),
+							'resource'=> array(
+								'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':' . $config['bucket'] . $config['allowPrefix']
+							)
 						)
 					)
-				)
-			);	
-		}
-		$policyStr = str_replace('\\/', '/', json_encode($policy));
-		$Action = 'GetFederationToken';
-		$Nonce = rand(10000, 20000);
-		$Timestamp = time();
-		$Method = 'POST';
-		if(array_key_exists('durationSeconds', $config)){
-			if(!(is_integer($config['durationSeconds']))){
-				throw new exception("durationSeconds must be a int type");
+				);	
 			}
+			$policyStr = str_replace('\\/', '/', json_encode($policy));
+			$Action = 'GetFederationToken';
+			$Nonce = rand(10000, 20000);
+			$Timestamp = time();
+			$Method = 'POST';
+			if(array_key_exists('durationSeconds', $config)){
+				if(!(is_integer($config['durationSeconds']))){
+					throw new exception("durationSeconds must be a int type");
+				}
+			}
+			$params = array(
+				'SecretId'=> $config['secretId'],
+				'Timestamp'=> $Timestamp,
+				'Nonce'=> $Nonce,
+				'Action'=> $Action,
+				'DurationSeconds'=> $config['durationSeconds'],
+				'Version'=>'2018-08-13',
+				'Name'=> 'cos',
+				'Region'=> 'ap-guangzhou',
+				'Policy'=> urlencode($policyStr)
+			);
+			$params['Signature'] = $this->getSignature($params, $config['secretKey'], $Method, $config);
+			$url = $config['url'];
+			$ch = curl_init($url);
+			if(array_key_exists('proxy', $config)){
+				$config['proxy'] && curl_setopt($ch, CURLOPT_PROXY, $config['proxy']);
+			}
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
+			curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $this->json2str($params));
+			$result = curl_exec($ch);
+			if(curl_errno($ch)) $result = curl_error($ch);
+			curl_close($ch);
+			$result = json_decode($result, 1);
+			if (isset($result['Response'])) {
+				$result = $result['Response'];
+				if(isset($result['Error'])){
+					throw new Exception("get cam failed");
+				}
+				$result['startTime'] = $result['ExpiredTime'] - $config['durationSeconds'];
+			}
+			$result = $this->backwardCompat($result);
+			return $result;
+		}catch(Exception $e){
+			if($result == null){
+				$result = "error: " . + $e->getMessage();
+			}else{
+				$result = json_encode($result);
+			}
+			throw new Exception($result);
 		}
-		$params = array(
-			'SecretId'=> $config['secretId'],
-			'Timestamp'=> $Timestamp,
-			'Nonce'=> $Nonce,
-			'Action'=> $Action,
-			'DurationSeconds'=> $config['durationSeconds'],
-			'Version'=>'2018-08-13',
-			'Name'=> 'cos',
-			'Region'=> 'ap-guangzhou',
-			'Policy'=> urlencode($policyStr)
-		);
-		$params['Signature'] = $this->getSignature($params, $config['secretKey'], $Method, $config);
-		$url = $config['url'];
-		$ch = curl_init($url);
-		if(array_key_exists('proxy', $config)){
-			$config['proxy'] && curl_setopt($ch, CURLOPT_PROXY, $config['proxy']);
-		}
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
-		curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->json2str($params));
-		$result = curl_exec($ch);
-		if(curl_errno($ch)) $result = curl_error($ch);
-		curl_close($ch);
-		$result = json_decode($result, 1);
-		if (isset($result['Response'])) {
-			$result = $result['Response'];
-			$result['startTime'] = $result['ExpiredTime'] - $config['durationSeconds'];
-		}
-		$result = $this->backwardCompat($result);
-		return $result;
 	}
 	
 	// get policy

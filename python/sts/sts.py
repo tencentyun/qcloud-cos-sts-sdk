@@ -131,7 +131,7 @@ class Sts:
             'Region': 'ap-guangzhou'
         }
         data['Signature'] = self.__encrypt('POST', self.sts_url, data)
-
+        result_json = None
         try:
             url = self.sts_scheme + '://' + self.sts_url
             response = requests.post(url, proxies=self.network_proxy, data=data)
@@ -141,10 +141,12 @@ class Sts:
                 result_json = result_json['Response']
        
             result_json['startTime'] = result_json['ExpiredTime'] - self.duration_seconds
-            
             return self._backwardCompat(result_json)
-        except requests.exceptions.HTTPError as e:
-            raise e
+        except Exception as e:
+            result = "error"
+            if result_json is not None:
+                result = result_json
+            raise Exception("result: " + result, e)
 
     def __encrypt(self, method, url, key_values):
         source = Tools.flat_params(key_values)

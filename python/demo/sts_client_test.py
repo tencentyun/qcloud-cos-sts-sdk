@@ -30,7 +30,5 @@ def request_sts2():
 
 
 if __name__ == '__main__':
-    # request_sts()
-    request_sts2()
-
-
+    request_sts()
+    # request_sts2()
