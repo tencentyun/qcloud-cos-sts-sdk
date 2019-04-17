@@ -19,6 +19,7 @@ def request_sts():
     for element in scopes:
         content.append(element.get_dict())
     user_info = {'scopes': json.dumps(content)}
+
     r = requests.post("http://127.0.0.1:5000/scopests", data=user_info)
     print(r.text)
 
@@ -29,7 +30,7 @@ def request_sts2():
 
 
 if __name__ == '__main__':
-    request_sts()
-    # request_sts2()
+    # request_sts()
+    request_sts2()
 
 

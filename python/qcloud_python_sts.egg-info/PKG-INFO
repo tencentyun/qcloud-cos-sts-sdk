@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: qcloud-python-sts
-Version: 1.3.2
+Version: 1.3.3
 Summary: this is sts for python on v3
 Home-page: https://github.com/tencentyun/qcloud-cos-sts-sdk
 Author: qcloudterminal

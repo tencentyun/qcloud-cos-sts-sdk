@@ -62,7 +62,7 @@ config = {
 		'https': 'XXX'
 	},
     # 换成你的 bucket
-    'bucket': 'test-1250000000', 
+    'bucket': 'example-1250000000', 
     # 换成 bucket 所在地区
     'region': 'ap-guangzhou',
     # 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
@@ -93,7 +93,7 @@ print ('get data : ' + response.content.decode("unicode-escape"))
 
 # 方式 二
 policy = {'version': '2.0', 'statement': [{'action': ['name/cos:PutObject'], 'effect': 'allow', 
-'principal': {'qcs': ['*']}, 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/*']}]}
+'principal': {'qcs': ['*']}, 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/*']}]}
 config = {
     # 临时密钥有效时长，单位是秒
     'duration_seconds': 1800,
@@ -152,8 +152,8 @@ print ('get data : ' + response.content.decode("unicode-escape"))
 ```python
 from sts.sts import Sts, Scope
 scopes = list()
-scopes.append(Scope("name/cos:PutObject", "test-12500000", "ap-guangzhou", "/1.txt"));
-scopes.append(Scope("name/cos:GetObject", "test-12500000", "ap-guangzhou", "/dir/*"));
+scopes.append(Scope("name/cos:PutObject", "example-1250000000", "ap-guangzhou", "/1.txt"));
+scopes.append(Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/dir/*"));
 policy = Sts.get_policy(scopes)
 ```
 ### 返回结果
@@ -165,13 +165,13 @@ policy = Sts.get_policy(scopes)
 		"actions":["name/cos:PutObject"],
 		"effect":"allow",
 		"principal":{"qcs":["*"]},
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/test/1.txt"]
+		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/1.txt"]
 	},
 	{
 		"actions":["name/cos:GetObject" ],
 		"effect":"allow",
 		"principal":{"qcs":["*"]},
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:prefix//12500000/test/dir/*" ]
+		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/dir/*" ]
 	}
 ]
 }

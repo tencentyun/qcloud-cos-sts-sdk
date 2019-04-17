@@ -15,37 +15,63 @@ import random
 
 
 class Sts:
+    secret_id = None
+    secret_key = None
+    duration_seconds = 1800
+    bucket = None
+    region = None
+    resource = None
+    allow_actions = None
+    policy = None
+    network_proxy = None
+    sts_url = 'sts.tencentcloudapi.com/'
+    sts_scheme = 'https'
 
     def __init__(self, config={}):
-        if 'allow_actions' in config:
-            self.allow_actions = config.get('allow_actions')
-        # else:
-        #     raise ValueError('missing allow_actions')
+        self.parse_parameters(config)
 
-        if 'duration_seconds' in config:
-            self.duration = config.get('duration_seconds')
-            if not isinstance(self.duration, int):
-                raise ValueError('duration_seconds must be int type')
-        else:
-            self.duration = 1800
-
-        self.sts_url = 'sts.tencentcloudapi.com/'
-        self.sts_scheme = 'https://'
-
-        self.secret_id = config.get('secret_id')
-        self.secret_key = config.get('secret_key')
-        self.proxy = config.get('proxy')
-        self.region = config.get('region')
-        self.policy = config.get('policy')
-        bucket = config.get('bucket')
-        if bucket is not None:
-            split_index = bucket.rfind('-')
-            short_bucket_name = bucket[:split_index]
-            appid = bucket[(split_index+1):]
-            self.resource = "qcs::cos:{region}:uid/{appid}:prefix//{appid}/{short_bucket_name}/{allow_prefix}".format(
-                region=config['region'], appid=appid, short_bucket_name=short_bucket_name,
-                allow_prefix=config['allow_prefix']
-            )
+    def parse_parameters(self, config):
+        if not isinstance(config, dict):
+            raise ValueError("config is not dict")
+        keys = config.keys()
+        resource_prefix = None
+        for key in keys:
+            key_lower = str(key).lower()
+            if "secret_id" == key_lower:
+                self.secret_id = config.get(key)
+            elif "secret_key" == key_lower:
+                self.secret_key = config.get(key)
+            elif "bucket" == key_lower:
+                self.bucket = config.get(key)
+            elif "duration_seconds" == key_lower:
+                self.duration_seconds = config.get(key)
+            elif "region" == key_lower:
+                self.region = config.get(key)
+            elif "allow_prefix" == key_lower:
+                resource_prefix = config.get(key)
+            elif "policy" == key_lower:
+                self.policy = config.get(key)
+            elif "allow_actions" == key_lower:
+                self.allow_actions = config.get(key)
+            elif "proxy" == key_lower:
+                self.network_proxy = config.get(key)
+        if not isinstance(self.duration_seconds, int):
+            raise ValueError('duration_seconds must be int type')
+        # 若是policy 为空，则 bucket he resource_prefix 不为空
+        if self.policy is None:
+            if self.bucket is None:
+                raise ValueError('bucket == None')
+            if resource_prefix is None:
+                raise ValueError("resource_prefix == None")
+            split_index = self.bucket.rfind('-')
+            if split_index < 0:
+                raise ValueError('bucket is invalid: ' + self.bucket)
+            appid = str(self.bucket[(split_index + 1):]).strip()
+            if not str(resource_prefix).startswith('/'):
+                resource_prefix = '/' + resource_prefix
+            self.resource = "qcs::cos:{region}:uid/{appid}:{bucket}{prefix}".format(region=self.region,
+                                                                                    appid=appid, bucket=self.bucket,
+                                                                                    prefix=resource_prefix)
 
     @staticmethod
     def get_policy(scopes=[]):
@@ -61,14 +87,9 @@ class Sts:
             resources = list()
 
             actions.append(scope.get_action())
-
             statement_element['action'] = actions
 
-            statement_element['effect'] = 'allow'
-
-            principal = dict()
-            principal['qcs'] = list('*')
-            statement_element['principal'] = principal
+            statement_element['effect'] = scope.get_effect()
 
             resources.append(scope.get_resource())
             statement_element['resource'] = resources
@@ -83,16 +104,16 @@ class Sts:
             import ssl
         except ImportError as e:
             raise e
-
         if self.policy is None:
             policy = {
                 'version': '2.0',
-                'statement': {
-                    'action': self.allow_actions,
-                    'effect': 'allow',
-                    'principal': {'qcs': '*'},
-                    'resource': self.resource
-                }
+                'statement': [
+                    {
+                        'action': self.allow_actions,
+                        'effect': 'allow',
+                        'resource': self.resource
+                    }
+                ]
             }
         else:
             policy = self.policy
@@ -104,7 +125,7 @@ class Sts:
             'Nonce': random.randint(100000, 200000),
             'Action': 'GetFederationToken',
             'Version': '2018-08-13',
-            'DurationSeconds':self.duration,
+            'DurationSeconds': self.duration_seconds,
             'Name': 'cos-sts-python',
             'Policy': policy_encode,
             'Region': 'ap-guangzhou'
@@ -112,13 +133,14 @@ class Sts:
         data['Signature'] = self.__encrypt('POST', self.sts_url, data)
 
         try:
-            response = requests.post(self.sts_scheme + self.sts_url, proxies=self.proxy, data=data)
+            url = self.sts_scheme + '://' + self.sts_url
+            response = requests.post(url, proxies=self.network_proxy, data=data)
             result_json = response.json()
 
             if isinstance(result_json['Response'], dict):
                 result_json = result_json['Response']
        
-            result_json['startTime'] = result_json['ExpiredTime'] - self.duration
+            result_json['startTime'] = result_json['ExpiredTime'] - self.duration_seconds
             
             return self._backwardCompat(result_json)
         except requests.exceptions.HTTPError as e:
@@ -172,6 +194,8 @@ class Scope(object):
     bucket = None
     region = None
     resource_prefix = None
+    condition = None
+    effect = 'allow'
 
     def __init__(self, action=None, bucket=None, region=None, resource_prefix=None):
         self.action = action
@@ -191,21 +215,38 @@ class Scope(object):
     def set_resource_prefix(self, resource_prefix):
         self.resource_prefix = resource_prefix
 
+    def is_allow(self, is_allow):
+        if is_allow:
+            self.effect = 'allow'
+        else:
+            self.effect = 'deny'
+
+    def set_condition(self, condition):
+        self.condition = condition
+
     def get_action(self):
+        if self.action is None:
+            raise ValueError('action == None')
         return self.action
 
     def get_resource(self):
+        if self.bucket is None:
+            raise ValueError('bucket == None')
+        if self.resource_prefix is None:
+            raise ValueError("resource_prefix == None")
         split_index = self.bucket.rfind('-')
-        bucket_name = str(self.bucket[:split_index]).strip()
+        if split_index < 0:
+            raise ValueError('bucket is invalid: ' + self.bucket)
         appid = str(self.bucket[(split_index + 1):]).strip()
         if not str(self.resource_prefix).startswith('/'):
             self.resource_prefix = '/' + self.resource_prefix
         resource = "qcs::cos:{region}:uid/{appid}:" \
-                   "prefix//{appid}/{bucket_name}{prefix}".format(region=self.region,
-                                                                  appid=appid,
-                                                                  bucket_name=bucket_name,
-                                                                  prefix=self.resource_prefix)
+                   "{bucket}{prefix}".format(region=self.region, appid=appid,
+                                             bucket=self.bucket, prefix=self.resource_prefix)
         return resource
+
+    def get_effect(self):
+        return self.effect
 
     def get_dict(self):
         result = dict()
@@ -213,5 +254,7 @@ class Scope(object):
         result['bucket'] = self.bucket
         result['region'] = self.region
         result['prefix'] = self.resource_prefix
+        result['effect'] = self.effect
+        result['condition'] = self.condition
         return result
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
+import json
+
 from sts.sts import Sts, Scope
 
 
@@ -7,46 +9,48 @@ def test_policy():
     scope = Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', 'dir/*')
     scopes = list()
     scopes.append(scope)
-    print(Sts.get_policy(scopes=scopes))
+    print(json.dumps(Sts.get_policy(scopes), indent=4))
 
 
 def test_policy2():
     scopes = list()
-    scopes.append(Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:ListParts', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:UploadPart', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', '1/test.txt'))
-    print(Sts.get_policy(scopes))
+    scopes.append(Scope('name/cos:PutObject', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:ListParts', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:UploadPart', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', '1/test.txt'))
+    print(json.dumps(Sts.get_policy(scopes), indent=4))
 
 
 def test_sts():
     scopes = list()
-    scopes.append(Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:ListParts', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:UploadPart', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'test-1250000000', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:GetObject', 'test-1250000000', 'ap-guangzhou', '1/test.txt'))
+    scopes.append(Scope('name/cos:PutObject', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:ListParts', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:UploadPart', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'example-1250000000', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', '1/test.txt'))
     config = {
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
-        'secret_id': 'AKIDXXX',
-        # 固定密钥
-        'secret_key': 'EH8oXXX',
-        'proxy': {
-            'http': 'XXX',
-            'https': 'XXX'
-        },
+        # 固定密钥 id
+        'secret_id': 'AKIDPXXX',
+        # 固定密钥 key
+        'secret_key': 'EH8xxx',
+        #  设置网络代理
+        # 'proxy': {
+        #     'http': 'xxx',
+        #     'https': 'xxx'
+        # },
         'policy': Sts.get_policy(scopes)
     }
 
     sts = Sts(config)
     response = sts.get_credential()
-    print('get data : ' + str(response))
+    print('get data : ' + json.dumps(dict(response), indent=4))
 
 
 if __name__ == '__main__':

@@ -12,17 +12,17 @@ def get_credential_response():
     config = {
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
-        # 临时密钥有效时长，单位是秒
-        'duration_seconds': 1800,
-        'secret_id': 'AKIDXXX',
-        # 固定密钥
-        'secret_key': 'EH8oXXX',
-        'proxy': {
-            'http': 'XXX',
-            'https': 'XX'
-        },
+         # 固定密钥 id
+        'secret_id': 'AKIDxx',
+        # 固定密钥 key
+        'secret_key': 'EH8oxx',
+        # 设置网络代理
+        # 'proxy': {
+        #     'http': 'xx',
+        #     'https': 'xx'
+        # },
         # 换成你的 bucket
-        'bucket': 'test-12500000',
+        'bucket': 'android-ut-persist-bucket-1253653367',
         # 换成 bucket 所在地区
         'region': 'ap-guangzhou',
         # 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
@@ -62,13 +62,15 @@ def get_credential_response_with_scope():
     config = {
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
-        'secret_id': 'AKIDXXX',
-        # 固定密钥
-        'secret_key': 'EH8oXXX',
-        'proxy': {
-            'http': 'XXX',
-            'https': 'XX'
-        },
+        # 固定密钥 id
+        'secret_id': 'AKIDxx',
+        # 固定密钥 key
+        'secret_key': 'EH8oxx',
+        # 设置网络代理
+        # 'proxy': {
+        #     'http': 'xx',
+        #     'https': 'xx'
+        # },
         'policy': policy
     }
 
