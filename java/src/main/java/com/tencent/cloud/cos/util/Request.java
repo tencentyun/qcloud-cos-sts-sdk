@@ -53,7 +53,7 @@ public class Request {
 		try {
 			params.put("Signature", Sign.sign(plainText, secretKey, signatureMethod));
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage(), e);
 		}
 
 		StringBuilder url = new StringBuilder("https://");
@@ -106,7 +106,7 @@ public class Request {
 		try {
 			params.put("Signature", Sign.sign(plainText, secretKey, signatureMethod));
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage(), e);
 		}
 
 		String url = "https://" + requestHost + requestPath;
@@ -143,10 +143,7 @@ public class Request {
 				}
 			}
 			requestUrl = url;
-			String BOUNDARY = "---------------------------"
-					+ MD5.stringToMD5(
-							String.valueOf(System.currentTimeMillis()))
-							.substring(0, 15);
+		
 			URL realUrl = new URL(url);
 			URLConnection connection = null;
 			if (url.toLowerCase().startsWith("https")) {

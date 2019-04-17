@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class CosStsClient {
@@ -14,19 +15,17 @@ public class CosStsClient {
 
     public static JSONObject getCredential(TreeMap<String, Object> config) throws IOException {
         TreeMap<String, Object> params = new TreeMap<String, Object>();
-
-        String policy = (String) config.get("policy");
+        Parameters parameters = new Parameters();
+        parameters.parse(config);
+        
+        String policy = parameters.policy;
         if (policy != null) {
             params.put("Policy", policy);
         } else {
-            params.put("Policy", getPolicy(config).toString());
+            params.put("Policy", getPolicy(parameters).toString());
         }
-
-        int durationSeconds = DEFAULT_DURATION_SECONDS;
-        if (config.get("durationSeconds") != null) {
-            durationSeconds = (Integer) config.get("durationSeconds");
-        }
-        params.put("DurationSeconds", durationSeconds);
+        
+        params.put("DurationSeconds", parameters.duration);
 
         params.put("Name", "cos-sts-java");
         params.put("Action", "GetFederationToken");
@@ -38,8 +37,8 @@ public class CosStsClient {
 
         String result = null;
         try {
-            result = Request.send(params, (String) config.get("SecretId"),
-                    (String) config.get("SecretKey"),
+            result = Request.send(params, (String) parameters.secretId,
+                    parameters.secretKey,
                     "POST", host, path);
             JSONObject jsonResult = new JSONObject(result);
             JSONObject data = jsonResult.optJSONObject("Response");
@@ -47,7 +46,7 @@ public class CosStsClient {
                 data = jsonResult;
             }
             long expiredTime = data.getLong("ExpiredTime");
-            data.put("startTime", expiredTime - durationSeconds);
+            data.put("startTime", expiredTime - parameters.duration);
             return downCompat(data);
         } catch (Exception e) {
             throw new IOException("result = " + result, e);
@@ -82,23 +81,26 @@ public class CosStsClient {
         return Character.toLowerCase(source.charAt(0)) + source.substring(1);
     }
 
-    private static JSONObject getPolicy(TreeMap<String, Object> config) {
-        String bucket = (String) config.get("bucket");
-        String region = (String) config.get("region");
-        String allowPrefix = (String) config.get("allowPrefix");
-        String[] allowActions = (String[]) config.get("allowActions");
+    private static JSONObject getPolicy(Parameters parameters) {
+    	if(parameters.bucket == null) { 
+    		throw new NullPointerException("bucket == null");
+    	}
+    	if(parameters.allowPrefix == null) {
+    		throw new NullPointerException("allowPrefix == null");
+    	}
+        String bucket = parameters.bucket;
+        String region = parameters.region;
+        String allowPrefix = parameters.allowPrefix;
+        if(!allowPrefix.startsWith("/")) {
+        	allowPrefix = "/" + allowPrefix;
+        }
+        String[] allowActions = parameters.allowActions;
 
         JSONObject policy = new JSONObject();
         policy.put("version", "2.0");
 
         JSONObject statement = new JSONObject();
-        policy.put("statement", statement);
-
         statement.put("effect", "allow");
-        JSONObject principal = new JSONObject();
-        principal.put("qcs", "*");
-        statement.put("principal", principal);
-
         JSONArray actions = new JSONArray();
         for (String action : allowActions) {
             actions.put(action);
@@ -106,14 +108,47 @@ public class CosStsClient {
         statement.put("action", actions);
 
         int lastSplit = bucket.lastIndexOf("-");
-        String shortBucketName = bucket.substring(0, lastSplit);
         String appId = bucket.substring(lastSplit + 1);
-
-        String resource = String.format("qcs::cos:%s:uid/%s:prefix//%s/%s/%s",
-                region, appId, appId, shortBucketName, allowPrefix);
+        String resource = String.format("qcs::cos:%s:uid/%s:%s%s",
+        region, appId, bucket, allowPrefix);
+        
         statement.put("resource", resource);
-
+        policy.put("statement", statement);
         return policy;
-
+    }
+    
+    private static class Parameters{
+    	String secretId;
+    	String secretKey;
+    	int duration = DEFAULT_DURATION_SECONDS;
+    	String bucket;
+    	String region;
+    	String allowPrefix;
+    	String[] allowActions;
+    	String policy;
+    	
+    	public void parse(Map<String, Object> config) {
+			if(config == null) throw new NullPointerException("config == null");
+			for(Map.Entry<String, Object> entry : config.entrySet()) {
+				String key = entry.getKey();
+				if("SecretId".equalsIgnoreCase(key)) {
+					secretId = (String) entry.getValue();
+				}else if("SecretKey".equalsIgnoreCase(key)) {
+					secretKey = (String) entry.getValue();
+				}else if("durationSeconds".equalsIgnoreCase(key)) {
+					duration = (Integer) entry.getValue();
+				}else if("bucket".equalsIgnoreCase(key)) {
+					bucket = (String) entry.getValue();
+				}else if("region".equalsIgnoreCase(key)) {
+					region = (String) entry.getValue();
+				}else if("allowPrefix".equalsIgnoreCase(key)) {
+					allowPrefix = (String) entry.getValue();
+				}else if("policy".equalsIgnoreCase(key)) {
+					policy = (String) entry.getValue();
+				}else if("allowActions".equalsIgnoreCase(key)) {
+					allowActions = (String[]) entry.getValue();
+				}
+			}
+		}
     }
 }

@@ -6,6 +6,12 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author bradyxiao
+ * remove principal 
+ * @since 3.0.3
+ */
 public class STSPolicy {
 	
 	private List<Scope> scopes = new ArrayList<Scope>();
@@ -33,13 +39,7 @@ public class STSPolicy {
 		actions.put(scope.getAction());
 		element.put("action", actions);
 		
-		element.put("effect", "allow");
-		
-		JSONObject principal = new JSONObject();
-		JSONArray qcs = new JSONArray();
-		qcs.put("*");
-		principal.put("qcs", qcs);
-		element.put("principal", principal);
+		element.put("effect", scope.getEffect());
 		
 		JSONArray resources = new JSONArray();
 		resources.put(scope.getResource());

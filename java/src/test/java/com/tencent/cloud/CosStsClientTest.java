@@ -23,9 +23,9 @@ public class CosStsClientTest {
             properties.load(new FileInputStream(configFile));
 
 			 // 云 api 密钥 SecretId
-             config.put("SecretId", properties.getProperty("SecretId"));
+             config.put("secretId", properties.getProperty("SecretId"));
              // 云 api 密钥 SecretKey
-             config.put("SecretKey", properties.getProperty("SecretKey"));
+             config.put("secretKey", properties.getProperty("SecretKey"));
 
             if (properties.containsKey("https.proxyHost")) {
                 System.setProperty("https.proxyHost", properties.getProperty("https.proxyHost"));
@@ -58,7 +58,7 @@ public class CosStsClientTest {
             config.put("allowActions", allowActions);
 
             JSONObject credential = CosStsClient.getCredential(config);
-            System.out.println(credential);
+            System.out.println(credential.toString(4));
         } catch (Exception e) {
         	e.printStackTrace();
             throw new IllegalArgumentException("no valid secret !");
@@ -70,7 +70,7 @@ public class CosStsClientTest {
     	List<Scope> scopes = new ArrayList<Scope>();
     	Scope scope = new Scope("name/cos:PutObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt");
     	scopes.add(scope);
-    	System.out.println(CosStsClient.getPolicy(scopes));
+    	System.out.println(new JSONObject(CosStsClient.getPolicy(scopes)).toString(4));
     	
     }
     
@@ -84,9 +84,9 @@ public class CosStsClientTest {
              properties.load(new FileInputStream(configFile));
 
              // 固定密钥 SecretId
-             config.put("SecretId", properties.getProperty("SecretId"));
+             config.put("secretId", properties.getProperty("SecretId"));
              // 固定密钥 SecretKey
-             config.put("SecretKey", properties.getProperty("SecretKey"));
+             config.put("secretKey", properties.getProperty("SecretKey"));
 
              if (properties.containsKey("https.proxyHost")) {
                  System.setProperty("https.proxyHost", properties.getProperty("https.proxyHost"));
@@ -104,7 +104,7 @@ public class CosStsClientTest {
              config.put("policy", CosStsClient.getPolicy(scopes));
 
              JSONObject credential = CosStsClient.getCredential(config);
-             System.out.println(credential);
+             System.out.println(credential.toString(4));
          } catch (Exception e) {
         	 e.printStackTrace();
              throw new IllegalArgumentException("no valid secret !");
