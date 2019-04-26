@@ -150,7 +150,7 @@ try {
     config.put("durationSeconds", 1800);
 	
 	//授权策略，指明了可操作那些资源，以及可操作的权限的列表，可由 getPolicy(List<Scope>)生成
-	String policy = "{\"version\":\"2.0\",\"statement\":[{\"actions\":[\"name/cos:putobject\"],\"effect\":\"al
+	String policy = "{\"version\":\"2.0\",\"statement\":[{\"action\":[\"name/cos:putobject\"],\"effect\":\"al
 	low\",\"resource\":[\"qcs::cos:ap-guangzhou:uid/125000000:example-125000000/*\"]}]}";
 	config.put("policy", policy);
 
