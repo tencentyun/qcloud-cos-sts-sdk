@@ -98,7 +98,7 @@ $actions=array('name/cos:PutObject'); // 简单上传
 $resources = array("qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/*"); // 设置可操作的资源路径前缀，根据实际情况进行设置
 
 $statements = array(array(
-		'actions' => $actions,
+		'action' => $actions,
 		'effect' => 'allow',
 		'resource' => $resources
 ));
