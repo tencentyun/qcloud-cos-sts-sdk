@@ -180,12 +180,12 @@ echo str_replace('\\/', '/', json_encode($policy));
 "version":"2.0",
 "statement":[
 	{
-		"actions":["name/cos:PutObject"],
+		"action":["name/cos:PutObject"],
 		"effect":"allow",
 		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/1.txt"]
 	},
 	{
-		"actions":["name/cos:GetObject" ],
+		"action":["name/cos:GetObject" ],
 		"effect":"allow",
 		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/dir/*" ]
 	}
