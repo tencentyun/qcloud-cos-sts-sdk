@@ -209,12 +209,12 @@ String policy = CosStsClient.getPolicy(scopes);
 "version":"2.0",
 "statement":[
 	{
-		"actions":["name/cos:PutObject"],
+		"action":["name/cos:PutObject"],
 		"effect":"allow",
 		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-125000000/1.txt"]
 	},
 	{
-		"actions":["name/cos:GetObject" ],
+		"action":["name/cos:GetObject" ],
 		"effect":"allow",
 		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-125000000/dir/*" ]
 	}
