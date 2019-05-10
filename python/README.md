@@ -89,7 +89,7 @@ config = {
 
 sts = Sts(config)
 response = sts.get_credential()
-print ('get data : ' + response.content.decode("unicode-escape"))
+print ('get data : ' + json.dumps(dict(response), indent=4))
 
 # 方式 二
 policy = {'version': '2.0', 'statement': [{'action': ['name/cos:PutObject'], 'effect': 'allow', 
@@ -113,7 +113,7 @@ config = {
 
 sts = Sts(config)
 response = sts.get_credential()
-print ('get data : ' + response.content.decode("unicode-escape"))
+print ('get data : ' + json.dumps(dict(response), indent=4))
 ```
 
 ### 返回结果
