@@ -43,6 +43,7 @@
 * Nodejs
 * PHP
 * Python
+* Ruby
 
 #### 第二步：发布 Web API
 
