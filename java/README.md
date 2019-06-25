@@ -28,6 +28,20 @@
     	    <version>3.0.3</version>
     	</dependency>
 
+- 使用 gradle 集成方式
+	1) 在您的项目根目录下的 build.gradle 文件中添加 maven 仓库：
+	allprojects {
+		repositories {
+		     ...
+		     // 添加如下 maven 仓库地址
+		     maven {
+			 url "https://dl.bintray.com/qcloud/maven-repo"
+		     }
+		 }
+	}
+	2)在应用的根目录下的 build.gradle 中添加依赖：
+	compile 'com.tencent.cloud:cos-sts-java:3.0.3'
+	
 - 源码安装
 
 	拷贝 `src\main\java` 中的代码到您的工程中，并根据 pom.xml文件添加依赖项.
