@@ -145,7 +145,7 @@ class Sts:
         except Exception as e:
             result = "error"
             if result_json is not None:
-                result = result_json
+                result = str(result_json)
             raise Exception("result: " + result, e)
 
     def __encrypt(self, method, url, key_values):
