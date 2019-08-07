@@ -95,7 +95,7 @@ class STS{
 				'DurationSeconds'=> $config['durationSeconds'],
 				'Version'=>'2018-08-13',
 				'Name'=> 'cos',
-				'Region'=> 'ap-guangzhou',
+				'Region'=> $config['region'],
 				'Policy'=> urlencode($policyStr)
 			);
 			$params['Signature'] = $this->getSignature($params, $config['secretKey'], $Method, $config);

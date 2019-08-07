@@ -28,14 +28,6 @@
     	    <version>3.0.3</version>
     	</dependency>
 
-- 源码安装
-
-	拷贝 `src\main\java` 中的代码到您的工程中，并根据 pom.xml文件添加依赖项.
-
-## 查看示例
-
-请查看 `src/test` 下的 java 文件，里面描述了如何调用SDK。
-
 ## 接口说明
 
 ### getCredential
@@ -169,12 +161,16 @@ try {
 成功的话，可以拿到包含密钥的 JSON 文本：
 
 ```
-{ credentials:
-   { sessionToken: 'd88109ab2794fc4e8c9491353face398c240441030001',
-     tmpSecretId: 'AKIDq9bhO815EteWwntqvvzOeSTONZ4knQgr',
-     tmpSecretKey: 'GJz0iUp5eCeidvqnXoFGfm6Leq28t1NX' },
-  expiredTime: 1545306616,
-  startTime: 1545304817 }
+{
+    "credentials": {
+        "tmpSecretId": "AKIDEPMQB_Q9Jt2fJxXyIekOzKZzx-sdGQgBga4TzsUdTWL9xlvsjInOHhCYFqfoKOY4",
+        "tmpSecretKey": "W/3Lbl1YEW02mCoawIesl5kNehSskrSbp1cT1tgW70g=",
+        "sessionToken": "c6xnSYAxyFbX8Y50627y9AA79u6Qfucw6924760b61588b79fea4c277b01ba157UVdr_10Y30bdpYtO8CXedYZe3KKZ_DyzaPiSFfNAcbr2MTfAgwJe-dhYhfyLMkeCqWyTNF-rOdOb0rp4Gto7p4yQAKuIPhQhuDd77gcAyGakC2WXHVd6ZuVaYIXBizZxqIHAf4lPiLHa6SZejSQfa_p5Ip2U1cAdkEionKbrX97xTKTcA_5Pu525CFSzHZIQibc2uNMZ-IRdQp12MaXZB6bxM6nB4xXH45mDIlbIGjaAsrtRJJ3csmf82uBKaJrYQoguAjBepMH91WcH87LlW9Ya3emNfVX7NMRRf64riYd_vomGF0TLgan9smEKAOdtaL94IkLvVJdhLqpvjBjp_4JCdqwlFAixaTzGJHdJzpGWOh0mQ6jDegAWgRYTrJvc5caYTz7Vphl8XoX5wHKKESUn_vqyTAid32t0vNYE034FIelxYT6VXuetYD_mvPfbHVDIXaFt7e_O8hRLkFwrdAIVaUml1mRPvccv2qOWSXs"
+    },
+    "expiration": "2019-08-07T08:54:35Z",
+    "startTime": 1565166275,
+    "expiredTime": 1565168075
+}
 ```
 
 ### getPolicy

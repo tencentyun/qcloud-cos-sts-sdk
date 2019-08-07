@@ -128,7 +128,7 @@ class Sts:
             'DurationSeconds': self.duration_seconds,
             'Name': 'cos-sts-python',
             'Policy': policy_encode,
-            'Region': 'ap-guangzhou'
+            'Region': self.region
         }
         data['Signature'] = self.__encrypt('POST', self.sts_url, data)
         result_json = None

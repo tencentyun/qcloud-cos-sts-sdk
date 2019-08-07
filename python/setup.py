@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='qcloud-python-sts',
-    version='1.3.3',
+    version='3.0.0',
     description='this is sts for python on v3',
     url='https://github.com/tencentyun/qcloud-cos-sts-sdk',
     author='qcloudterminal',

@@ -2,12 +2,12 @@ var STS = require('../sdk/sts');
 
 // 配置参数
 var config = {
-    secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',   // 固定密钥
-    secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',  // 固定密钥
+    secretId: process.env.GROUP_SECRET_ID,   // 固定密钥
+    secretKey: process.env.GROUP_SECRET_KEY,  // 固定密钥
     proxy: '',
     durationSeconds: 1800,  // 密钥有效期
     // 放行判断相关参数
-    bucket: 'test-1250000000', // 换成你的 bucket
+    bucket: 'test-bucket-1253653367', // 换成你的 bucket
     region: 'ap-guangzhou', // 换成 bucket 所在地区
     allowPrefix: '*' // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
 };
@@ -44,6 +44,7 @@ var config = {
         secretKey: config.secretKey,
         proxy: config.proxy,
         durationSeconds: config.durationSeconds,
+        region: config.region,
         policy: policy,
     }, function (err, credential) {
         console.log('getCredential:');

@@ -38,7 +38,7 @@ public class CosStsClientTest {
             // 换成你的 bucket
             config.put("bucket", "android-ut-persist-bucket-1253653367");
             // 换成 bucket 所在地区
-            config.put("region", "ap-guangzhou");
+            config.put("region", "ap-shanghai");
 
             // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
             config.put("allowPrefix", "*");
@@ -60,7 +60,7 @@ public class CosStsClientTest {
             JSONObject credential = CosStsClient.getCredential(config);
             System.out.println(credential.toString(4));
         } catch (Exception e) {
-        	e.printStackTrace();
+        	    e.printStackTrace();
             throw new IllegalArgumentException("no valid secret !");
         }
     }
@@ -111,4 +111,5 @@ public class CosStsClientTest {
          }
     	
     }
+
 }

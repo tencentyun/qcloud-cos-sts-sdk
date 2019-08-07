@@ -73,7 +73,7 @@ var getCredential = function (options, callback) {
         DurationSeconds: durationSeconds,
         Name: 'cos-sts-nodejs',
         Version: '2018-08-13',
-        Region:'ap-guangzhou',
+        Region: options.region,
         Policy: encodeURIComponent(policyStr),
     };
     params.Signature = util.getSignature(params, secretKey, method);
