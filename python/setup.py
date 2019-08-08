@@ -1,6 +1,7 @@
-
-from setuptools import setup
-
+# coding=utf-8
+from setuptools import setup, find_packages
+with open("README.md", "r") as fh: 
+    long_description = fh.read()
 setup(
     name='qcloud-python-sts',
     version='3.0.0',
