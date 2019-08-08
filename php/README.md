@@ -4,7 +4,7 @@
    创建composer.json的文件，内容如下：
    {
     	"require":{
-    		"qcloud_sts/qcloud-sts-sdk": "1.3.*"
+    		"qcloud_sts/qcloud-sts-sdk": "3.0.*"
     	}
     }
     ```
