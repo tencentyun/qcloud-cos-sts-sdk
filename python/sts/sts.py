@@ -147,6 +147,7 @@ class Sts:
             if result_json is not None:
                 result = str(result_json)
                 raise Exception("result: " + result, e)
+            raise Exception("result: " + result, e)
 
     def __encrypt(self, method, url, key_values):
         source = Tools.flat_params(key_values)
