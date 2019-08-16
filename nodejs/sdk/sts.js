@@ -56,6 +56,7 @@ var getCredential = function (options, callback) {
     var secretKey = options.secretKey;
     var proxy = options.proxy || '';
     var host = options.host || '';
+    var region = options.region || 'ap-beijing';
     var durationSeconds = options.durationSeconds || options.durationInSeconds || 1800;
     var policy = options.policy;
 
@@ -73,7 +74,7 @@ var getCredential = function (options, callback) {
         DurationSeconds: durationSeconds,
         Name: 'cos-sts-nodejs',
         Version: '2018-08-13',
-        Region: options.region,
+        Region: region,
         Policy: encodeURIComponent(policyStr),
     };
     params.Signature = util.getSignature(params, secretKey, method);
