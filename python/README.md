@@ -46,9 +46,13 @@
 调用代码如下：
 
 ```python
-# 方式 一
-from sts.sts import Sts
 
+
+# coding=utf-8
+from sts.sts import Sts
+import json
+
+# 方式 一
 config = {
     # 临时密钥有效时长，单位是秒
     'duration_seconds': 1800,
@@ -57,10 +61,10 @@ config = {
     # 固定密钥
     'secret_key': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     # 是否需要设置代理
-	'proxy': {
-		'http': 'XXX',
-		'https': 'XXX'
-	},
+    'proxy': {
+      'http': 'XXX',
+      'https': 'XXX'
+    },
     # 换成你的 bucket
     'bucket': 'example-1250000000', 
     # 换成 bucket 所在地区
@@ -69,19 +73,19 @@ config = {
     'allow_prefix': '*', 
     # 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     'allow_actions': [
-        // 简单上传
+        # 简单上传
         'name/cos:PutObject',
-		// 表单上传
+		# 表单上传
         'name/cos:PostObject',
-        // 分片上传： 初始化分片
+        # 分片上传： 初始化分片
         'name/cos:InitiateMultipartUpload',
-		// 分片上传： 查询 bucket 中未完成分片上传的UploadId
+		# 分片上传： 查询 bucket 中未完成分片上传的UploadId
         "name/cos:ListMultipartUploads",
-		// 分片上传： 查询已上传的分片
+		# 分片上传： 查询已上传的分片
         "name/cos:ListParts",
-		// 分片上传： 上传分片块
+		# 分片上传： 上传分片块
         "name/cos:UploadPart",
-		// 分片上传： 完成分片上传
+		# 分片上传： 完成分片上传
         "name/cos:CompleteMultipartUpload"
     ]
 
