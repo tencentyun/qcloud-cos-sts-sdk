@@ -30,17 +30,19 @@ public class CosStsClient {
         params.put("Name", "cos-sts-java");
         params.put("Action", "GetFederationToken");
         params.put("Version", "2018-08-13");
-        params.put("Region", parameters.region);
+        String region = RegionCodeFilter.convert(parameters.region);
+        params.put("Region", region);
 
         String host = "sts.tencentcloudapi.com";
         String path = "/";
 
         String result = null;
+        JSONObject jsonResult = null;
         try {
             result = Request.send(params, (String) parameters.secretId,
                     parameters.secretKey,
                     "POST", host, path);
-            JSONObject jsonResult = new JSONObject(result);
+            jsonResult = new JSONObject(result);
             JSONObject data = jsonResult.optJSONObject("Response");
             if (data == null) {
                 data = jsonResult;
@@ -49,6 +51,22 @@ public class CosStsClient {
             data.put("startTime", expiredTime - parameters.duration);
             return downCompat(data);
         } catch (Exception e) {
+            if (jsonResult != null) {
+                JSONObject response = jsonResult.optJSONObject("Response");
+                if (response != null) {
+                    JSONObject error = response.optJSONObject("Error");
+                    if (error != null) {
+                        String message = error.optString("Message");
+                        String code = error.optString("Code");
+                        if ("InvalidParameterValue".equals(code) && message != null && message.contains("Region")) {
+                            // Region is not recognized
+                            if (RegionCodeFilter.block(region)) {
+                                return getCredential(config);
+                            }
+                        }
+                    }
+                }
+            }
             throw new IOException("result = " + result, e);
         }
     }

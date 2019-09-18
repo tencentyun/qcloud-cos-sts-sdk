@@ -36,9 +36,9 @@ public class CosStsClientTest {
             config.put("durationSeconds", 1800);
 
             // 换成你的 bucket
-            config.put("bucket", "android-ut-persist-bucket-1253653367");
+            config.put("bucket", "123123123-1253653367");
             // 换成 bucket 所在地区
-            config.put("region", "ap-shanghai");
+            config.put("region", "ap-beijing-1");
 
             // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子：* 或者 a/* 或者 a.jpg
             config.put("allowPrefix", "*");
@@ -99,8 +99,8 @@ public class CosStsClientTest {
              //设置 policy
              List<Scope> scopes = new ArrayList<Scope>();
              Scope scope = new Scope("name/cos:PutObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt");
-         	 scopes.add(scope);
-         	 scopes.add(new Scope("name/cos:GetObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt"));
+             scopes.add(scope);
+             scopes.add(new Scope("name/cos:GetObject", "android-ut-persist-bucket-1253653367", "ap-guangzhou", "/test.txt"));
              config.put("policy", CosStsClient.getPolicy(scopes));
 
              JSONObject credential = CosStsClient.getCredential(config);
