@@ -1,6 +1,6 @@
 <?php
 include '../sts/sts.php';
-$scope = new Scope("name/cos:PutObject", "test-12500000", "ap-guangzhou", "/dir/*");
+$scope = new Scope("name/cos:PutObject", "test-12500000", "ap-guangzhou", "/exampleobject");
 echo $scope->get_action() . '|' . $scope->get_resource() . '<br>';
 $scopes = array();
 array_push($scopes, $scope);
