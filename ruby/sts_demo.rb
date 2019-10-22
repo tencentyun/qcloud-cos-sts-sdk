@@ -8,7 +8,7 @@ config = {
     appid: '',
     bucket: '',
     region: '',
-    allow_prefix: '*',
+    allow_prefix: 'exampleobject',
     allow_actions: [
         'name/cos:PutObject',
         'name/cos:InitiateMultipartUpload',
