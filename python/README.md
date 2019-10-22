@@ -26,7 +26,7 @@
 |duration_seconds|long| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
 |bucket|String| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
-|allow_prefix|String|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|allow_prefix|String|资源的前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)|
 |allow_actions|list| 授予 COS API 权限集合, 如简单上传操作：name/cos:PutObject|
 |policy|dict| 策略：由 allow_actions、bucket、allow_prefix字段组成的描述授权的具体信息|
 
@@ -69,8 +69,9 @@ config = {
     'bucket': 'example-1250000000', 
     # 换成 bucket 所在地区
     'region': 'ap-guangzhou',
-    # 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
-    'allow_prefix': '*', 
+    # 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径
+    # 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
+    'allow_prefix': 'exampleobject', 
     # 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     'allow_actions': [
         # 简单上传
@@ -97,7 +98,7 @@ print ('get data : ' + json.dumps(dict(response), indent=4))
 
 # 方式 二
 policy = {'version': '2.0', 'statement': [{'action': ['name/cos:PutObject'], 'effect': 'allow', 
- 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/*']}]}
+ 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/exampleobject']}]}
 config = {
     # 临时密钥有效时长，单位是秒
     'duration_seconds': 1800,
@@ -147,7 +148,7 @@ print ('get data : ' + json.dumps(dict(response), indent=4))
 | ---- | ---- | ---- |
 |bucket|String| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
-|resource_prefix|String|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|resource_prefix|String|资源的前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用) |
 |action|String| 授予 COS API 权限，, 如简单上传操作：name/cos:PutObject|
 |scope|Scope| 构造policy的信息：由 action、bucket、region、sourcePrefix组成|
 
@@ -161,7 +162,7 @@ print ('get data : ' + json.dumps(dict(response), indent=4))
 from sts.sts import Sts, Scope
 scopes = list()
 scopes.append(Scope("name/cos:PutObject", "example-1250000000", "ap-guangzhou", "/1.txt"));
-scopes.append(Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/dir/*"));
+scopes.append(Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/dir/exampleobject"));
 policy = Sts.get_policy(scopes)
 ```
 ### 返回结果
@@ -177,7 +178,7 @@ policy = Sts.get_policy(scopes)
 	{
 		"action":["name/cos:GetObject" ],
 		"effect":"allow",
-		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/dir/*" ]
+		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/dir/exampleobject" ]
 	}
 ]
 }
