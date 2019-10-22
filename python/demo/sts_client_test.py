@@ -8,12 +8,12 @@ from sts.sts import Scope
 
 def request_sts():
     scopes = list()
-    scopes.append(Scope('name/cos:PutObject', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:GetObject', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:ListParts', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:UploadPart', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'dir/*'))
-    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'dir/*'))
+    scopes.append(Scope('name/cos:PutObject', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'exampleobject'))
+    scopes.append(Scope('name/cos:GetObject', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'exampleobject'))
+    scopes.append(Scope('name/cos:InitiateMultipartUpload', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'exampleobject'))
+    scopes.append(Scope('name/cos:ListParts', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'exampleobject'))
+    scopes.append(Scope('name/cos:UploadPart', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'exampleobject'))
+    scopes.append(Scope('name/cos:CompleteMultipartUpload', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:GetObject', 'android-ut-persist-bucket-1253653367', 'ap-guangzhou', '1/test.txt'))
     content = list()
     for element in scopes:
