@@ -64,7 +64,7 @@ $config = array(
     'bucket' => 'example-1250000000', // 换成你的 bucket
     'region' => 'ap-guangzhou', // 换成 bucket 所在地区
     'durationSeconds' => 1800, // 密钥有效期
-    'allowPrefix' => '*', // 设置可操作的资源路径前缀，根据实际情况进行设置,如授予可操作所有的资源：则为 *； 如授予操作某个路径a下的所有资源，则为 a/*；如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
+    'allowPrefix' => 'exampleobject', // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
     // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     'allowActions' => array (
         // 简单上传
@@ -95,7 +95,7 @@ echo json_encode($tempKeys);
 //方法二
 //设置策略 policy，可通过 STS 的 getPolicy($scopes)获取
 $actions=array('name/cos:PutObject'); // 简单上传
-$resources = array("qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/*"); // 设置可操作的资源路径前缀，根据实际情况进行设置
+$resources = array("qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/exampleobject"); // 设置可操作的资源路径前缀，根据实际情况进行设置
 
 $statements = array(array(
 		'action' => $actions,
@@ -170,7 +170,7 @@ include 'sts.php'
 
 $scopes = array();
 array_push($scopes,new Scope("name/cos:PutObject", "example-1250000000", "ap-guangzhou", "/1.txt"));
-array_push($scopes, new Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/dir/*"));
+array_push($scopes, new Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/exampleobject"));
 
 //创建 sts
 $sts = new STS();
@@ -191,7 +191,7 @@ echo str_replace('\\/', '/', json_encode($policy));
 	{
 		"action":["name/cos:GetObject" ],
 		"effect":"allow",
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/dir/*" ]
+		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/exampleobject" ]
 	}
 ]
 }
