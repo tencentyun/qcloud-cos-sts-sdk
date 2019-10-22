@@ -2,7 +2,7 @@
 include '../sts/sts.php';
 $sts = new STS();
 $scopes = array();
-array_push($scopes, new Scope("name/cos:PutObject", "test-125000000", "ap-guangzhou", "/dir/*"));
+array_push($scopes, new Scope("name/cos:PutObject", "test-125000000", "ap-guangzhou", "/exampleobject"));
 array_push($scopes, new Scope("name/cos:GetObject", "test-125000000", "ap-guangzhou", "/1.txt"));
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
