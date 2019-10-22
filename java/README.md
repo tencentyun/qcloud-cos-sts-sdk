@@ -43,7 +43,7 @@
 |durationSeconds|int| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
 |bucket|String| 存储桶名称：bucketName-appid, 如 example-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
-|allowPrefix|String|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|allowPrefix|String|资源的前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用) |
 |allowActions|String[]| 授予 COS API 权限集合, 如简单上传操作：name/cos:PutObject|
 |policy|String| 策略：由 allowActions、bucket、region、allowPrefix字段组成的描述授权的具体信息|
 
@@ -86,11 +86,9 @@ try {
     // 换成 bucket 所在地区
     config.put("region", "ap-guangzhou");
 
-    // 设置可操作的资源路径前缀，根据实际情况进行设置
-	// 如授予可操作所有的资源：则为 *； 
-	// 如授予操作某个路径a下的所有资源，则为 a/*；  
-	// 如授予只能操作某个特定路径的文件 a/test.jpg， 则为 a/test.jpg
-    config.put("allowPrefix", "*");
+// 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，
+// 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
+    config.put("allowPrefix", "exampleobject");
 
     // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     String[] allowActions = new String[] {
@@ -143,7 +141,7 @@ try {
 	
 	//授权策略，指明了可操作那些资源，以及可操作的权限的列表，可由 getPolicy(List<Scope>)生成
 	String policy = "{\"version\":\"2.0\",\"statement\":[{\"action\":[\"name/cos:putobject\"],\"effect\":\"al
-	low\",\"resource\":[\"qcs::cos:ap-guangzhou:uid/125000000:example-125000000/*\"]}]}";
+	low\",\"resource\":[\"qcs::cos:ap-guangzhou:uid/125000000:example-125000000/exampleobject\"]}]}";
 	config.put("policy", policy);
 
 	// 请求临时密钥信息
@@ -183,7 +181,7 @@ try {
 | ---- | ---- | ---- |
 |bucket|String| 存储桶名称：bucketName-appid, 如 example-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
-|sourcePrefix|String|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
+|sourcePrefix|String|资源的前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用) |
 |action|String| 授予 COS API 权限， 如简单上传操作：name/cos:PutObject name/cos:PutObject |
 |scope|Scope| 构造policy的信息：由 action、bucket、region、sourcePrefix组成|
 
@@ -196,7 +194,7 @@ try {
 ```java
 List<Scope> scopes = new ArrayList<Scope>();
 scopes.add(new Scope("name/cos:PutObject", "example-125000000", "ap-guangzhou", "/1.txt"));
-scopes.add(new Scope("name/cos:GetObject", "example-125000000", "ap-guangzhou", "/dir/*"));
+scopes.add(new Scope("name/cos:GetObject", "example-125000000", "ap-guangzhou", "/dir/exampleobject"));
 String policy = CosStsClient.getPolicy(scopes);
 ```
 ### 返回结果
@@ -212,7 +210,7 @@ String policy = CosStsClient.getPolicy(scopes);
 	{
 		"action":["name/cos:GetObject" ],
 		"effect":"allow",
-		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-125000000/dir/*" ]
+		"resource":["qcs::cos:ap-guangzhou:uid/1250000000:example-125000000/dir/exampleobject" ]
 	}
 ]
 }
