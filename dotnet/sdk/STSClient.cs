@@ -55,12 +55,11 @@ namespace COSSTS
 
                 string[] splitParts = bucket.Split('-');
                 string appId = splitParts[splitParts.Length - 1];
-                string bucketName = bucket.Substring(0, bucket.Length - appId.Length - 1);
                 if (!allowPrefix.StartsWith("/")) {
                     allowPrefix = "/" + allowPrefix;
                 }
                 dic.Add("resource", string.Format("qcs::cos:{0}:uid/{1}:{2}{3}",
-                    region, appId, bucketName, allowPrefix));
+                    region, appId, bucket, allowPrefix));
                 states.Add(dic);
             }
             policy.Add("version", "2.0");

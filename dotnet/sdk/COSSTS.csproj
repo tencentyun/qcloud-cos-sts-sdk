@@ -9,10 +9,11 @@
     <Deterministic>true</Deterministic>
 
     <PackageId>Tencent.QCloud.Cos.Sts.Sdk</PackageId>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
     <Authors>Tencent</Authors>
     <Company>Tencent</Company>
     <description>Tencent Cloud COS(Cloud Object Service) STS .Net SDK</description>
+    <RepositoryUrl>https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/nodejs</RepositoryUrl>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
