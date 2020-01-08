@@ -6,7 +6,7 @@
 
     <groupId>com.tencent.cloud</groupId>
     <artifactId>cos-sts-java</artifactId>
-    <version>3.0.5</version>
+    <version>3.0.6</version>
     <packaging>jar</packaging>
     <name>cos-sts-java</name>
     <description>sts java sdk for qcloud cos</description>

@@ -56,6 +56,7 @@ public class CosStsClientTest {
                     "name/cos:CompleteMultipartUpload"
             };
             config.put("allowActions", allowActions);
+            config.put("secretType", 1);
 
             JSONObject credential = CosStsClient.getCredential(config);
             System.out.println(credential.toString(4));

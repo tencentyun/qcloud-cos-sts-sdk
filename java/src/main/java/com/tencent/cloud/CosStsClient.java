@@ -32,6 +32,9 @@ public class CosStsClient {
         params.put("Version", "2018-08-13");
         String region = RegionCodeFilter.convert(parameters.region);
         params.put("Region", region);
+        if(parameters.secretType != null) {
+            params.put("SecretType", parameters.secretType);
+        }
 
         String host = "sts.tencentcloudapi.com";
         String path = "/";
@@ -144,6 +147,7 @@ public class CosStsClient {
     	String allowPrefix;
     	String[] allowActions;
     	String policy;
+    	Integer secretType; // option argument, only can choose 0 or 1, 0 for long certificate, 1 for short certificate
     	
     	public void parse(Map<String, Object> config) {
 			if(config == null) throw new NullPointerException("config == null");
@@ -165,7 +169,9 @@ public class CosStsClient {
 					policy = (String) entry.getValue();
 				}else if("allowActions".equalsIgnoreCase(key)) {
 					allowActions = (String[]) entry.getValue();
-				}
+				}else if("secretType".equalsIgnoreCase(key)) {
+				    secretType = (Integer)entry.getValue();
+                                }
 			}
 		}
     }
