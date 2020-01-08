@@ -5,7 +5,7 @@
     	<dependency>
     	    <groupId>com.tencent.cloud</groupId>
     	    <artifactId>cos-sts-java</artifactId>
-    	    <version>3.0.5</version>
+    	    <version>3.0.6</version>
     	</dependency>
 
 ## 接口说明
@@ -69,6 +69,8 @@ try {
 // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，
 // 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
     config.put("allowPrefix", "exampleobject");
+    // secretType 为可选字段，可设置为0（长密钥）或 1（短密钥）
+    config.put("secretType", 1);
 
     // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     String[] allowActions = new String[] {
