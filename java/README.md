@@ -1,12 +1,13 @@
 ## 获取 SDK
 - 使用 maven 集成方式，在 Java 工程中的 pom.xml 文件中添加如下的 maven 依赖：
 	
-
-    	<dependency>
-    	    <groupId>com.tencent.cloud</groupId>
-    	    <artifactId>cos-sts-java</artifactId>
-    	    <version>3.0.6</version>
-    	</dependency>
+```xml
+<dependency>
+    <groupId>com.tencent.cloud</groupId>
+    <artifactId>cos-sts-java</artifactId>
+    <version>3.0.6</version>
+</dependency>
+```
 
 ## 接口说明
 
@@ -39,7 +40,7 @@
 |expiredTime | String | 密钥的失效时间，是 UNIX 时间戳 |
 
 ### 使用示例
-```
+```java
 //方式一
 TreeMap<String, Object> config = new TreeMap<String, Object>();
 
@@ -141,7 +142,7 @@ try {
 
 成功的话，可以拿到包含密钥的 JSON 文本：
 
-```
+```json
 {
     "credentials": {
         "tmpSecretId": "AKIDEPMQB_Q9Jt2fJxXyIekOzKZzx-sdGQgBga4TzsUdTWL9xlvsjInOHhCYFqfoKOY4",
@@ -181,7 +182,7 @@ scopes.add(new Scope("name/cos:GetObject", "example-125000000", "ap-guangzhou", 
 String policy = CosStsClient.getPolicy(scopes);
 ```
 ### 返回结果
-```java
+```json
 {
 "version":"2.0",
 "statement":[
