@@ -66,9 +66,10 @@ try {
     // 换成 bucket 所在地区
     config.put("region", "ap-guangzhou");
 
-// 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，
-// 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
-    config.put("allowPrefix", "exampleobject");
+    // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，
+    // 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
+    config.put("allowPrefix", "exampleobject"); 
+    
     // secretType 为可选字段，可设置为0（长密钥）或 1（短密钥）
     config.put("secretType", 1);
 
