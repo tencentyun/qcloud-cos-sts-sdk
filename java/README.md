@@ -71,9 +71,6 @@ try {
     // 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
     config.put("allowPrefix", "exampleobject"); 
     
-    // secretType 为可选字段，可设置为0（长密钥）或 1（短密钥）
-    config.put("secretType", 1);
-
     // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
     String[] allowActions = new String[] {
             // 简单上传
