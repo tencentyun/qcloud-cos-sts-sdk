@@ -11,9 +11,9 @@ if __name__ == '__main__':
     config = {
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
-        'secret_id': os.environ['GROUP_SECRET_ID'],
+        'secret_id': os.environ['COS_SECRET_ID'],
         # 固定密钥
-        'secret_key': os.environ['GROUP_SECRET_KEY'],
+        'secret_key': os.environ['COS_SECRET_KEY'],
         # 设置网络代理
         # 'proxy': {
         #     'http': 'xx',
