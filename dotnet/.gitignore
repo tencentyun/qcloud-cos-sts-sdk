@@ -2,3 +2,5 @@ sdk/bin/
 sdk/obj/
 test/bin/
 test/obj/
+demo/bin/
+demo/obj/
