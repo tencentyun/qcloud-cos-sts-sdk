@@ -1,16 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <!-- <ProjectReference Include="..\sdk\COSSTS.csproj">
-      <Name>COSSTS</Name>
-    </ProjectReference> -->
+
+  <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
     <PackageReference Include="Tencent.QCloud.Cos.Sts.Sdk" Version="3.0.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ProjectReference Include="..\sdk\COSSTS.csproj">
+      <Name>COSSTS</Name>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,5 +21,4 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
   </ItemGroup>
-
 </Project>

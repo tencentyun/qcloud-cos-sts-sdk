@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,39 +7,17 @@
     <AssemblyName>COSSTS</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <PackageId>Tencent.QCloud.Cos.Sts.Sdk</PackageId>
     <Version>3.0.1</Version>
     <Authors>Tencent</Authors>
     <Company>Tencent</Company>
     <description>Tencent Cloud COS(Cloud Object Service) STS .Net SDK</description>
-    <RepositoryUrl>https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/nodejs</RepositoryUrl>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\COSXML.xml</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
+    <RepositoryUrl>https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/dotnet</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="TencentCloudSDK" Version="3.0.*" />
   </ItemGroup>
-
 </Project>
