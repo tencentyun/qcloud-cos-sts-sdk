@@ -1,0 +1,23 @@
+{
+    "name": "sts/demo",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "wjielai",
+            "email": "wjielai@tencent.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../",
+            "options": {
+                "symlink": false
+            }
+        }
+    ],
+    "require": {
+        "qcloud_sts/qcloud-sts-sdk": "dev-master"
+    }
+}

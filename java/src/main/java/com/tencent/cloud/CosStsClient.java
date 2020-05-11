@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,6 +18,9 @@ public class CosStsClient {
         TreeMap<String, Object> params = new TreeMap<String, Object>();
         Parameters parameters = new Parameters();
         parameters.parse(config);
+
+        if(parameters.secretId == null) throw new IllegalArgumentException("secretId is null");
+        if(parameters.secretKey == null) throw new IllegalArgumentException("secretKey is null");
         
         String policy = parameters.policy;
         if (policy != null) {
@@ -103,38 +107,44 @@ public class CosStsClient {
     }
 
     private static JSONObject getPolicy(Parameters parameters) {
-    	if(parameters.bucket == null) { 
-    		throw new NullPointerException("bucket == null");
-    	}
-    	if(parameters.allowPrefix == null) {
-    		throw new NullPointerException("allowPrefix == null");
-    	}
+        if(parameters.bucket == null) {
+            throw new IllegalArgumentException("bucket == null");
+        }
+        if(parameters.allowPrefixes == null) {
+            throw new IllegalArgumentException("allowPrefixes == null");
+        }
+        if(parameters.region == null) {
+            throw new IllegalArgumentException("region == null");
+        }
         String bucket = parameters.bucket;
         String region = parameters.region;
-        String allowPrefix = parameters.allowPrefix;
-        if(!allowPrefix.startsWith("/")) {
-        	allowPrefix = "/" + allowPrefix;
+
+        int lastSplit = bucket.lastIndexOf("-");
+        String appId = bucket.substring(lastSplit + 1);
+
+        String[] allowPrefixes = parameters.allowPrefixes;
+        List<String> resources = new ArrayList<String>(allowPrefixes.length);
+        for (String prefix : allowPrefixes) {
+            String p = prefix;
+            if(!p.startsWith("/")) {
+                p = "/" + p;
+            }
+            String resource = String.format("qcs::cos:%s:uid/%s:%s%s",
+                    region, appId, bucket, p);
+            resources.add(resource);
         }
-        String[] allowActions = parameters.allowActions;
 
         JSONObject policy = new JSONObject();
         policy.put("version", "2.0");
 
+        JSONArray statements = new JSONArray();
         JSONObject statement = new JSONObject();
         statement.put("effect", "allow");
-        JSONArray actions = new JSONArray();
-        for (String action : allowActions) {
-            actions.put(action);
-        }
-        statement.put("action", actions);
+        statement.put("action", parameters.allowActions);
+        statement.put("resource", resources.toArray(new String[0]));
+        statements.put(statement);
 
-        int lastSplit = bucket.lastIndexOf("-");
-        String appId = bucket.substring(lastSplit + 1);
-        String resource = String.format("qcs::cos:%s:uid/%s:%s%s",
-        region, appId, bucket, allowPrefix);
-        
-        statement.put("resource", resource);
-        policy.put("statement", statement);
+        policy.put("statement", statements);
         return policy;
     }
     
@@ -144,7 +154,7 @@ public class CosStsClient {
     	int duration = DEFAULT_DURATION_SECONDS;
     	String bucket;
     	String region;
-    	String allowPrefix;
+    	String[] allowPrefixes;
     	String[] allowActions;
     	String policy;
     	Integer secretType; // option argument, only can choose 0 or 1, 0 for long certificate, 1 for short certificate
@@ -164,14 +174,16 @@ public class CosStsClient {
 				}else if("region".equalsIgnoreCase(key)) {
 					region = (String) entry.getValue();
 				}else if("allowPrefix".equalsIgnoreCase(key)) {
-					allowPrefix = (String) entry.getValue();
-				}else if("policy".equalsIgnoreCase(key)) {
+                    allowPrefixes = new String[] { (String) entry.getValue() };
+				}else if("allowPrefixes".equalsIgnoreCase(key)) {
+                    allowPrefixes = (String[]) entry.getValue();
+                }else if("policy".equalsIgnoreCase(key)) {
 					policy = (String) entry.getValue();
 				}else if("allowActions".equalsIgnoreCase(key)) {
 					allowActions = (String[]) entry.getValue();
 				}else if("secretType".equalsIgnoreCase(key)) {
 				    secretType = (Integer)entry.getValue();
-                                }
+				}
 			}
 		}
     }

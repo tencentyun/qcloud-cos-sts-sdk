@@ -2,6 +2,7 @@ using NUnit.Framework;
 using COSSTS;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Tests
 {
@@ -44,8 +45,21 @@ namespace Tests
         [Test]
         public void TestSTSClient()
         {
-            string credential = STSClient.genCredential(values);
-            TestContext.Progress.WriteLine(credential);
+            Dictionary<string, object> credential = STSClient.genCredential(values);
+            TestContext.Progress.WriteLine(JsonConvert.SerializeObject(credential));
+            Assert.NotNull(credential);
+        }
+
+        [Test]
+        public void TestSTSClientMultiPrefix()
+        {
+            values.Remove("allowPrefix");
+            values.Add("allowPrefixes", new string[] {
+                "exampleobject",
+                "exampleobject2"
+            });
+            Dictionary<string, object> credential = STSClient.genCredential(values);
+            TestContext.Progress.WriteLine(JsonConvert.SerializeObject(credential));
             Assert.NotNull(credential);
         }
 
@@ -55,7 +69,9 @@ namespace Tests
             
             string policy = STSClient.getPolicy(
                 (string) values["region"], (string) values["bucket"], 
-                (string) values["allowPrefix"], (string[]) values["allowActions"]);
+                new string[] {
+                    (string) values["allowPrefix"]}, 
+                (string[]) values["allowActions"]);
             TestContext.Progress.WriteLine(policy);
             Assert.NotNull(policy);
         }

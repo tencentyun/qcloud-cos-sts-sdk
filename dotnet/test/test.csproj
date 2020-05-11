@@ -7,10 +7,10 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <!-- <ProjectReference Include="..\sdk\COSSTS.csproj">
+    <ProjectReference Include="..\sdk\COSSTS.csproj">
       <Name>COSSTS</Name>
-    </ProjectReference> -->
-    <PackageReference Include="Tencent.QCloud.Cos.Sts.Sdk" Version="3.0.*" />
+    </ProjectReference>
+    <!-- <PackageReference Include="Tencent.QCloud.Cos.Sts.Sdk" Version="3.0.*" /> -->
   </ItemGroup>
 
   <ItemGroup>

@@ -28,6 +28,11 @@ namespace demo
             values.Add("bucket", bucket);
             values.Add("region", region);
             values.Add("allowPrefix", allowPrefix);
+            // 也可以通过 allowPrefixes 指定路径前缀的集合
+            // values.Add("allowPrefixes", new string[] {
+            //     "path/to/dir1/*",
+            //     "path/to/dir2/*",
+            // });
             values.Add("allowActions", allowActions);
             values.Add("durationSeconds", 1800);
 

@@ -13,11 +13,11 @@
         }
     ],
     "autoload": {
-      "psr-0": {
-        "php\\": "sts/"
+      "psr-4": {
+        "QCloud\\COSSTS\\": "php/src"
      }
     },
     "require": {
-        "qcloud": ">=5.3.0"
+        "php": ">=5.3.0"
     }
 }

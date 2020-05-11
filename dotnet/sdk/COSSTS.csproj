@@ -9,7 +9,7 @@
     <Deterministic>true</Deterministic>
 
     <PackageId>Tencent.QCloud.Cos.Sts.Sdk</PackageId>
-    <Version>3.0.1</Version>
+    <Version>3.0.2</Version>
     <Authors>Tencent</Authors>
     <Company>Tencent</Company>
     <description>Tencent Cloud COS(Cloud Object Service) STS .Net SDK</description>

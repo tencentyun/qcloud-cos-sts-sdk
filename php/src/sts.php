@@ -1,5 +1,7 @@
 <?php
 
+namespace QCloud\COSSTS;
+
 class STS{
 	// 临时密钥计算样例
 	
