@@ -2,7 +2,7 @@
 
 ## 安装方法
 
-```cmd
+```
 dotnet add package Tencent.QCloud.Cos.Sts.Sdk
 ```
 
@@ -10,45 +10,9 @@ dotnet add package Tencent.QCloud.Cos.Sts.Sdk
 <PackageReference Include="Tencent.QCloud.Cos.Sts.Sdk" Version="3.0.*" />
 ```
 
-## 接口说明
+## 查看使用示例
 
-### `getCredential`
-
-获取临时密钥接口。
-
-#### 使用示例
-
-```C#
-using COSSTS;
-
-Dictionary<string, object> values = new Dictionary<string, object>();
-
-string bucket = "bucketName-1250000000";  // 您的 bucket
-string region = "ap-guangzhou";  // bucket 所在区域
-string allowPrefix = "exampleobject"; // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
-string[] allowActions = new string[] {  // 允许的操作范围，这里以上传操作为例
-    "name/cos:PutObject",
-    "name/cos:PostObject",
-    "name/cos:InitiateMultipartUpload",
-    "name/cos:ListMultipartUploads",
-    "name/cos:ListParts",
-    "name/cos:UploadPart",
-    "name/cos:CompleteMultipartUpload"
-};
-string secretId = "your-secret-id"; // 云 API 密钥 Id
-string secretKey = "your-secret-key"; // 云 API 密钥 Key
-
-values.Add("bucket", bucket);
-values.Add("region", region);
-values.Add("allowPrefix", allowPrefix); 
-values.Add("allowActions", allowActions);
-values.Add("durationSeconds", 1800); // 要申请的临时密钥最长有效时间，单位秒，最大可设置 7200
-
-values.Add("secretId", secretId);
-values.Add("secretKey", secretKey);
-
-string credential = STSClient.genCredential(values);
-```
+请查看 [demo 示例](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/dotnet/demo)，里面描述了如何调用SDK。
 
 #### 返回示例
 
@@ -59,7 +23,9 @@ string credential = STSClient.genCredential(values);
       "TmpSecretId":"AKIDPWhQ5TbMphPVVaoVXDYerSadYq_N-nSK6l68wgIKVQqtEtfTjTW934kJWRC-Jll6",
       "TmpSecretKey":"afrk3zl9E89GbL3uCXYdzLyzQiWX+bn/YvF6L5RMnH0="
    },
+   "Expiration": "2019-08-07T08:54:35Z",
    "ExpiredTime":1574079131,
+   "StartTime":1574077331,
    "RequestId":"3f8f5f69-1929-4f8f-9e47-ee0426a880ae"
 }
 ```

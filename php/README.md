@@ -1,6 +1,7 @@
 ## 获取 SDK
 
 - composer 安装
+
 ```
 创建composer.json的文件，内容如下：
 {
@@ -20,7 +21,7 @@ PHP SDK 源码已迁移到 [COS STS PHP SDK](https://github.com/tencentyun/qclou
 
 ### 返回数据示例
 
-```
+```json
 {
 	"expiredTime": 1589258683,
 	"expiration": "2020-05-12T04:44:43Z",

@@ -9,11 +9,16 @@
 </dependency>
 ```
 
+## 调用示例
+
+请查看 [test](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/java/src/test) 里的示例。
+
 ## 接口说明
 
 ### getCredential
 
 获取临时密钥接口
+
 
 ### 参数说明
 
@@ -39,102 +44,6 @@
 |startTime | String | 密钥的起止时间，是 UNIX 时间戳 |
 |expiredTime | String | 密钥的失效时间，是 UNIX 时间戳 |
 
-### 使用示例
-```java
-//方式一
-TreeMap<String, Object> config = new TreeMap<String, Object>();
-
-try {
-    Properties properties = new Properties();
-    File configFile = new File("local.properties");
-    properties.load(new FileInputStream(configFile));
-
-    // 云 API 密钥 secretId
-    config.put("secretId", properties.getProperty("SecretId"));
-    // 云 API 密钥 secretKey
-    config.put("secretKey", properties.getProperty("SecretKey"));
-	//若需要设置网络代理，则可以如下设置
-    if (properties.containsKey("https.proxyHost")) {
-        System.setProperty("https.proxyHost", properties.getProperty("https.proxyHost"));
-        System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
-    }
-
-    // 临时密钥有效时长，单位是秒
-    config.put("durationSeconds", 1800);
-
-    // 换成你的 bucket
-    config.put("bucket", "example-125000000");
-    // 换成 bucket 所在地区
-    config.put("region", "ap-guangzhou");
-
-    // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，
-    // 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
-    config.put("allowPrefix", "exampleobject"); 
-    
-    // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
-    String[] allowActions = new String[] {
-            // 简单上传
-            "name/cos:PutObject",
-			// 表单上传
-            "name/cos:PostObject",
-            // 分片上传： 初始化分片
-            "name/cos:InitiateMultipartUpload",
-			// 分片上传： 查询 bucket 中未完成分片上传的UploadId
-            "name/cos:ListMultipartUploads",
-			// 分片上传： 查询已上传的分片
-            "name/cos:ListParts",
-			// 分片上传： 上传分片块
-            "name/cos:UploadPart",
-			// 分片上传： 完成分片上传
-            "name/cos:CompleteMultipartUpload"
-    };
-    config.put("allowActions", allowActions);
-	// 请求临时密钥信息
-    JSONObject credential = CosStsClient.getCredential(config);
-	// 请求成功：打印对应的临时密钥信息
-    System.out.println(credential.toString(4));
-} catch (Exception e) {
-    // 请求失败，抛出异常
-	throw new IllegalArgumentException("no valid secret !");
-}
-
-
-//方式二
-TreeMap<String, Object> config = new TreeMap<String, Object>();
-
-try {
-    Properties properties = new Properties();
-    File configFile = new File("local.properties");
-    properties.load(new FileInputStream(configFile));
-
-    // 云 API 密钥 secretId
-    config.put("secretId", properties.getProperty("SecretId"));
-    // 云 API 密钥 secretKey
-    config.put("secretKey", properties.getProperty("SecretKey"));
-	//若需要设置网络代理，则可以如下设置
-    if (properties.containsKey("https.proxyHost")) {
-        System.setProperty("https.proxyHost", properties.getProperty("https.proxyHost"));
-        System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
-    }
-
-    // 临时密钥有效时长，单位是秒
-    config.put("durationSeconds", 1800);
-	
-	//授权策略，指明了可操作那些资源，以及可操作的权限的列表，可由 getPolicy(List<Scope>)生成
-	String policy = "{\"version\":\"2.0\",\"statement\":[{\"action\":[\"name/cos:putobject\"],\"effect\":\"al
-	low\",\"resource\":[\"qcs::cos:ap-guangzhou:uid/125000000:example-125000000/exampleobject\"]}]}";
-	config.put("policy", policy);
-
-	// 请求临时密钥信息
-    JSONObject credential = CosStsClient.getCredential(config);
-	// 请求成功：打印对应的临时密钥信息
-    System.out.println(credential.toString(4));
-} catch (Exception e) {
-    // 请求失败，抛出异常
-	throw new IllegalArgumentException("no valid secret !");
-}
-```
-
 ### 返回结果 credential
 
 成功的话，可以拿到包含密钥的 JSON 文本：
@@ -148,7 +57,8 @@ try {
     },
     "expiration": "2019-08-07T08:54:35Z",
     "startTime": 1565166275,
-    "expiredTime": 1565168075
+    "expiredTime": 1565168075,
+    "requestId":"3f8f5f69-1929-4f8f-9e47-ee0426a880ae"
 }
 ```
 
@@ -171,13 +81,7 @@ try {
 | ---- | ---- | ---- |
 |policy | String | 申请临时密钥所需的权限策略 |
 
-### 使用示例
-```java
-List<Scope> scopes = new ArrayList<Scope>();
-scopes.add(new Scope("name/cos:PutObject", "example-125000000", "ap-guangzhou", "/1.txt"));
-scopes.add(new Scope("name/cos:GetObject", "example-125000000", "ap-guangzhou", "/dir/exampleobject"));
-String policy = CosStsClient.getPolicy(scopes);
-```
+
 ### 返回结果
 ```json
 {

@@ -6,6 +6,10 @@
 npm i qcloud-cos-sts --save
 ```
 
+## 调用示例
+
+请查看 [demo](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/nodejs/src/test) 里的示例。
+
 ## 接口说明
 
 ### `getCredential`
@@ -38,42 +42,6 @@ npm i qcloud-cos-sts --save
 | - - tmpSecretKey | String | 临时密钥 Key，可用于计算签名 |
 | - - sessionToken | String | 请求时需要用的 token 字符串，最终请求 COS API 时，需要放在 Header 的 x-cos-security-token 字段 |
 
-#### 使用示例
-
-```javascript
-var STS = require('qcloud-cos-sts');
-var policy = {
-    'version': '2.0',
-    'statement': [{
-        'action': [
-            // 简单上传
-            'name/cos:PutObject',
-            'name/cos:PostObject',
-            // 分片上传
-            'name/cos:InitiateMultipartUpload',
-            'name/cos:ListMultipartUploads',
-            'name/cos:ListParts',
-            'name/cos:UploadPart',
-            'name/cos:CompleteMultipartUpload'
-        ],
-        'effect': 'allow',
-        'principal': {'qcs': ['*']},
-        'resource': [
-            'qcs::cos:ap-guangzhou:uid/1250000000:prefix//1250000000/test/exampleobject',
-        ],
-    }],
-};
-STS.getCredential({
-    secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    policy: policy,
-    // durationSeconds: 1800,
-    // proxy: '',
-}, function (err, credential) {
-    console.log(err || credential);
-});
-```
-
 #### 返回示例
 
 ```json
@@ -85,7 +53,8 @@ STS.getCredential({
     },
     "expiration": "2019-08-07T08:54:35Z",
     "startTime": 1565166275,
-    "expiredTime": 1565168075
+    "expiredTime": 1565168075,
+    "requestId":"3f8f5f69-1929-4f8f-9e47-ee0426a880ae"
 }
 ```
 
@@ -110,20 +79,6 @@ STS.getCredential({
 | policy | Object | 申请临时密钥所需的权限策略 |
 
 policy 具体格式请看 [文档](https://cloud.tencent.com/document/product/436/31923)
-
-#### 使用示例
-
-```javascript
-var STS = require('qcloud-cos-sts');
-var scope = [{
-    action: 'name/cos:PutObject',
-    bucket: 'test-1250000000',
-    region: 'ap-guangzhou',
-    prefix: 'exampleobject', // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
-}];
-var policy = STS.getPolicy(scope);
-console.log(policy);
-```
 
 #### 返回示例
 

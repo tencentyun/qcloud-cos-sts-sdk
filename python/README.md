@@ -1,15 +1,12 @@
 ## 获取 SDK
-- 使用 pip 安装
-    
-    pip install -U qcloud-python-sts
-   
-- 源码安装
 
-    拷贝 `sts/sts.py` 文件到您的 python 工程中。
+```
+pip install -U qcloud-python-sts
+```
 
-## 查看示例
+## 调用示例
 
-请查看 `demo/sts_demo.py` 文件，里面描述了如何调用SDK。
+请查看 [demo](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/python/demo) 里的示例。
 
 ## 接口说明
 
@@ -34,98 +31,18 @@
 
 |字段|类型|描述|
 | ---- | ---- | ---- |
-|credentials | String | 临时密钥信息 |
+|credentials | dict | 临时密钥信息 |
 |tmpSecretId | String | 临时密钥 Id，可用于计算签名 |
 |tmpSecretKey | String | 临时密钥 Key，可用于计算签名 |
 |sessionToken | String | 请求时需要用的 token 字符串，最终请求 COS API 时，需要放在 Header 的 x-cos-security-token 字段 |
 |startTime | String | 密钥的起止时间，是 UNIX 时间戳 |
 |expiredTime | String | 密钥的失效时间，是 UNIX 时间戳 |
 
-### 使用方法
-
-调用代码如下：
-
-```python
-
-
-# coding=utf-8
-from sts.sts import Sts
-import json
-
-# 方式 一
-config = {
-    # 临时密钥有效时长，单位是秒
-    'duration_seconds': 1800,
-    # 固定密钥
-    'secret_id': 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 
-    # 固定密钥
-    'secret_key': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    # 是否需要设置代理
-    'proxy': {
-      'http': 'XXX',
-      'https': 'XXX'
-    },
-    # 换成你的 bucket
-    'bucket': 'example-1250000000', 
-    # 换成 bucket 所在地区
-    'region': 'ap-guangzhou',
-    # 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径
-    # 例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
-    'allow_prefix': 'exampleobject', 
-    # 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
-    'allow_actions': [
-        # 简单上传
-        'name/cos:PutObject',
-		# 表单上传
-        'name/cos:PostObject',
-        # 分片上传： 初始化分片
-        'name/cos:InitiateMultipartUpload',
-		# 分片上传： 查询 bucket 中未完成分片上传的UploadId
-        "name/cos:ListMultipartUploads",
-		# 分片上传： 查询已上传的分片
-        "name/cos:ListParts",
-		# 分片上传： 上传分片块
-        "name/cos:UploadPart",
-		# 分片上传： 完成分片上传
-        "name/cos:CompleteMultipartUpload"
-    ]
-
-}
-
-sts = Sts(config)
-response = sts.get_credential()
-print ('get data : ' + json.dumps(dict(response), indent=4))
-
-# 方式 二
-policy = {'version': '2.0', 'statement': [{'action': ['name/cos:PutObject'], 'effect': 'allow', 
- 'resource': ['qcs::cos:ap-guangzhou:uid/1250000000:example-1250000000/exampleobject']}]}
-config = {
-    # 临时密钥有效时长，单位是秒
-    'duration_seconds': 1800,
-    # 固定密钥
-    'secret_id': 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 
-    # 固定密钥
-    'secret_key': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    # 是否需要设置代理
-	'proxy': {
-		'http': 'XXX',
-		'https': 'XXX'
-	},
-	# 设置 策略 policy, 可通过 get_policy(list)获取
-    'policy': policy
-
-}
-
-sts = Sts(config)
-response = sts.get_credential()
-print ('get data : ' + json.dumps(dict(response), indent=4))
-```
-
 ### 返回结果
 
 成功的话，可以拿到包含密钥的 JSON 文本：
 
-```
+```json
 {
     "credentials": {
         "tmpSecretId": "AKIDEPMQB_Q9Jt2fJxXyIekOzKZzx-sdGQgBga4TzsUdTWL9xlvsjInOHhCYFqfoKOY4",
@@ -157,16 +74,9 @@ print ('get data : ' + json.dumps(dict(response), indent=4))
 | ---- | ---- | ---- |
 |policy | dict | 申请临时密钥所需的权限策略 |
 
-### 使用示例
-```python
-from sts.sts import Sts, Scope
-scopes = list()
-scopes.append(Scope("name/cos:PutObject", "example-1250000000", "ap-guangzhou", "/1.txt"));
-scopes.append(Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/dir/exampleobject"));
-policy = Sts.get_policy(scopes)
-```
+
 ### 返回结果
-```python
+```json
 {
 "version":"2.0",
 "statement":[
