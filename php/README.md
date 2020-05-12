@@ -1,198 +1,35 @@
 ## 获取 SDK
+
 - composer 安装
-   ```
-   创建composer.json的文件，内容如下：
-   {
-    	"require":{
-    		"qcloud_sts/qcloud-sts-sdk": "3.0.*"
-    	}
-    }
-    ```
-	
-   执行如下命令 `composer install`,安装sdk。使用该命令后会在当前目录中创建一个 vendor 文件夹，里面包含 SDK 的依赖库和一个 autoload.php 脚本，方便在项目中调用.
-
-- 源码安装
-
-	拷贝 `sts/sts.php` 文件到您的 php 工程中。
-
-## 查看示例
-
-请查看 `demo/sts_test.php` 文件，里面描述了如何调用SDK。
-
-## 接口说明
-
-### getTempKeys
-
-获取临时密钥接口
-
-### 参数说明
-
-|字段|类型|描述|
-| ---- | ---- | ---- |
-|secretId|string| 云 API 密钥 Id|
-|secretKey|string| 云 API 密钥 key|
-|durationSeconds|long| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
-|bucket|string| 存储桶名称：bucketName-appid, 如 test-125000000|
-|region|string| 存储桶所属地域，如 ap-guangzhou|
-|allowPrefix|string|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
-|allowActions|array| 授予 COS API 权限集合, 如简单上传操作：name/cos:PutObject|
-|policy|array| 策略：由 allowActions、bucket、region、allowPrefix字段组成的描述授权的具体信息|
-
-### 返回值说明
-
-|字段|类型|描述|
-| ---- | ---- | ---- |
-|credentials | string | 临时密钥信息 |
-|tmpSecretId | string | 临时密钥 Id，可用于计算签名 |
-|tmpSecretKey | string | 临时密钥 Key，可用于计算签名 |
-|sessionToken | string | 请求时需要用的 token 字符串，最终请求 COS API 时，需要放在 Header 的 x-cos-security-token 字段 |
-|startTime | string | 密钥的起止时间，是 UNIX 时间戳 |
-|expiredTime | string | 密钥的失效时间，是 UNIX 时间戳 |
-
-### 使用示例
-```php
-include 'sts.php'
-
-//方法一
-// 配置参数
-$config = array(
-    'url' => 'https://sts.tencentcloudapi.com/',
-    'domain' => 'sts.tencentcloudapi.com',
-    //'proxy' => null,  //设置网络请求代理,若不需要设置，则为null
-    'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
-    'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
-    'bucket' => 'example-1250000000', // 换成你的 bucket
-    'region' => 'ap-guangzhou', // 换成 bucket 所在地区
-    'durationSeconds' => 1800, // 密钥有效期
-    'allowPrefix' => 'exampleobject', // 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
-    // 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
-    'allowActions' => array (
-        // 简单上传
-        'name/cos:PutObject',
-		// 表单上传
-        'name/cos:PostObject',
-        // 分片上传： 初始化分片
-        'name/cos:InitiateMultipartUpload',
-		// 分片上传： 查询 bucket 中未完成分片上传的UploadId
-        "name/cos:ListMultipartUploads",
-		// 分片上传： 查询已上传的分片
-        "name/cos:ListParts",
-		// 分片上传： 上传分片块
-        "name/cos:UploadPart",
-		// 分片上传： 完成分片上传
-        "name/cos:CompleteMultipartUpload"
-    )
-);
-
-//创建 sts
-$sts = new STS();
-
-// 获取临时密钥，计算签名
-$tempKeys = $sts->getTempKeys($config);
-
-echo json_encode($tempKeys);
-
-//方法二
-//设置策略 policy，可通过 STS 的 getPolicy($scopes)获取
-$actions=array('name/cos:PutObject'); // 简单上传
-$resources = array("qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/exampleobject"); // 设置可操作的资源路径前缀，根据实际情况进行设置
-
-$statements = array(array(
-		'action' => $actions,
-		'effect' => 'allow',
-		'resource' => $resources
-));
-$policy = array(
-'version'=> '2.0', 
-'statement' => $statements
-);
-
-// 配置参数
-$config = array(
-    'url' => 'https://sts.tencentcloudapi.com/',
-    'domain' => 'sts.tencentcloudapi.com',
-    //'proxy' => null,  //设置网络请求代理,若不需要设置，则为null
-    'secretId' => 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretId
-    'secretKey' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 云 API 密钥 secretKey
-    'policy' => $policy //策略
-    )
-);
-
-//创建 sts
-$sts = new STS();
-
-// 获取临时密钥，计算签名
-$tempKeys = $sts->getTempKeys($config);
-
-echo json_encode($tempKeys);
 ```
-
-### 返回结果
-
-成功的话，可以拿到包含密钥的 JSON 文本：
-
-```php
+创建composer.json的文件，内容如下：
 {
-    "credentials": {
-        "tmpSecretId": "AKIDEPMQB_Q9Jt2fJxXyIekOzKZzx-sdGQgBga4TzsUdTWL9xlvsjInOHhCYFqfoKOY4",
-        "tmpSecretKey": "W/3Lbl1YEW02mCoawIesl5kNehSskrSbp1cT1tgW70g=",
-        "sessionToken": "c6xnSYAxyFbX8Y50627y9AA79u6Qfucw6924760b61588b79fea4c277b01ba157UVdr_10Y30bdpYtO8CXedYZe3KKZ_DyzaPiSFfNAcbr2MTfAgwJe-dhYhfyLMkeCqWyTNF-rOdOb0rp4Gto7p4yQAKuIPhQhuDd77gcAyGakC2WXHVd6ZuVaYIXBizZxqIHAf4lPiLHa6SZejSQfa_p5Ip2U1cAdkEionKbrX97xTKTcA_5Pu525CFSzHZIQibc2uNMZ-IRdQp12MaXZB6bxM6nB4xXH45mDIlbIGjaAsrtRJJ3csmf82uBKaJrYQoguAjBepMH91WcH87LlW9Ya3emNfVX7NMRRf64riYd_vomGF0TLgan9smEKAOdtaL94IkLvVJdhLqpvjBjp_4JCdqwlFAixaTzGJHdJzpGWOh0mQ6jDegAWgRYTrJvc5caYTz7Vphl8XoX5wHKKESUn_vqyTAid32t0vNYE034FIelxYT6VXuetYD_mvPfbHVDIXaFt7e_O8hRLkFwrdAIVaUml1mRPvccv2qOWSXs"
-    },
-    "expiration": "2019-08-07T08:54:35Z",
-    "startTime": 1565166275,
-    "expiredTime": 1565168075
+    "require":{
+        "qcloud_sts/qcloud-sts-sdk": "3.0.*"
+    }
 }
 ```
 
+## 查看SDK源码
 
-### getPolicy
+PHP SDK 源码已迁移到 [COS STS PHP SDK](https://github.com/tencentyun/qcloud-cos-sts-php-sdk)。
 
-获取策略(policy)接口。本接口适用于接收 Web、iOS、Android 客户端 SDK 提供的 Scope 参数。推荐您把 Scope 参数放在请求的 Body 里面，通过 POST 方式传到后台。
+## 查看使用示例
 
-### 参数说明
+请查看 [demo 示例](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/php/demo)，里面描述了如何调用SDK。
 
-|字段|类型|描述|
-| ---- | ---- | ---- |
-|bucket|string| 存储桶名称：bucketName-appid, 如 test-125000000|
-|region|string| 存储桶所属地域，如 ap-guangzhou|
-|sourcePrefix|string|资源的前缀，如授予操作所有资源，则为`*`；如授予操作某个路径a下的所有资源,则为 `a/*`，如授予只能操作特定的文件a/test.jpg, 则为`a/test.jpg`|
-|action|string| 授予 COS API 权限，如简单上传操作 name/cos:PutObject |
-|scope|Scope| 构造policy的信息：由 action、bucket、region、sourcePrefix组成|
+### 返回数据示例
 
-### 返回值说明
-|字段|类型|描述|
-| ---- | ---- | ---- |
-|policy | array | 申请临时密钥所需的权限策略 |
-
-### 使用示例
-```php
-include 'sts.php'
-
-$scopes = array();
-array_push($scopes,new Scope("name/cos:PutObject", "example-1250000000", "ap-guangzhou", "/1.txt"));
-array_push($scopes, new Scope("name/cos:GetObject", "example-1250000000", "ap-guangzhou", "/exampleobject"));
-
-//创建 sts
-$sts = new STS();
-//获取policy
-$policy= $sts->getPolicy($scopes);
-echo str_replace('\\/', '/', json_encode($policy));
 ```
-### 返回结果
-```php
 {
-"version":"2.0",
-"statement":[
-	{
-		"action":["name/cos:PutObject"],
-		"effect":"allow",
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/1.txt"]
+	"expiredTime": 1589258683,
+	"expiration": "2020-05-12T04:44:43Z",
+	"credentials": {
+		"sessionToken": "Biypn6exa48PpMe7wFerEnNMpBKKPQo180c57e0a5275ebae506d7851a85f36a4P0TV5UFR3FYJjsoZA1tk6uRKoDRzc6-60BmwLqdS75OhjHEa7GlVYpL_ofKQJTpPKziKX7FnI10D_6qtLdjzf2NdsyUtQEd5kPpDCOQJZn9-BpleqWQe8oyH_2u7xi2f0FtjCYaoGIZ_lUqlILXQwr0B0t3hLfL4xNE-EmVjUlUXa16HxVCn4_hJetqo9LmI0AgLOjCbYx9aVrsV10eDsRta-TQSIXmJNP3aJ6oz8d8GBTgTE1I2qSFDnv9pjtQKW8HZWI_glPIfmHXCCwAESxEFL_owGz839Va0qYhF6LkfVmsuoU1zNcvJR1w3cIE6izV3SKHaOtWaew3IOervuOPoN3S2oYGNwv2EavtDAWyUBIeI7X6nMVzlpnyJ-3bkIhOq9QVIQAs8wh5A0u9mvKWugT5t6qgyEgvEZSj9k6p-JjwxMgLC6s5uK1i_nnf4fN7ZQ6I-JAfHnH4jEDiVtJgXqfuWPX_vnzskyR2Co6E",
+		"tmpSecretId": "AKIDTRPc-oe6c_avPSRwFVsPDyy3IoAr3szMajlOGuoEXY1232YLy6j4f-xZ5zL-NBMG",
+		"tmpSecretKey": "2v29SZztGYk6SGwHYm\/chJXdD3zPRFasmPoJiCmlR\/I="
 	},
-	{
-		"action":["name/cos:GetObject" ],
-		"effect":"allow",
-		"resource":["qcs::cos:ap-guangzhou:uid/12500000:example-1250000000/exampleobject" ]
-	}
-]
+	"requestId": "69ef6295-b981-464d-9816-9c2ef92189d1",
+	"startTime": 1589256883
 }
 ```

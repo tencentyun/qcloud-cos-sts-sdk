@@ -8,16 +8,7 @@
             "email": "wjielai@tencent.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../",
-            "options": {
-                "symlink": false
-            }
-        }
-    ],
     "require": {
-        "qcloud_sts/qcloud-sts-sdk": "dev-master"
+        "qcloud_sts/qcloud-sts-sdk": "3.0.*"
     }
 }
