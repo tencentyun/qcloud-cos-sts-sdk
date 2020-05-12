@@ -1,5 +1,9 @@
 <?php
-include '../sts/sts.php';
+require 'vendor/autoload.php';
+
+use QCloud\COSSTS\STS;
+use QCloud\COSSTS\Scope;
+
 $scope = new Scope("name/cos:PutObject", "test-12500000", "ap-guangzhou", "/exampleobject");
 echo $scope->get_action() . '|' . $scope->get_resource() . '<br>';
 $scopes = array();

@@ -1,5 +1,8 @@
 <?php
-include '../sts/sts.php';
+require 'vendor/autoload.php';
+
+use QCloud\COSSTS\STS;
+
 $sts = new STS();
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',

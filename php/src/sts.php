@@ -14,7 +14,7 @@ class STS{
 		ksort($obj);
 		$arr = array();
 		if(!is_array($obj)){
-			throw new Exception($obj + " must be a array");
+			throw new \Exception($obj + " must be a array");
 		}
 		foreach ($obj as $key => $val) {
 			array_push($arr, $key . '=' . ($notEncode ? $val : rawurlencode($val)));
@@ -31,7 +31,7 @@ class STS{
 	// v2接口的key首字母小写，v3改成大写，此处做了向下兼容
 	function backwardCompat($result) {
 		if(!is_array($result)){
-			throw new Exception($result + " must be a array");
+			throw new \Exception($result + " must be a array");
 		}
 		$compat = array();
 		foreach ($result as $key => $value) {
@@ -56,14 +56,14 @@ class STS{
 					$ShortBucketName = substr($config['bucket'],0, strripos($config['bucket'], '-'));
 					$AppId = substr($config['bucket'], 1 + strripos($config['bucket'], '-'));
 				}else{
-					throw new Exception("bucket== null");
+					throw new \Exception("bucket== null");
 				}
 				if(array_key_exists('allowPrefix', $config)){
 					if(!(strpos($config['allowPrefix'], '/') === 0)){
 					$config['allowPrefix'] = '/' . $config['allowPrefix'];
 					}
 				}else{
-					throw new Exception("allowPrefix == null");
+					throw new \Exception("allowPrefix == null");
 				}
 				$policy = array(
 					'version'=> '2.0',
@@ -86,7 +86,7 @@ class STS{
 			$Method = 'POST';
 			if(array_key_exists('durationSeconds', $config)){
 				if(!(is_integer($config['durationSeconds']))){
-					throw new exception("durationSeconds must be a int type");
+					throw new \Exception("durationSeconds must be a int type");
 				}
 			}
 			$params = array(
@@ -119,19 +119,19 @@ class STS{
 			if (isset($result['Response'])) {
 				$result = $result['Response'];
 				if(isset($result['Error'])){
-					throw new Exception("get cam failed");
+					throw new \Exception("get cam failed");
 				}
 				$result['startTime'] = $result['ExpiredTime'] - $config['durationSeconds'];
 			}
 			$result = $this->backwardCompat($result);
 			return $result;
-		}catch(Exception $e){
+		}catch(\Exception $e){
 			if($result == null){
 				$result = "error: " . + $e->getMessage();
 			}else{
 				$result = json_encode($result);
 			}
-			throw new Exception($result);
+			throw new \Exception($result);
 		}
 	}
 	
@@ -162,56 +162,5 @@ class STS{
 		);
 		return $policy;
 	}	
-}
-
-class Scope{
-	var $action;
-	var $bucket;
-	var $region;
-	var $resourcePrefix;
-	var $effect = 'allow';
-	function __construct($action, $bucket, $region, $resourcePrefix){
-		$this->action = $action;
-		$this->bucket = $bucket;
-		$this->region = $region;
-		$this->resourcePrefix = $resourcePrefix;
-	}
-	
-	function set_effect($isAllow){
-		if($isAllow){
-			$this->effect = 'allow';
-		}else{
-			$this->effect = 'deny';
-		}
-	}
-	
-	function get_action(){
-		if($this->action == null){
-			throw new Exception("action == null");
-		}
-		return $this->action;
-	}
-	
-	function get_resource(){
-		if($this->bucket == null){
-			throw new Exception("bucket == null");
-		}
-		if($this->resourcePrefix == null){
-			throw new Exception("resourcePrefix == null");
-		}
-		$index = strripos($this->bucket, '-');
-		if($index < 0){
-			throw new Exception("bucket is invalid: " + $this->bucket);
-		}
-		$appid = substr($this->bucket, $index + 1);
-		if(!(strpos($this->resourcePrefix, '/') === 0)){
-			$this->resourcePrefix = '/' . $this->resourcePrefix;
-		}
-		return 'qcs::cos:' . $this->region . ':uid/' . $appid . ':' . $this->bucket . $this->resourcePrefix;
-	}
-	
-	function get_effect(){
-		return $this->effect;
-	}
 }
 ?>
