@@ -24,5 +24,4 @@ scope 的格式是一个对象数组，格式说明如下：
 getCredential 和 getPolicy 其他字段详细说明可以看 [STS nodejs 接口文档](nodejs/README.md)
 
 以下是 server 例子：
-[sts nodejs scope demo](nodejs/sts-server-scope.js)
-其他语言有待完善，可以参考 ndoejs 例子逻辑自行实现
+[sts nodejs scope demo](nodejs/demo/sts-server-scope.js)

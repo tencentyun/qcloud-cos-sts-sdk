@@ -40,11 +40,16 @@
 目前我们提供了以下语言的 SDK，帮忙您快速在后台集成生成密钥的功能，您可以根据自己后台的架构自行选择：
 
 * Java
-* Nodejs
+* Node.js
 * PHP
 * Python
-* Ruby
+* Go
+* .NET
 
 #### 第二步：发布 Web API
 
 将您的服务以 Web API 的方式发布出去，这样您授权的客户端 App，如 Android、iOS，都可以通过标准的 HTTP 协议请求到临时密钥，访问 COS 服务。
+
+#### 高级功能
+
+您可以通过 `Scope` 的方式更细粒度的控制返回密钥的权限，详细请看 [细粒度控制权限](https://github.com/tencentyun/qcloud-cos-sts-sdk/blob/master/scope.md)。
