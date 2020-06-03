@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-use QCloud\COSSTS\STS;
+use QCloud\COSSTS\Sts;
 
-$sts = new STS();
+$sts = new Sts();
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
     'domain' => 'sts.tencentcloudapi.com',

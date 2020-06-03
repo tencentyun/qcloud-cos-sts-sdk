@@ -1,10 +1,10 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-use QCloud\COSSTS\STS;
+use QCloud\COSSTS\Sts;
 use QCloud\COSSTS\Scope;
 
-$sts = new STS();
+$sts = new Sts();
 $scopes = array();
 array_push($scopes, new Scope("name/cos:PutObject", "test-1253653367", "ap-guangzhou", "/exampleobject"));
 array_push($scopes, new Scope("name/cos:GetObject", "test-1253653367", "ap-guangzhou", "/1.txt"));
