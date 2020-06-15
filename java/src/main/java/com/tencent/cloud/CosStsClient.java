@@ -13,6 +13,7 @@ import java.util.TreeMap;
 public class CosStsClient {
 
     private static final int DEFAULT_DURATION_SECONDS = 1800;
+    private static final String STS_DEFAULT_HOST = "sts.tencentcloudapi.com";
 
     public static JSONObject getCredential(TreeMap<String, Object> config) throws IOException {
         TreeMap<String, Object> params = new TreeMap<String, Object>();
@@ -40,7 +41,10 @@ public class CosStsClient {
             params.put("SecretType", parameters.secretType);
         }
 
-        String host = "sts.tencentcloudapi.com";
+        String host = STS_DEFAULT_HOST;
+        if (parameters.host != null) {
+            host = parameters.host;
+        }
         String path = "/";
 
         String result = null;
@@ -157,7 +161,8 @@ public class CosStsClient {
     	String[] allowPrefixes;
     	String[] allowActions;
     	String policy;
-    	Integer secretType; // option argument, only can choose 0 or 1, 0 for long certificate, 1 for short certificate
+        Integer secretType; // option argument, only can choose 0 or 1, 0 for long certificate, 1 for short certificate
+        String host;
     	
     	public void parse(Map<String, Object> config) {
 			if(config == null) throw new NullPointerException("config == null");
@@ -183,6 +188,8 @@ public class CosStsClient {
 					allowActions = (String[]) entry.getValue();
 				}else if("secretType".equalsIgnoreCase(key)) {
 				    secretType = (Integer)entry.getValue();
+				}else if("host".equalsIgnoreCase(key)) {
+				    host = (String)entry.getValue();
 				}
 			}
 		}
