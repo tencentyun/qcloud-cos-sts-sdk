@@ -13,7 +13,7 @@ import java.util.TreeMap;
 public class CosStsClient {
 
     private static final int DEFAULT_DURATION_SECONDS = 1800;
-    private static final String STS_DEFAULT_HOST = "sts.tencentcloudapi.com";
+    public static final String STS_DEFAULT_HOST = "sts.tencentcloudapi.com";
 
     public static JSONObject getCredential(TreeMap<String, Object> config) throws IOException {
         TreeMap<String, Object> params = new TreeMap<String, Object>();
@@ -52,7 +52,7 @@ public class CosStsClient {
         try {
             result = Request.send(params, (String) parameters.secretId,
                     parameters.secretKey,
-                    "POST", host, path);
+                    "POST", host, STS_DEFAULT_HOST, path);
             jsonResult = new JSONObject(result);
             JSONObject data = jsonResult.optJSONObject("Response");
             if (data == null) {

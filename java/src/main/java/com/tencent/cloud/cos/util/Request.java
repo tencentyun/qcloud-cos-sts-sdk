@@ -81,7 +81,7 @@ public class Request {
 	}
 
 	public static String send(TreeMap<String, Object> params, String secretId,
-			String secretKey, String requestMethod, String requestHost,
+			String secretKey, String requestMethod, String requestHost, String stsHost,
 			String requestPath) {
 		if (!params.containsKey("SecretId"))
 			params.put("SecretId", secretId);
@@ -95,7 +95,7 @@ public class Request {
 
 		params.remove("Signature");
 		String plainText = Sign.makeSignPlainText(params, requestMethod,
-				requestHost, requestPath);
+				stsHost, requestPath);
 
 		String signatureMethod = "HmacSHA1";
 		if(params.containsKey("SignatureMethod") && params.get("SignatureMethod").toString().equals("HmacSHA256"))
