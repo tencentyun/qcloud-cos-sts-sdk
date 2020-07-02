@@ -35,7 +35,7 @@ npm i qcloud-cos-sts --save
 | ---- | ---- | ---- |
 | err | Object | 错误信息 |
 | data | Object | 返回的临时密钥内容 |
-| - startTime | Number | 密钥的起止时间，是 UNIX 时间戳 |
+| - startTime | Number | 密钥的起始时间，是 UNIX 时间戳 |
 | - expiredTime | Number | 密钥的失效时间，是 UNIX 时间戳 |
 | - credentials | String | 云API |
 | - - tmpSecretId | String | 临时密钥 Id，可用于计算签名 |
