@@ -45,6 +45,10 @@ public class CosStsClient {
         if (parameters.host != null) {
             host = parameters.host;
         }
+        String stsHost = STS_DEFAULT_HOST;
+        if (host.startsWith("sts.") && host.endsWith(".tencentcloudapi.com")) {
+            stsHost = host;
+        }
         String path = "/";
 
         String result = null;
@@ -52,7 +56,7 @@ public class CosStsClient {
         try {
             result = Request.send(params, (String) parameters.secretId,
                     parameters.secretKey,
-                    "POST", host, STS_DEFAULT_HOST, path);
+                    "POST", host, stsHost, path);
             jsonResult = new JSONObject(result);
             JSONObject data = jsonResult.optJSONObject("Response");
             if (data == null) {
