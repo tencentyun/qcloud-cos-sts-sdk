@@ -5,7 +5,7 @@
 <dependency>
     <groupId>com.tencent.cloud</groupId>
     <artifactId>cos-sts-java</artifactId>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
 </dependency>
 ```
 
@@ -41,7 +41,7 @@
 |tmpSecretId | String | 临时密钥 Id，可用于计算签名 |
 |tmpSecretKey | String | 临时密钥 Key，可用于计算签名 |
 |sessionToken | String | 请求时需要用的 token 字符串，最终请求 COS API 时，需要放在 Header 的 x-cos-security-token 字段 |
-|startTime | String | 密钥的起止时间，是 UNIX 时间戳 |
+|startTime | String | 密钥的起始时间，是 UNIX 时间戳 |
 |expiredTime | String | 密钥的失效时间，是 UNIX 时间戳 |
 
 ### 返回结果 credential
