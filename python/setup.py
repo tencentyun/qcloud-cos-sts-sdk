@@ -1,10 +1,8 @@
 # coding=utf-8
 from setuptools import setup, find_packages
-with open("README.md", "r", encoding='UTF-8') as fh: 
-    long_description = fh.read()
 setup(
     name='qcloud-python-sts',
-    version='3.0.0',
+    version='3.0.4',
     description='this is sts for python on v3',
     url='https://github.com/tencentyun/qcloud-cos-sts-sdk',
     author='qcloudterminal',

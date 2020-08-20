@@ -35,6 +35,8 @@ def test_sts():
     scopes.append(Scope('name/cos:CompleteMultipartUpload', 'example-1253653367', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:GetObject', 'example-1253653367', 'ap-guangzhou', '1/test.txt'))
     config = {
+        'sts_scheme': 'https',
+        'sts_url': 'sts.tencentcloudapi.com/',
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
         'secret_id': os.environ['COS_SECRET_ID'],

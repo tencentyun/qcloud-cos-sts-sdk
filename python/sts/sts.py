@@ -13,6 +13,8 @@ import base64
 import requests
 import random
 
+sts_url = 'https://sts.tencentcloudapi.com/'
+sts_domain = 'sts.tencentcloudapi.com'
 
 class Sts:
     secret_id = None
@@ -24,8 +26,8 @@ class Sts:
     allow_actions = None
     policy = None
     network_proxy = None
-    sts_url = 'sts.tencentcloudapi.com/'
-    sts_scheme = 'https'
+    url = sts_url
+    domain = sts_domain
 
     def __init__(self, config={}):
         self.parse_parameters(config)
@@ -55,6 +57,10 @@ class Sts:
                 self.allow_actions = config.get(key)
             elif "proxy" == key_lower:
                 self.network_proxy = config.get(key)
+            elif "url" == key_lower:
+                self.url = config.get(key)
+            elif "domain" == key_lower:
+                self.domain = config.get(key)
         if not isinstance(self.duration_seconds, int):
             raise ValueError('duration_seconds must be int type')
         # 若是policy 为空，则 bucket he resource_prefix 不为空
@@ -130,11 +136,10 @@ class Sts:
             'Policy': policy_encode,
             'Region': self.region
         }
-        data['Signature'] = self.__encrypt('POST', self.sts_url, data)
+        data['Signature'] = self.__encrypt('POST', self.domain, data)
         result_json = None
         try:
-            url = self.sts_scheme + '://' + self.sts_url
-            response = requests.post(url, proxies=self.network_proxy, data=data)
+            response = requests.post(self.url, proxies=self.network_proxy, data=data)
             result_json = response.json()
 
             if isinstance(result_json['Response'], dict):
@@ -149,9 +154,9 @@ class Sts:
                 raise Exception("result: " + result, e)
             raise Exception("result: " + result, e)
 
-    def __encrypt(self, method, url, key_values):
+    def __encrypt(self, method, domain, key_values):
         source = Tools.flat_params(key_values)
-        source = method + url + '?' + source
+        source = method + domain + '/?' + source
         try:
             key = bytes(self.secret_key) # Python 2.X
             source = bytes(source)

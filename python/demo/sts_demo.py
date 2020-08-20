@@ -9,6 +9,8 @@ from sts.sts import Sts
 if __name__ == '__main__':
 
     config = {
+        'url': 'https://sts.tencentcloudapi.com/',
+        'domain': 'sts.tencentcloudapi.com',
         # 临时密钥有效时长，单位是秒
         'duration_seconds': 1800,
         'secret_id': os.environ['COS_SECRET_ID'],

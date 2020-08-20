@@ -41,10 +41,12 @@ public class CosStsClient {
             params.put("SecretType", parameters.secretType);
         }
 
+        // 请求的 Host
         String host = STS_DEFAULT_HOST;
         if (parameters.host != null) {
             host = parameters.host;
         }
+        // 签名的 Host
         String stsHost = STS_DEFAULT_HOST;
         if (host.startsWith("sts.") && host.endsWith(".tencentcloudapi.com")) {
             stsHost = host;

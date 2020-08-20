@@ -1,0 +1,18 @@
+{
+    "name": "sts/demo",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "wjielai",
+            "email": "wjielai@tencent.com"
+        }
+    ],
+    "repositories": [{
+        "type": "path",
+        "url": "/Users/wjielai/Workspace/qcloud-cos-sts-php-sdk"
+    }],
+    "require": {
+        "qcloud_sts/qcloud-sts-sdk": "dev-test"
+    }
+}

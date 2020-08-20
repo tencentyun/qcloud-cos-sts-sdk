@@ -23,7 +23,9 @@ namespace COSSTS
 
             ClientProfile clientProfile = new ClientProfile();
             HttpProfile httpProfile = new HttpProfile();
-            httpProfile.Endpoint = ("sts.tencentcloudapi.com");
+            String endpoint = values.ContainsKey("Domain") ? (string) values["Domain"]: 
+                "sts.tencentcloudapi.com";
+            httpProfile.Endpoint = endpoint;
             clientProfile.HttpProfile = httpProfile;
 
             // get policy
