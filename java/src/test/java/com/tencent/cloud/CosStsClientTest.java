@@ -1,5 +1,6 @@
 package com.tencent.cloud;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -118,6 +119,66 @@ public class CosStsClientTest {
              throw new IllegalArgumentException("no valid secret !");
          }
     	
+    }
+
+    @Test
+    public void testGetCredential3() {
+        TreeMap<String, Object> config = new TreeMap<String, Object>();
+
+        try {
+            Properties properties = new Properties();
+            File configFile = new File("local.properties");
+            properties.load(new FileInputStream(configFile));
+
+            // 云 api 密钥 SecretId
+            config.put("secretId", properties.getProperty("SecretId"));
+            // 云 api 密钥 SecretKey
+            config.put("secretKey", properties.getProperty("SecretKey"));
+
+            if (properties.containsKey("https.proxyHost")) {
+                System.setProperty("https.proxyHost", properties.getProperty("https.proxyHost"));
+                System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
+            }
+
+            // 生成 policy
+            JSONObject policy = new JSONObject();
+            policy.put("version", "2.0");
+
+            JSONArray statements = new JSONArray();
+            JSONObject statement = new JSONObject();
+            statement.put("effect", "allow");
+            statement.put("action", new String[] {
+                    "name/cos:PutObject",
+                    "name/cos:PostObject",
+                    // 分片上传
+                    "name/cos:InitiateMultipartUpload",
+                    "name/cos:ListMultipartUploads",
+                    "name/cos:ListParts",
+                    "name/cos:UploadPart",
+                    "name/cos:CompleteMultipartUpload"
+            });
+            statement.put("resource", new String[] {
+                    String.format("qcs::cos:%s:uid/%s:%s%s",
+                            "ap-beijing", "1253653367", "123123123-1253653367", "exampleObject")
+            });
+            statements.put(statement);
+
+            policy.put("statement", statements);
+
+            // 临时密钥有效时长，单位是秒
+            config.put("durationSeconds", 1800);
+            // 换成 bucket 所在地区
+            config.put("region", "ap-beijing");
+
+            // Policy
+            config.put("policy", policy.toString());
+
+            JSONObject credential = CosStsClient.getCredential(config);
+            System.out.println(credential.toString(4));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("no valid secret !");
+        }
     }
 
 }
