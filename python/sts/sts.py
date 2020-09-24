@@ -34,7 +34,7 @@ class Sts:
 
     def parse_parameters(self, config):
         if not isinstance(config, dict):
-            raise ValueError("config is not dict")
+            raise ValueError("Error: config is not dict")
         keys = config.keys()
         resource_prefix = None
         for key in keys:
@@ -61,17 +61,23 @@ class Sts:
                 self.url = config.get(key)
             elif "domain" == key_lower:
                 self.domain = config.get(key)
+        if not self.secret_id:
+            raise ValueError('Error: secret_id is none')
+        if not self.secret_key:
+            raise ValueError('Error: secret_key is none')
         if not isinstance(self.duration_seconds, int):
-            raise ValueError('duration_seconds must be int type')
+            raise ValueError('Error: duration_seconds must be int type')
         # 若是policy 为空，则 bucket he resource_prefix 不为空
         if self.policy is None:
-            if self.bucket is None:
-                raise ValueError('bucket == None')
-            if resource_prefix is None:
-                raise ValueError("resource_prefix == None")
+            if not self.region:
+                raise ValueError('Error: region == none')
+            if not self.bucket:
+                raise ValueError('Error: bucket == None')
+            if not resource_prefix:
+                raise ValueError("Error: resource_prefix == None")
             split_index = self.bucket.rfind('-')
             if split_index < 0:
-                raise ValueError('bucket is invalid: ' + self.bucket)
+                raise ValueError('Error: bucket is invalid: ' + self.bucket)
             appid = str(self.bucket[(split_index + 1):]).strip()
             if not str(resource_prefix).startswith('/'):
                 resource_prefix = '/' + resource_prefix

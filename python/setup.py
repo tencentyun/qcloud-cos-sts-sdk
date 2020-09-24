@@ -1,12 +1,12 @@
 # coding=utf-8
 from setuptools import setup, find_packages
 
-with open("README.md", "r", encoding="utf-8") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name='qcloud-python-sts',
-    version='3.0.4',
+    version='3.0.5',
     description='this is sts for python on v3',
     long_description=long_description,
     long_description_content_type="text/markdown",

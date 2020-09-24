@@ -75,5 +75,21 @@ namespace Tests
             TestContext.Progress.WriteLine(policy);
             Assert.NotNull(policy);
         }
+
+        [Test()]
+        public void testTimeStamp()
+        {
+            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1, 0, 0, 0, 0));
+            TestContext.Progress.WriteLine(startTime);
+            DateTime nowTime = DateTime.Now;
+            TestContext.Progress.WriteLine(nowTime);
+            long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+            TestContext.Progress.WriteLine(unixTime);
+            TestContext.Progress.WriteLine("==============");
+
+            DateTimeOffset expiresAtOffset = DateTimeOffset.Now;
+            var totalSeconds = expiresAtOffset.ToUnixTimeMilliseconds();
+            TestContext.Progress.WriteLine(totalSeconds);
+        }
     }
 }
