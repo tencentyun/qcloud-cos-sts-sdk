@@ -53,7 +53,7 @@ type CredentialResult struct {
 	Credentials *Credentials     `json:"Credentials,omitempty"`
 	ExpiredTime int              `json:"ExpiredTime,omitempty"`
 	Expiration  string           `json:"Expiration,omitempty"`
-	StartTime   int              `json:"-,omitempty"`
+	StartTime   int              `json:"StartTime,omitempty"`
 	RequestId   string           `json:"RequestId,omitempty"`
 	Error       *CredentialError `json:"Error,omitempty"`
 }
