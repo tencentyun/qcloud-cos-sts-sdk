@@ -64,8 +64,7 @@ namespace COSSTS
 
             string strParams = JsonConvert.SerializeObject(body);
             req = GetFederationTokenRequest.FromJsonString<GetFederationTokenRequest>(strParams);
-            GetFederationTokenResponse resp = client.GetFederationToken(req).
-                ConfigureAwait(false).GetAwaiter().GetResult();
+            GetFederationTokenResponse resp = client.GetFederationTokenSync(req);
             string jsonString = JsonConvert.SerializeObject(resp);
             Dictionary<string, object> dic = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
             if (dic.ContainsKey("ExpiredTime")) {
