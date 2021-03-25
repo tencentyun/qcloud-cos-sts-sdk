@@ -37,7 +37,7 @@ var util = {
                 compat[this.lowerFirstLetter(key)] = data[key];
             }
         }
-          
+
         return compat;
     },
     lowerFirstLetter: function (source) {
@@ -46,7 +46,7 @@ var util = {
 };
 
 // 拼接获取临时密钥的参数
-var getCredential = function (options, callback) {
+var _getCredential = function (options, callback) {
 
     if (options.durationInSeconds !== undefined) {
         console.warn('warning: durationInSeconds has been deprecated, Please use durationSeconds ).');
@@ -103,10 +103,19 @@ var getCredential = function (options, callback) {
                 } catch (e) {
                     callback(new Error(`Parse Response Error: ${JSON.stringify(data)}`))
                 }
-            } 
+            }
         } else {
             callback(err || body);
         }
+    });
+};
+
+var getCredential = (opt, callback) => {
+    if (callback) return _getCredential(opt, callback);
+    return new Promise((resolve, reject) => {
+        _getCredential(opt, (err, data) => {
+            err ? reject(err) : resolve(data);
+        });
     });
 };
 
