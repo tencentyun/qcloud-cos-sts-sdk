@@ -21,6 +21,8 @@ namespace demo
                 "name/cos:UploadPart",
                 "name/cos:CompleteMultipartUpload"
             };
+            // Demo 这里是从环境变量读取，如果是直接硬编码在代码中，请参考：
+            // string secretId = "AKIDXXXXXXXXX";
             string secretId = Environment.GetEnvironmentVariable("COS_KEY"); // 云 API 密钥 Id
             string secretKey = Environment.GetEnvironmentVariable("COS_SECRET"); // 云 API 密钥 Key
 
@@ -43,7 +45,7 @@ namespace demo
 
             // Credentials = {
             //   "Token": "4oztDXOAAI3c6qUE5TkNuVzSP1tUQz15f3f946eb08f9411d3d61505cc4bc74cczCZLchkvRmmrqzE09ELVw35gzYlBXsQp03PBpL79ubLvoAMWbBgSMmI6eApmhqv7NFeDdKJlikVe0fNCU2NNUe7cHrgttfTIK87ZnC86kww-HysFgIGeBNWpwo4ih0lV0z9a2WiTIjPoeDBwPU4YeeAVQAGPnRgHALoL2FtxNsutFzDjuryRZDK7Am4Cs9YxpZHhG7_F_II6363liKNsHTk8ONRZrNxKiOqvFvyhsJ-oTTUg0I0FT4_xo0lq5zR9yyySXHbE7z-2im4rgnK3sBagN47zkgltJyefJmaPUdDgGmvaQBO6TqxiiszOsayS7CxCZK1yi90H2KS3xRUYTLf94aVaZlufrIwntXIXZaHOKHmwuZuXl7HnHoXbfg_YENoLP6JAkDCw0GOFEGNOrkCuxRtcdJ08hysrwBw1hmYawDHkbyxYkirY-Djg7PswiC4_juBvG0iwjzVwE0W_rhxIa7YtamLnZJxQk9dyzbbl0F4DTYwS101Hq9wC7jtifkXFjBFTGRnfPe85K-hEnJLaEy7eYfulIPI9QiIUxi4BLPbzjD9j3qJ4Wdt5oqk9XcF9y5Ii2uQx1eymNl7qCA",
-            //   "TmpSecretId": "AKIDjjyp4_pAix_hgxv5WsXk72GGk8edXeWpH4NXerPA5ZLxJzr8Z_TGSnjXM42--qXI",
+            //   "TmpSecretId": "xxxxxxxxxxxx",
             //   "TmpSecretKey": "PZ/WWfPZFYqahPSs8URUVMc8IyJH+T24zdn8V1cZaMs="
             // }
             // ExpiredTime = 1597916602
