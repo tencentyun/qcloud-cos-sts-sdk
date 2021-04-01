@@ -66,6 +66,7 @@ type Client struct {
 	client    *http.Client
 	SecretId  string
 	SecretKey string
+	Host      string
 }
 
 func NewClient(secretId, secretKey string, hc *http.Client) *Client {
@@ -76,8 +77,13 @@ func NewClient(secretId, secretKey string, hc *http.Client) *Client {
 		client:    hc,
 		SecretId:  secretId,
 		SecretKey: secretKey,
+		Host:      kHost,
 	}
 	return c
+}
+
+func (c *Client) SetHost(host string) {
+	c.Host = host
 }
 
 func makeFlat(params map[string]interface{}) string {
@@ -95,7 +101,7 @@ func makeFlat(params map[string]interface{}) string {
 }
 
 func (c *Client) signed(method string, params map[string]interface{}) string {
-	source := method + kHost + "/?" + makeFlat(params)
+	source := method + c.Host + "/?" + makeFlat(params)
 
 	hmacObj := hmac.New(sha1.New, []byte(c.SecretKey))
 	hmacObj.Write([]byte(source))
@@ -141,7 +147,7 @@ func (c *Client) GetCredential(opt *CredentialOptions) (*CredentialResult, error
 	sign := c.signed("POST", params)
 	paramValues.Add("Signature", sign)
 
-	urlStr := "https://" + kHost
+	urlStr := "https://" + c.Host
 	resp, err := c.client.PostForm(urlStr, paramValues)
 	if err != nil {
 		return nil, err

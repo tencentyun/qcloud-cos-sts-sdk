@@ -15,6 +15,8 @@ func main() {
 		os.Getenv("COS_SECRETKEY"),
 		nil,
 	)
+	// 设置域名, 默认域名sts.tencentcloudapi.com
+	// c.SetHost("")
 	opt := &sts.CredentialOptions{
 		DurationSeconds: int64(time.Hour.Seconds()),
 		Region:          "ap-guangzhou",
