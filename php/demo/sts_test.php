@@ -6,7 +6,7 @@ use QCloud\COSSTS\Sts;
 $sts = new Sts();
 $config = array(
     'url' => 'https://sts.tencentcloudapi.com/',
-    'domain' => 'sts.tencentcloudapi.com',
+    'domain' => 'sts.tencentcloudapi.com', // 域名，非必须，默认为 sts.tencentcloudapi.com
     'proxy' => '',
     'secretId' => getenv('GROUP_SECRET_ID'), // 固定密钥
     'secretKey' => getenv('GROUP_SECRET_KEY'), // 固定密钥

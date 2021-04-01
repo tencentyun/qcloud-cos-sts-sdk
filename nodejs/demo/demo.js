@@ -5,6 +5,7 @@ var config = {
     secretId: process.env.GROUP_SECRET_ID,   // 固定密钥
     secretKey: process.env.GROUP_SECRET_KEY,  // 固定密钥
     proxy: '',
+    host: 'sts.tencentcloudapi.com', // 域名，非必须，默认为 sts.tencentcloudapi.com
     durationSeconds: 1800,  // 密钥有效期
     // 放行判断相关参数
     bucket: 'test-bucket-1253653367', // 换成你的 bucket
