@@ -48,8 +48,17 @@
 
 #### 第二步：发布 Web API
 
-将您的服务以 Web API 的方式发布出去，这样您授权的客户端 App，如 Android、iOS，都可以通过标准的 HTTP 协议请求到临时密钥，访问 COS 服务。
+将您的服务以 Web API 的方式发布出去，这样您授权的客户端 App，如 Android、iOS，Web端，都可以通过标准的 HTTP 协议请求到临时密钥，访问 COS 服务。
 
 #### 高级功能
 
 您可以通过 `Scope` 的方式更细粒度的控制返回密钥的权限，详细请看 [细粒度控制权限](https://github.com/tencentyun/qcloud-cos-sts-sdk/blob/master/scope.md)。
+
+#### 其他语言
+
+如果您需要其他语言的 SDK，可以参考社区提供的版本。
+
+| 语言      | 作者 |  仓库 | 
+| ----------- | ----------- |----------- |
+| elixir   | @scottming        |[scottming/qcloud_cos_sts](https://github.com/scottming/qcloud_cos_sts)        |
+
