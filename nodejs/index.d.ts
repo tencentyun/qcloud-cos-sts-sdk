@@ -65,7 +65,7 @@ export interface PolicyDescription {
 }
 
 export interface PolicyStatement {
-  action: string;
+  action: string | string[];
   effect: 'allow';
   principal: { qcs: '*' };
   resource: string;
