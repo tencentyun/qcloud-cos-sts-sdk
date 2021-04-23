@@ -47,7 +47,7 @@ export function getCredential(options: GetCredentialOptions, callback: (err: Obj
 /** 表示当客户端的请求，最少需要什么样的权限，是一个键值对象 */
 export interface CosPolicyScope {
   /** 操作名称，如 `"name/cos:PutObject"` */
-  action: string;
+  action: string | string[];
 
   /** 存储桶名称，格式：`test-1250000000` */
   bucket: string;
