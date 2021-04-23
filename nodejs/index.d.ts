@@ -1,6 +1,6 @@
 export interface GetCredentialOptions {
   /** 云 API 密钥 Id */
-  secretId: number;
+  secretId: string;
 
   /** 云 API 密钥 Key */
   secretKey: string;
