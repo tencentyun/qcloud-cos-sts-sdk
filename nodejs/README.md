@@ -8,7 +8,7 @@ npm i qcloud-cos-sts --save
 
 ## 调用示例
 
-请查看 [demo](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/nodejs/src/test) 里的示例。
+请查看 [demo](https://github.com/tencentyun/qcloud-cos-sts-sdk/blob/master/nodejs/demo/demo.js) 里的示例。
 
 ## 接口说明
 
