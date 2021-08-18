@@ -1,21 +1,20 @@
 package com.tencent.cloud;
 
-import com.tencent.cloud.cos.util.Request;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.tencent.cloud.cos.util.Jackson;
+import com.tencent.cloud.cos.util.Request;
 
 public class CosStsClient {
 
     private static final int DEFAULT_DURATION_SECONDS = 1800;
     public static final String STS_DEFAULT_HOST = "sts.tencentcloudapi.com";
 
-    public static JSONObject getCredential(TreeMap<String, Object> config) throws IOException {
+    public static Response getCredential(TreeMap<String, Object> config) throws IOException {
         TreeMap<String, Object> params = new TreeMap<String, Object>();
         Parameters parameters = new Parameters();
         parameters.parse(config);
@@ -27,7 +26,7 @@ public class CosStsClient {
         if (policy != null) {
             params.put("Policy", policy);
         } else {
-            params.put("Policy", getPolicy(parameters).toString());
+            params.put("Policy", getPolicy(parameters));
         }
         
         params.put("DurationSeconds", parameters.duration);
@@ -54,27 +53,35 @@ public class CosStsClient {
         String path = "/";
 
         String result = null;
-        JSONObject jsonResult = null;
+        JsonNode jsonResult = null;
         try {
             result = Request.send(params, (String) parameters.secretId,
                     parameters.secretKey,
                     "POST", host, stsHost, path);
-            jsonResult = new JSONObject(result);
-            JSONObject data = jsonResult.optJSONObject("Response");
+            jsonResult = Jackson.jsonNodeOf(result);
+            JsonNode data = jsonResult.get("Response");
             if (data == null) {
                 data = jsonResult;
             }
-            long expiredTime = data.getLong("ExpiredTime");
-            data.put("startTime", expiredTime - parameters.duration);
-            return downCompat(data);
+
+            Response response = Jackson.fromJsonString(data.toString(), Response.class);
+            long expiredTime = data.get("ExpiredTime").asLong();
+            response.startTime = expiredTime - parameters.duration;
+
+            if (response.credentials.token != null) {
+                response.credentials.sessionToken = response.credentials.token;
+                response.credentials.token = null;
+            }
+
+            return response;
         } catch (Exception e) {
             if (jsonResult != null) {
-                JSONObject response = jsonResult.optJSONObject("Response");
+                JsonNode response = jsonResult.get("Response");
                 if (response != null) {
-                    JSONObject error = response.optJSONObject("Error");
+                    JsonNode error = response.get("Error");
                     if (error != null) {
-                        String message = error.optString("Message");
-                        String code = error.optString("Code");
+                        String message = error.get("Message").asText();
+                        String code = error.get("Code").asText();
                         if ("InvalidParameterValue".equals(code) && message != null && message.contains("Region")) {
                             // Region is not recognized
                             if (RegionCodeFilter.block(region)) {
@@ -87,36 +94,31 @@ public class CosStsClient {
             throw new IOException("result = " + result, e);
         }
     }
-    
+
     public static String getPolicy(List<Scope> scopes) {
-    	if(scopes == null || scopes.size() == 0)return null;
-    	STSPolicy stsPolicy = new STSPolicy();
-    	stsPolicy.addScope(scopes);
-    	return stsPolicy.toString();
-    }
+        if(scopes == null || scopes.size() == 0) return null;
 
-    // v2接口的key首字母小写，v3改成大写，此处做了向下兼容
-    private static JSONObject downCompat(JSONObject resultJson) {
-        JSONObject dcJson = new JSONObject();
+        Policy policy = new Policy();
+        policy.setVersion("2.0");
 
-        for (String key : resultJson.keySet()) {
-            Object value = resultJson.get(key);
-            if (value instanceof JSONObject) {
-                dcJson.put(headerToLowerCase(key), downCompat((JSONObject) value));
-            } else {
-                String newKey = "Token".equals(key) ? "sessionToken" : headerToLowerCase(key);
-                dcJson.put(newKey, resultJson.get(key));
-            }
+        for (Scope scope: scopes) {
+            Statement statement = new Statement();
+            statement.setEffect(scope.getEffect());
+            statement.addAction(scope.getAction());
+            statement.addResource(scope.getResource());
+
+            policy.addStatement(statement);
         }
 
-        return dcJson;
+        return Jackson.toJsonPrettyString(policy);
     }
 
-    private static String headerToLowerCase(String source) {
-        return Character.toLowerCase(source.charAt(0)) + source.substring(1);
-    }
-
-    private static JSONObject getPolicy(Parameters parameters) {
+    /**
+     * construct policy string from parameters.
+     * @param parameters
+     * @return
+     */
+    static String getPolicy(Parameters parameters) {
         if(parameters.bucket == null) {
             throw new IllegalArgumentException("bucket == null");
         }
@@ -126,39 +128,36 @@ public class CosStsClient {
         if(parameters.region == null) {
             throw new IllegalArgumentException("region == null");
         }
+
+        Statement statement = new Statement();
+        statement.setEffect("allow");
+
+        for (String action : parameters.allowActions) {
+            statement.addAction(action);
+        }
+
         String bucket = parameters.bucket;
         String region = parameters.region;
-
         int lastSplit = bucket.lastIndexOf("-");
         String appId = bucket.substring(lastSplit + 1);
-
-        String[] allowPrefixes = parameters.allowPrefixes;
-        List<String> resources = new ArrayList<String>(allowPrefixes.length);
-        for (String prefix : allowPrefixes) {
+        for (String prefix : parameters.allowPrefixes) {
             String p = prefix;
             if(!p.startsWith("/")) {
                 p = "/" + p;
             }
             String resource = String.format("qcs::cos:%s:uid/%s:%s%s",
                     region, appId, bucket, p);
-            resources.add(resource);
+            statement.addResource(resource);;
         }
 
-        JSONObject policy = new JSONObject();
-        policy.put("version", "2.0");
+        Policy policy = new Policy();
+        policy.setVersion("2.0");
+        policy.addStatement(statement);
 
-        JSONArray statements = new JSONArray();
-        JSONObject statement = new JSONObject();
-        statement.put("effect", "allow");
-        statement.put("action", parameters.allowActions);
-        statement.put("resource", resources.toArray(new String[0]));
-        statements.put(statement);
-
-        policy.put("statement", statements);
-        return policy;
+        return Jackson.toJsonPrettyString(policy);
     }
     
-    private static class Parameters{
+    static class Parameters{
     	String secretId;
     	String secretKey;
     	int duration = DEFAULT_DURATION_SECONDS;

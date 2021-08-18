@@ -5,7 +5,7 @@
 <dependency>
     <groupId>com.tencent.cloud</groupId>
     <artifactId>cos-sts-java</artifactId>
-    <version>3.0.8</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 
