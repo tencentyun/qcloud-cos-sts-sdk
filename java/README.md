@@ -3,8 +3,8 @@
 	
 ```xml
 <dependency>
-    <groupId>com.tencent.cloud</groupId>
-    <artifactId>cos-sts-java</artifactId>
+    <groupId>com.qcloud</groupId>
+    <artifactId>cos-sts_api</artifactId>
     <version>3.1.0</version>
 </dependency>
 ```

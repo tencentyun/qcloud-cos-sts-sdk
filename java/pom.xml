@@ -4,16 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tencent.cloud</groupId>
-    <artifactId>cos-sts-java</artifactId>
+    <groupId>com.qcloud</groupId>
+    <artifactId>cos-sts_api</artifactId>
     <version>3.1.0</version>
     <packaging>jar</packaging>
-    <name>cos-sts-java</name>
+    <name>cos-sts-java-sdk</name>
     <description>sts java sdk for qcloud cos</description>
     <url>https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/java</url>
     <licenses>
         <license>
-            <name>cos-sts-java</name>
+            <name>cos-sts-java-sdk</name>
             <url>https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/java</url>
         </license>
     </licenses>
@@ -58,12 +58,12 @@
     <distributionManagement>
         <repository>
             <id>oss</id>
-            <name>cos-sts-java</name>
+            <name>cos-sts_api</name>
             <url> https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
             <id>oss</id>
-            <name>cos-sts-java</name>
+            <name>cos-sts_api</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
