@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/tencentyun/qcloud-cos-sts-sdk/go"
+	"io/ioutil"
 	"os"
 	"time"
 )
@@ -36,10 +37,20 @@ func main() {
 			},
 		},
 	}
+	// case 1 请求临时密钥
 	res, err := c.GetCredential(opt)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("%+v\n", res)
 	fmt.Printf("%+v\n", res.Credentials)
+
+	// case 2 发起临时密钥请求，需自行解析密钥，自行判断临时密钥是否请求成功
+	resp, err := c.RequestCredential(opt)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	bs, _ := ioutil.ReadAll(resp.Body)
+	fmt.Printf("body:%v\n", string(bs))
 }
