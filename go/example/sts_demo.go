@@ -24,9 +24,17 @@ func main() {
 		Policy: &sts.CredentialPolicy{
 			Statement: []sts.CredentialPolicyStatement{
 				{
+					// 密钥的权限列表。简单上传和分片需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
 					Action: []string{
+						// 简单上传
 						"name/cos:PostObject",
 						"name/cos:PutObject",
+						// 分片上传
+						"name/cos:InitiateMultipartUpload",
+						"name/cos:ListMultipartUploads",
+						"name/cos:ListParts",
+						"name/cos:UploadPart",
+						"name/cos:CompleteMultipartUpload",
 					},
 					Effect: "allow",
 					Resource: []string{
