@@ -5,7 +5,7 @@ use QCloud\COSSTS\Sts;
 
 $sts = new Sts();
 $config = array(
-    'url' => 'https://sts.tencentcloudapi.com/',
+    'url' => 'https://sts.tencentcloudapi.com/', // url和domain保持一致
     'domain' => 'sts.tencentcloudapi.com', // 域名，非必须，默认为 sts.tencentcloudapi.com
     'proxy' => '',
     'secretId' => getenv('GROUP_SECRET_ID'), // 固定密钥,若为明文密钥，请直接以'xxx'形式填入，不要填写到getenv()函数中
@@ -30,5 +30,5 @@ $config = array(
 
 // 获取临时密钥，计算签名
 $tempKeys = $sts->getTempKeys($config);
-echo json_encode($tempKeys)
-?>
+echo json_encode($tempKeys);
+
