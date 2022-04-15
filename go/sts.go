@@ -230,7 +230,7 @@ func (c *Client) RequestCredential(opt *CredentialOptions) (*http.Response, erro
 	return c.sendRequest(params)
 }
 
-func (c Client) GetRoleCredential(opt *CredentialOptions) (*CredentialResult, error) {
+func (c *Client) GetRoleCredential(opt *CredentialOptions) (*CredentialResult, error) {
 	if opt == nil || opt.RoleArn == "" || opt.RoleSessionName == "" {
 		return nil, errors.New("CredentialOptions is illegal")
 	}
