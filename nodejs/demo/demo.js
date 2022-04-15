@@ -6,6 +6,7 @@ var config = {
     secretKey: process.env.GROUP_SECRET_KEY,  // 固定密钥
     proxy: '',
     host: 'sts.tencentcloudapi.com', // 域名，非必须，默认为 sts.tencentcloudapi.com
+    endpoint: 'sts.internal.tencentcloudapi.com', // 域名，非必须，与host二选一，默认为 sts.tencentcloudapi.com
     durationSeconds: 1800,  // 密钥有效期
     // 放行判断相关参数
     bucket: 'test-bucket-1253653367', // 换成你的 bucket
@@ -47,8 +48,8 @@ var policy = {
         proxy: config.proxy,
         durationSeconds: config.durationSeconds,
         region: config.region,
+        endpoint: config.endpoint,
         policy: policy,
-        endpoint: 'sts.internal.tencentcloudapi.com', // 支持使用内网域名，可选
     }, function (err, credential) {
         console.log('getCredential:');
         console.log(JSON.stringify(policy, null, '    '));
@@ -59,15 +60,15 @@ var policy = {
 // getRoleCredential
 // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
 (function () {
-  STS.getCredential({
+  STS.getRoleCredential({
       secretId: config.secretId,
       secretKey: config.secretKey,
       proxy: config.proxy,
       durationSeconds: config.durationSeconds,
       region: config.region,
+      endpoint: config.endpoint,
       policy: policy,
       roleArn: 'qcs::cam::uin/12345678:roleName/testRoleName', // 文档指引：https://cloud.tencent.com/document/product/1312/48197
-      endpoint: 'sts.internal.tencentcloudapi.com', // 支持使用内网域名，可选
   }, function (err, credential) {
       console.log('getRoleCredential:');
       console.log(JSON.stringify(policy, null, '    '));
