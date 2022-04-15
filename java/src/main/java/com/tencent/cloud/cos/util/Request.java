@@ -189,6 +189,7 @@ public class Request {
 			}
 
 			// 建立实际的连接
+//			System.out.println("request: url:" + url + ", METHOD: " + requestMethod + ", param:" + paramStr);
 			connection.connect();
 
 			// 定义 BufferedReader输入流来读取URL的响应

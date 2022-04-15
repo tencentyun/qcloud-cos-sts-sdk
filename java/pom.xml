@@ -6,7 +6,7 @@
 
     <groupId>com.qcloud</groupId>
     <artifactId>cos-sts_api</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <packaging>jar</packaging>
     <name>cos-sts-java-sdk</name>
     <description>sts java sdk for qcloud cos</description>
