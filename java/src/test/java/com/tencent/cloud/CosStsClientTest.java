@@ -67,7 +67,9 @@ public class CosStsClientTest {
             config.put("allowActions", allowActions);
 
             Response response = CosStsClient.getCredential(config);
-            System.out.println(Jackson.toJsonPrettyString(response));
+            System.out.println(response.credentials.tmpSecretId);
+            System.out.println(response.credentials.tmpSecretKey);
+            System.out.println(response.credentials.sessionToken);
         } catch (Exception e) {
         	    e.printStackTrace();
             throw new IllegalArgumentException("no valid secret !");
@@ -158,7 +160,7 @@ public class CosStsClientTest {
             // 添加一批资源路径
             // 一条资源的规则是：qcs::cos:<REGION>:uid/<APPID>:<BUCKET-APPID>/<OBJECT>
             statement.addResources(new String[] {
-                    String.format("qcs::cos:%s:uid/%s:%s%s",
+                    String.format("qcs::cos:%s:uid/%s:%s/%s",
                             "ap-chengdu", "1251668577", "sts-sdk-test-1251668577", "exampleObject")
             });
 
