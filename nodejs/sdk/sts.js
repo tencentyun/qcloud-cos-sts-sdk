@@ -87,7 +87,7 @@ var _getCredential = function (options, callback) {
 
     var opt = {
         method: method,
-        url: StsUrl.replace('{host}', host || endpoint),
+        url: StsUrl.replace('{host}', endpoint),
         strictSSL: false,
         json: true,
         form: params,
