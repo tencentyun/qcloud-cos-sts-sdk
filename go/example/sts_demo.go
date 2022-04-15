@@ -15,9 +15,8 @@ func main() {
 		os.Getenv("COS_SECRETID"),
 		os.Getenv("COS_SECRETKEY"),
 		nil,
+		// sts.Host("sts.tencentcloudapi.com"), // 设置域名, 默认域名sts.tencentcloudapi.com
 	)
-	// 设置域名, 默认域名sts.tencentcloudapi.com
-	// c.SetHost("")
 	opt := &sts.CredentialOptions{
 		DurationSeconds: int64(time.Hour.Seconds()),
 		Region:          "ap-guangzhou",
@@ -45,6 +44,7 @@ func main() {
 			},
 		},
 	}
+
 	// case 1 请求临时密钥
 	res, err := c.GetCredential(opt)
 	if err != nil {
@@ -61,4 +61,18 @@ func main() {
 	defer resp.Body.Close()
 	bs, _ := ioutil.ReadAll(resp.Body)
 	fmt.Printf("body:%v\n", string(bs))
+
+	// case 3 发起角色授权临时密钥请求, policy选填
+	opt = &sts.CredentialOptions{
+		DurationSeconds: int64(time.Hour.Seconds()),
+		Region:          "ap-guangzhou",
+		RoleArn:         "qcs::cam::uin/100010805041:roleName/COSBatch_QCSRole",
+		RoleSessionName: "test",
+	}
+	res, err = c.GetRoleCredential(opt)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", res)
+	fmt.Printf("%+v\n", res.Credentials)
 }
