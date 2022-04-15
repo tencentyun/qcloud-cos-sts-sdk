@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <RootNamespace>COSSTS</RootNamespace>
     <OutputType>Library</OutputType>
     <AssemblyName>COSSTS</AssemblyName>
@@ -9,7 +9,7 @@
     <Deterministic>true</Deterministic>
 
     <PackageId>Tencent.QCloud.Cos.Sts.Sdk</PackageId>
-    <Version>3.0.4</Version>
+    <Version>3.0.5</Version>
     <Authors>Tencent</Authors>
     <Company>Tencent</Company>
     <description>Tencent Cloud COS(Cloud Object Service) STS .Net SDK</description>
