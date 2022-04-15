@@ -16,6 +16,13 @@ export interface GetCredentialOptions {
 
   /** 可以通过改参数指定请求的域名 */
   host?: string;
+
+  /** 可以通过改参数指定请求的域名,与host二选一即可 */
+  endpoint?: string;
+}
+
+export interface GetRoleCredentialOptions extends GetCredentialOptions {
+  roleArn: string;
 }
 
 export interface CredentialData {
@@ -38,11 +45,17 @@ export interface CredentialData {
   }
 }
 
-/** 获取临时密钥接口。 */
+/** 获取临时密钥接口(获取联合身份临时访问凭证)。 */
 export function getCredential(options: GetCredentialOptions): Promise<CredentialData>;
 
-/** 获取临时密钥接口。 */
+/** 获取临时密钥接口(获取联合身份临时访问凭证)。 */
 export function getCredential(options: GetCredentialOptions, callback: (err: Object, data: CredentialData) => void): void;
+
+/** 获取临时密钥接口(申请扮演角色)。 */
+export function getRoleCredential(options: GetRoleCredentialOptions): Promise<CredentialData>;
+
+/** 获取临时密钥接口(申请扮演角色)。 */
+export function getRoleCredential(options: GetRoleCredentialOptions, callback: (err: Object, data: CredentialData) => void): void;
 
 /** 表示当客户端的请求，最少需要什么样的权限，是一个键值对象 */
 export interface CosPolicyScope {

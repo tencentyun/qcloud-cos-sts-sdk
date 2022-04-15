@@ -1,7 +1,6 @@
 var request= require('request');
 var crypto= require('crypto');
 
-var StsDomain = 'sts.tencentcloudapi.com';
 var StsUrl = 'https://{host}/';
 
 var util = {
@@ -19,8 +18,8 @@ var util = {
         return arr.join('&');
     },
     // 计算签名
-    getSignature: function (opt, key, method) {
-        var formatString = method + StsDomain + '/?' + util.json2str(opt);
+    getSignature: function (opt, key, method, stsDomain) {
+        var formatString = method + stsDomain + '/?' + util.json2str(opt);
         var hmac = crypto.createHmac('sha1', key);
         var sign = hmac.update(Buffer.from(formatString, 'utf8')).digest('base64');
         return sign;
@@ -59,12 +58,14 @@ var _getCredential = function (options, callback) {
     var region = options.region || 'ap-beijing';
     var durationSeconds = options.durationSeconds || options.durationInSeconds || 1800;
     var policy = options.policy;
+    var endpoint = options.host || options.endpoint || 'sts.tencentcloudapi.com';
 
     var policyStr = JSON.stringify(policy);
-    var action = 'GetFederationToken';
+    var action = options.action || 'GetFederationToken'; // 默认GetFederationToken
     var nonce = util.getRandom(10000, 20000);
     var timestamp = parseInt(+new Date() / 1000);
     var method = 'POST';
+    var name = 'cos-sts-nodejs'; // 临时会话名称
 
     var params = {
         SecretId: secretId,
@@ -72,21 +73,26 @@ var _getCredential = function (options, callback) {
         Nonce: nonce,
         Action: action,
         DurationSeconds: durationSeconds,
-        Name: 'cos-sts-nodejs',
         Version: '2018-08-13',
         Region: region,
         Policy: encodeURIComponent(policyStr),
     };
-    params.Signature = util.getSignature(params, secretKey, method);
+    if (action === 'AssumeRole') {
+      params.RoleSessionName = name;
+      params.RoleArn = options.roleArn;
+    } else {
+      params.Name = name;
+    }
+    params.Signature = util.getSignature(params, secretKey, method, endpoint);
 
     var opt = {
         method: method,
-        url: StsUrl.replace('{host}', host || StsDomain),
+        url: StsUrl.replace('{host}', endpoint),
         strictSSL: false,
         json: true,
         form: params,
         headers: {
-            Host: StsDomain
+            Host: endpoint
         },
         proxy: proxy,
     };
@@ -110,13 +116,26 @@ var _getCredential = function (options, callback) {
     });
 };
 
+// 获取联合身份临时访问凭证 GetFederationToken
 var getCredential = (opt, callback) => {
+  Object.assign(opt, { action: 'GetFederationToken' });
     if (callback) return _getCredential(opt, callback);
     return new Promise((resolve, reject) => {
         _getCredential(opt, (err, data) => {
             err ? reject(err) : resolve(data);
         });
     });
+};
+
+// 申请扮演角色 AssumeRole
+var getRoleCredential = (opt, callback) => {
+  Object.assign(opt, { action: 'AssumeRole' });
+  if (callback) return _getCredential(opt, callback);
+  return new Promise((resolve, reject) => {
+      _getCredential(opt, (err, data) => {
+          err ? reject(err) : resolve(data);
+      });
+  });
 };
 
 var getPolicy = function (scope) {
@@ -144,6 +163,7 @@ var getPolicy = function (scope) {
 
 var  cosStsSdk = {
     getCredential: getCredential,
+    getRoleCredential: getRoleCredential,
     getPolicy: getPolicy,
 };
 

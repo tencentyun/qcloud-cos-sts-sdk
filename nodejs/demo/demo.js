@@ -6,6 +6,7 @@ var config = {
     secretKey: process.env.GROUP_SECRET_KEY,  // 固定密钥
     proxy: '',
     host: 'sts.tencentcloudapi.com', // 域名，非必须，默认为 sts.tencentcloudapi.com
+    endpoint: 'sts.internal.tencentcloudapi.com', // 域名，非必须，与host二选一，默认为 sts.tencentcloudapi.com
     durationSeconds: 1800,  // 密钥有效期
     // 放行判断相关参数
     bucket: 'test-bucket-1253653367', // 换成你的 bucket
@@ -14,44 +15,65 @@ var config = {
 };
 
 
+var shortBucketName = config.bucket.substr(0 , config.bucket.lastIndexOf('-'));
+var appId = config.bucket.substr(1 + config.bucket.lastIndexOf('-'));
+var policy = {
+    'version': '2.0',
+    'statement': [{
+        'action': [
+            // 简单上传
+            'name/cos:PutObject',
+            'name/cos:PostObject',
+            // 分片上传
+            'name/cos:InitiateMultipartUpload',
+            'name/cos:ListMultipartUploads',
+            'name/cos:ListParts',
+            'name/cos:UploadPart',
+            'name/cos:CompleteMultipartUpload',
+        ],
+        'effect': 'allow',
+        'principal': {'qcs': ['*']},
+        'resource': [
+            'qcs::cos:' + config.region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
+        ],
+    }],
+};
+
 // getCredential
 // 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
 (function () {
-    var shortBucketName = config.bucket.substr(0 , config.bucket.lastIndexOf('-'));
-    var appId = config.bucket.substr(1 + config.bucket.lastIndexOf('-'));
-    var policy = {
-        'version': '2.0',
-        'statement': [{
-            'action': [
-                // 简单上传
-                'name/cos:PutObject',
-                'name/cos:PostObject',
-                // 分片上传
-                'name/cos:InitiateMultipartUpload',
-                'name/cos:ListMultipartUploads',
-                'name/cos:ListParts',
-                'name/cos:UploadPart',
-                'name/cos:CompleteMultipartUpload',
-            ],
-            'effect': 'allow',
-            'principal': {'qcs': ['*']},
-            'resource': [
-                'qcs::cos:' + config.region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
-            ],
-        }],
-    };
     STS.getCredential({
         secretId: config.secretId,
         secretKey: config.secretKey,
         proxy: config.proxy,
         durationSeconds: config.durationSeconds,
         region: config.region,
+        endpoint: config.endpoint,
         policy: policy,
     }, function (err, credential) {
         console.log('getCredential:');
         console.log(JSON.stringify(policy, null, '    '));
         console.log(err || credential);
     });
+})();
+
+// getRoleCredential
+// 简单上传和分片，需要以下的权限，其他权限列表请看 https://cloud.tencent.com/document/product/436/31923
+(function () {
+  STS.getRoleCredential({
+      secretId: config.secretId,
+      secretKey: config.secretKey,
+      proxy: config.proxy,
+      durationSeconds: config.durationSeconds,
+      region: config.region,
+      endpoint: config.endpoint,
+      policy: policy,
+      roleArn: 'qcs::cam::uin/12345678:roleName/testRoleName', // 文档指引：https://cloud.tencent.com/document/product/1312/48197
+  }, function (err, credential) {
+      console.log('getRoleCredential:');
+      console.log(JSON.stringify(policy, null, '    '));
+      console.log(err || credential);
+  });
 })();
 
 
