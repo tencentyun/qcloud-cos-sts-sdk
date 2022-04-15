@@ -1,7 +1,6 @@
-local.properties
 target
 .idea
 .settings
 .project
 .classpath
-cos-sts-java.iml
+*.iml

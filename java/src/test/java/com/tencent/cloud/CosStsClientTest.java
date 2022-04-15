@@ -1,5 +1,6 @@
 package com.tencent.cloud;
 
+import com.tencent.cloud.assumerole.AssumeRoleParam;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -194,4 +195,37 @@ public class CosStsClientTest {
         }
     }
 
+    @Test
+    public void testGetAssumeRoleCredential() {
+        final String configFileName = "local.properties";
+        File configFile = null;
+        try {
+            configFile = new File(configFileName);
+        } catch (Exception e) {
+            System.out.println("fail to load config file: " + configFile + "from root directory of the project.");
+            e.printStackTrace();
+            throw new IllegalArgumentException("fail to load config file.");
+        }
+
+        AssumeRoleParam param = null;
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(configFile));
+
+            param = new AssumeRoleParam();
+            param.Parse(properties);
+//            param.setDurationSec(3600); // the param con also be modified by setter.
+        } catch (Exception e) {
+            System.out.println("fail to build param from properties");
+            e.printStackTrace();
+            throw new IllegalArgumentException("fail to build param from properties.");
+        }
+
+        try {
+            Response response = CosStsClient.getRoleCredential(param);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("fail to assume role");
+        }
+    }
 }
