@@ -76,8 +76,8 @@ var policy = {
 })();
 
 
-// // getPolicy
-// // 获取临时密钥
+// getPolicy
+// 获取临时密钥
 (function () {
     var scope = [{
         action: 'name/cos:PutObject',

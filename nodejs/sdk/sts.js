@@ -58,7 +58,7 @@ var _getCredential = function (options, callback) {
     var region = options.region || 'ap-beijing';
     var durationSeconds = options.durationSeconds || options.durationInSeconds || 1800;
     var policy = options.policy;
-    var endpoint = options.endpoint || 'sts.tencentcloudapi.com';
+    var endpoint = options.host || options.endpoint || 'sts.tencentcloudapi.com';
 
     var policyStr = JSON.stringify(policy);
     var action = options.action || 'GetFederationToken'; // 默认GetFederationToken
