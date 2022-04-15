@@ -163,8 +163,8 @@ func (c *Client) GetCredential(opt *CredentialOptions) (*CredentialResult, error
 	params := map[string]interface{}{
 		"SecretId":        c.SecretId,
 		"Policy":          url.QueryEscape(policy),
-		"DurationSeconds": opt.DurationSeconds,
-		"Region":          opt.Region,
+		"DurationSeconds": durationSeconds,
+		"Region":          region,
 		"Timestamp":       time.Now().Unix(),
 		"Nonce":           rand.Int(),
 		"Name":            "cos-sts-go",
@@ -219,8 +219,8 @@ func (c *Client) RequestCredential(opt *CredentialOptions) (*http.Response, erro
 	params := map[string]interface{}{
 		"SecretId":        c.SecretId,
 		"Policy":          url.QueryEscape(policy),
-		"DurationSeconds": opt.DurationSeconds,
-		"Region":          opt.Region,
+		"DurationSeconds": durationSeconds,
+		"Region":          region,
 		"Timestamp":       time.Now().Unix(),
 		"Nonce":           rand.Int(),
 		"Name":            "cos-sts-go",
