@@ -160,6 +160,56 @@ class Sts:
                 raise Exception("result: " + result, e)
             raise Exception("result: " + result, e)
 
+    def get_role_credential(self, role_arn):
+        try:
+            import ssl
+        except ImportError as e:
+            raise e
+        if self.policy is None:
+            policy = {
+                'version': '2.0',
+                'statement': [
+                    {
+                        'action': self.allow_actions,
+                        'effect': 'allow',
+                        'resource': self.resource
+                    }
+                ]
+            }
+        else:
+            policy = self.policy
+        policy_encode = quote(json.dumps(policy))
+
+        data = {
+            'SecretId': self.secret_id,
+            'Timestamp': int(time.time()),
+            'Nonce': random.randint(100000, 200000),
+            'Action': 'AssumeRole',
+            'Version': '2018-08-13',
+            'DurationSeconds': self.duration_seconds,
+            'RoleSessionName': 'cos-sts-python',
+            'Policy': policy_encode,
+            'Region': self.region,
+            'RoleArn': role_arn,
+        }
+        data['Signature'] = self.__encrypt('POST', self.domain, data)
+        result_json = None
+        try:
+            response = requests.post(self.url, proxies=self.network_proxy, data=data)
+            result_json = response.json()
+
+            if isinstance(result_json['Response'], dict):
+                result_json = result_json['Response']
+       
+            result_json['startTime'] = result_json['ExpiredTime'] - self.duration_seconds
+            return self._backwardCompat(result_json)
+        except Exception as e:
+            result = "error"
+            if result_json is not None:
+                result = str(result_json)
+                raise Exception("result: " + result, e)
+            raise Exception("result: " + result, e)
+
     def __encrypt(self, method, domain, key_values):
         source = Tools.flat_params(key_values)
         source = method + domain + '/?' + source
