@@ -3,3 +3,4 @@ key.json
 dist
 qcloud_python_sts.egg-info
 build
+ignore
