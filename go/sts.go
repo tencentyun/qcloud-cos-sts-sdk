@@ -65,11 +65,15 @@ func (e *CredentialError) Error() string {
 	return fmt.Sprintf("Code: %v, Message: %v, RequestId: %v", e.Code, e.Message, e.RequestId)
 }
 
+type ClientConf struct {
+	Host   string
+	Scheme string
+}
 type Client struct {
 	client    *http.Client
 	SecretId  string
 	SecretKey string
-	Host      string
+	conf      ClientConf
 }
 
 type ClientOption = func(*Client)
@@ -77,6 +81,12 @@ type ClientOption = func(*Client)
 func Host(host string) ClientOption {
 	return func(cli *Client) {
 		cli.SetHost(host)
+	}
+}
+
+func Scheme(scheme string) ClientOption {
+	return func(cli *Client) {
+		cli.SetScheme(scheme)
 	}
 }
 
@@ -88,7 +98,10 @@ func NewClient(secretId, secretKey string, hc *http.Client, opt ...ClientOption)
 		client:    hc,
 		SecretId:  secretId,
 		SecretKey: secretKey,
-		Host:      kHost,
+		conf: ClientConf{
+			Host:   kHost,
+			Scheme: "https",
+		},
 	}
 	for _, fn := range opt {
 		fn(c)
@@ -97,7 +110,11 @@ func NewClient(secretId, secretKey string, hc *http.Client, opt ...ClientOption)
 }
 
 func (c *Client) SetHost(host string) {
-	c.Host = host
+	c.conf.Host = host
+}
+
+func (c *Client) SetScheme(scheme string) {
+	c.conf.Scheme = scheme
 }
 
 func getPolicy(policy *CredentialPolicy) (string, error) {
@@ -133,7 +150,7 @@ func makeFlat(params map[string]interface{}) string {
 }
 
 func (c *Client) signed(method string, params map[string]interface{}) string {
-	source := method + c.Host + "/?" + makeFlat(params)
+	source := method + c.conf.Host + "/?" + makeFlat(params)
 
 	hmacObj := hmac.New(sha1.New, []byte(c.SecretKey))
 	hmacObj.Write([]byte(source))
@@ -294,7 +311,7 @@ func (c *Client) sendRequest(params map[string]interface{}) (*http.Response, err
 	sign := c.signed("POST", params)
 	paramValues.Add("Signature", sign)
 
-	urlStr := "https://" + c.Host
+	urlStr := fmt.Sprintf("%s://%s", c.conf.Scheme, c.conf.Host)
 	resp, err := c.client.PostForm(urlStr, paramValues)
 	return resp, err
 }

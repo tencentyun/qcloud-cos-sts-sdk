@@ -22,7 +22,7 @@ func NewClient(secretId, secretKey string, hc *http.Client, opt ...func(*Client)
 |secretId|String| 云 API 密钥 Id|
 |secretKey|String| 云 API 密钥 key|
 |hc|*http.Client| go http模块Client |
-|opt|func(*Client)| Client配置项，可选 |
+|opt|func(*Client)| Client配置项，可选, 可用于设置 Host 和 Scheme |
 
 ### GetCredential
 
@@ -110,6 +110,8 @@ func main() {
 		os.Getenv("COS_SECRETID"),
 		os.Getenv("COS_SECRETKEY"),
 		nil,
+		// sts.Host("sts.tencentcloudapi.com"), // 设置域名, 默认域名sts.tencentcloudapi.com
+		// sts.Scheme("http"),      // 设置协议, 默认为https，公有云sts获取临时密钥不允许走http，特殊场景才需要设置http
 	)
 	opt := &sts.CredentialOptions{
 		DurationSeconds: int64(time.Hour.Seconds()),
@@ -230,6 +232,7 @@ func main() {
                 os.Getenv("COS_SECRETKEY"),
                 nil,
                 // sts.Host("sts.tencentcloudapi.com"), // 设置域名, 默认域名sts.tencentcloudapi.com
+				// sts.Scheme("http"),      // 设置协议, 默认为https，公有云sts获取临时密钥不允许走http，特殊场景才需要设置http
         )
         // 发起角色授权临时密钥请求, policy选填
         opt := &sts.CredentialOptions{
