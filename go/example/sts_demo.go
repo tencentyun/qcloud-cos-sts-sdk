@@ -12,12 +12,14 @@ func main() {
 	appid := "1259654469"
 	bucket := "test-1259654469"
 	c := sts.NewClient(
-		os.Getenv("COS_SECRETID"),
-		os.Getenv("COS_SECRETKEY"),
+		// 通过环境变量获取密钥
+		os.Getenv("SECRETID"),
+		os.Getenv("SECRETKEY"),
 		nil,
-		// sts.Host("sts.tencentcloudapi.com"), // 设置域名, 默认域名sts.tencentcloudapi.com
+		// sts.Host("sts.internal.tencentcloudapi.com"), // 设置域名, 默认域名sts.tencentcloudapi.com
 		// sts.Scheme("http"),      // 设置协议, 默认为https，公有云sts获取临时密钥不允许走http，特殊场景才需要设置http
 	)
+	// 策略概述 https://cloud.tencent.com/document/product/436/18023
 	opt := &sts.CredentialOptions{
 		DurationSeconds: int64(time.Hour.Seconds()),
 		Region:          "ap-guangzhou",
