@@ -24,6 +24,28 @@ func NewClient(secretId, secretKey string, hc *http.Client, opt ...func(*Client)
 |hc|*http.Client| go http模块Client |
 |opt|func(*Client)| Client配置项，可选, 可用于设置 Host 和 Scheme |
 
+### NewClientWithCredential
+
+通过 CredentialIface 创建客户端。
+```go
+func NewClientWithCredential(cred CredentialIface, hc *http.Client, opt ...func(*Client)) *Client
+```
+
+#### 参数说明
+```go
+type CredentialIface interface {
+	GetSecretId() string
+	GetSecretKey() string
+	GetToken() string
+}
+
+```
+|字段|类型|描述|
+| ---- | ---- | ---- |
+|cred |CredentialIface | 通过用户实现的CredentialIface接口获取密钥,用户需要自行保证接口线程安全 |
+|hc|*http.Client| go http模块Client |
+|opt|func(*Client)| Client配置项，可选, 可用于设置 Host 和 Scheme |
+
 ### GetCredential
 
 [获取临时密钥接口](https://cloud.tencent.com/document/product/1312/48195)

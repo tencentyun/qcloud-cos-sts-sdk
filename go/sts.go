@@ -70,10 +70,30 @@ type ClientConf struct {
 	Scheme string
 }
 type Client struct {
-	client    *http.Client
+	client     *http.Client
+	Credential CredentialIface
+	conf       ClientConf
+}
+
+type CredentialIface interface {
+	GetSecretId() string
+	GetSecretKey() string
+	GetToken() string
+}
+type Credential struct {
 	SecretId  string
 	SecretKey string
-	conf      ClientConf
+	Token     string // 不支持Token
+}
+
+func (c *Credential) GetSecretId() string {
+	return c.SecretId
+}
+func (c *Credential) GetSecretKey() string {
+	return c.SecretKey
+}
+func (c *Credential) GetToken() string {
+	return c.Token
 }
 
 type ClientOption = func(*Client)
@@ -95,9 +115,29 @@ func NewClient(secretId, secretKey string, hc *http.Client, opt ...ClientOption)
 		hc = &http.Client{}
 	}
 	c := &Client{
-		client:    hc,
-		SecretId:  secretId,
-		SecretKey: secretKey,
+		client: hc,
+		Credential: &Credential{
+			SecretId:  secretId,
+			SecretKey: secretKey,
+		},
+		conf: ClientConf{
+			Host:   kHost,
+			Scheme: "https",
+		},
+	}
+	for _, fn := range opt {
+		fn(c)
+	}
+	return c
+}
+
+func NewClientWithCredential(cred CredentialIface, hc *http.Client, opt ...ClientOption) *Client {
+	if hc == nil {
+		hc = &http.Client{}
+	}
+	c := &Client{
+		client:     hc,
+		Credential: cred,
 		conf: ClientConf{
 			Host:   kHost,
 			Scheme: "https",
@@ -152,7 +192,7 @@ func makeFlat(params map[string]interface{}) string {
 func (c *Client) signed(method string, params map[string]interface{}) string {
 	source := method + c.conf.Host + "/?" + makeFlat(params)
 
-	hmacObj := hmac.New(sha1.New, []byte(c.SecretKey))
+	hmacObj := hmac.New(sha1.New, []byte(c.Credential.GetSecretKey()))
 	hmacObj.Write([]byte(source))
 
 	sign := base64.StdEncoding.EncodeToString(hmacObj.Sum(nil))
@@ -178,7 +218,7 @@ func (c *Client) GetCredential(opt *CredentialOptions) (*CredentialResult, error
 	}
 	rand.Seed(time.Now().UnixNano())
 	params := map[string]interface{}{
-		"SecretId":        c.SecretId,
+		"SecretId":        c.Credential.GetSecretId(),
 		"Policy":          url.QueryEscape(policy),
 		"DurationSeconds": durationSeconds,
 		"Region":          region,
@@ -234,7 +274,7 @@ func (c *Client) RequestCredential(opt *CredentialOptions) (*http.Response, erro
 	}
 	rand.Seed(time.Now().UnixNano())
 	params := map[string]interface{}{
-		"SecretId":        c.SecretId,
+		"SecretId":        c.Credential.GetSecretId(),
 		"Policy":          url.QueryEscape(policy),
 		"DurationSeconds": durationSeconds,
 		"Region":          region,
@@ -265,7 +305,7 @@ func (c *Client) GetRoleCredential(opt *CredentialOptions) (*CredentialResult, e
 	}
 	rand.Seed(time.Now().UnixNano())
 	params := map[string]interface{}{
-		"SecretId":        c.SecretId,
+		"SecretId":        c.Credential.GetSecretId(),
 		"Policy":          url.QueryEscape(policy),
 		"RoleArn":         opt.RoleArn,
 		"RoleSessionName": opt.RoleSessionName,
