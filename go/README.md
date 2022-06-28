@@ -150,6 +150,7 @@ func main() {
 					Effect: "allow",
 					Resource: []string{
 						//这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
+						//存储桶的命名格式为 BucketName-APPID，此处填写的 bucket 必须为此格式
 						"qcs::cos:" + region + ":uid/" + appid + ":" + bucket + "/exampleobject",
 					},
 				},
@@ -282,6 +283,7 @@ func main() {
                                         Effect: "allow",
                                         Resource: []string{
                                                 //这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
+                                                //存储桶的命名格式为 BucketName-APPID，此处填写的 bucket 必须为此格式
                                                 "qcs::cos:ap-guangzhou:uid/" + appid + ":" + bucket + "/exampleobject",
                                         },
                                 },
