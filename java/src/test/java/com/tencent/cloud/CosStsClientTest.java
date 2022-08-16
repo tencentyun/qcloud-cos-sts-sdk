@@ -109,6 +109,38 @@ public class CosStsClientTest {
             scopes.add(new Scope("name/cos:GetObject", "sts-sdk-test-1251668577", "ap-chengdu", "/test.txt"));
             config.put("policy", CosStsClient.getPolicy(scopes));
 
+            /**
+             * condition复杂且没有统一的格式，这里也可以直接设置
+
+            final String raw_policy = "{\n"
+                    + "    \"version\":\"2.0\",\n"
+                    + "    \"statement\":[\n"
+                    + "        {\n"
+                    + "            \"effect\":\"allow\",\n"
+                    + "            \"action\":[\n"
+                    + "                \"name/cos:PutObject\",\n"
+                    + "                \"name/cos:PostObject\",\n"
+                    + "                \"name/cos:InitiateMultipartUpload\",\n"
+                    + "                \"name/cos:ListMultipartUploads\",\n"
+                    + "                \"name/cos:ListParts\",\n"
+                    + "                \"name/cos:UploadPart\",\n"
+                    + "                \"name/cos:CompleteMultipartUpload\"\n"
+                    + "            ],\n"
+                    + "            \"resource\":[\n"
+                    + "                \"qcs::cos:ap-shanghai:uid/125xxxxxx:examplebucket-125xxxxxx/*\"\n"
+                    + "            ],\n"
+                    + "            \"condition\":{\n"
+                    + "                \"string_equal\":{\n"
+                    + "                    \"cos:content-type\":\"image/jpeg\"\n"
+                    + "                }\n"
+                    + "            }\n"
+                    + "        },\n"
+                    + "    ]\n"
+                    + "}";
+
+            config.put("policy", raw_policy);
+             */
+
             Response credential = CosStsClient.getCredential(config);
             System.out.println(Jackson.toJsonPrettyString(credential));
         } catch (Exception e) {
