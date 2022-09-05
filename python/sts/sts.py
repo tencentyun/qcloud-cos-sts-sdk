@@ -36,7 +36,7 @@ class Sts:
         if not isinstance(config, dict):
             raise ValueError("Error: config is not dict")
         keys = config.keys()
-        resource_prefix = None
+        resource_prefix = list()
         for key in keys:
             key_lower = str(key).lower()
             if "secret_id" == key_lower:
@@ -50,7 +50,9 @@ class Sts:
             elif "region" == key_lower:
                 self.region = config.get(key)
             elif "allow_prefix" == key_lower:
-                resource_prefix = config.get(key)
+                prefix = config.get(key)
+                for prefix in prefix:
+                    resource_prefix.append(prefix)
             elif "policy" == key_lower:
                 self.policy = config.get(key)
             elif "allow_actions" == key_lower:
@@ -67,23 +69,26 @@ class Sts:
             raise ValueError('Error: secret_key is none')
         if not isinstance(self.duration_seconds, int):
             raise ValueError('Error: duration_seconds must be int type')
-        # 若是policy 为空，则 bucket he resource_prefix 不为空
+        # 若是policy 为空，则 bucket 和 resource_prefix 不为空
         if self.policy is None:
             if not self.region:
                 raise ValueError('Error: region == none')
             if not self.bucket:
                 raise ValueError('Error: bucket == None')
-            if not resource_prefix:
-                raise ValueError("Error: resource_prefix == None")
+            if len(resource_prefix) == 0:
+                raise ValueError("Error: len(resource_prefix) == 0")
             split_index = self.bucket.rfind('-')
             if split_index < 0:
                 raise ValueError('Error: bucket is invalid: ' + self.bucket)
             appid = str(self.bucket[(split_index + 1):]).strip()
-            if not str(resource_prefix).startswith('/'):
-                resource_prefix = '/' + resource_prefix
-            self.resource = "qcs::cos:{region}:uid/{appid}:{bucket}{prefix}".format(region=self.region,
+
+            self.resource = list()
+            for prefix in resource_prefix:
+                if not str(prefix).startswith('/'):
+                    prefix = '/' + prefix
+                self.resource.append("qcs::cos:{region}:uid/{appid}:{bucket}{prefix}".format(region=self.region,
                                                                                     appid=appid, bucket=self.bucket,
-                                                                                    prefix=resource_prefix)
+                                                                                    prefix=prefix))
 
     @staticmethod
     def get_policy(scopes=[]):
@@ -103,7 +108,7 @@ class Sts:
 
             statement_element['effect'] = scope.get_effect()
 
-            resources.append(scope.get_resource())
+            resources.extend(scope.get_resource())
             statement_element['resource'] = resources
 
             statement.append(statement_element)
@@ -116,16 +121,12 @@ class Sts:
             import ssl
         except ImportError as e:
             raise e
+
         if self.policy is None:
+            statement = self.get_statement()
             policy = {
                 'version': '2.0',
-                'statement': [
-                    {
-                        'action': self.allow_actions,
-                        'effect': 'allow',
-                        'resource': self.resource
-                    }
-                ]
+                'statement': statement,
             }
         else:
             policy = self.policy
@@ -166,15 +167,10 @@ class Sts:
         except ImportError as e:
             raise e
         if self.policy is None:
+            statement = self.get_statement()
             policy = {
                 'version': '2.0',
-                'statement': [
-                    {
-                        'action': self.allow_actions,
-                        'effect': 'allow',
-                        'resource': self.resource
-                    }
-                ]
+                'statement': statement
             }
         else:
             policy = self.policy
@@ -209,6 +205,17 @@ class Sts:
                 result = str(result_json)
                 raise Exception("result: " + result, e)
             raise Exception("result: " + result, e)
+    
+    def get_statement(self):
+        statement = list()
+        for resource in self.resource:
+            stmt = {
+                    'action': self.allow_actions,
+                    'effect': 'allow',
+                    'resource': resource
+                }
+            statement.append(stmt)
+        return statement
 
     def __encrypt(self, method, domain, key_values):
         source = Tools.flat_params(key_values)
@@ -302,11 +309,14 @@ class Scope(object):
         if split_index < 0:
             raise ValueError('bucket is invalid: ' + self.bucket)
         appid = str(self.bucket[(split_index + 1):]).strip()
-        if not str(self.resource_prefix).startswith('/'):
-            self.resource_prefix = '/' + self.resource_prefix
-        resource = "qcs::cos:{region}:uid/{appid}:" \
-                   "{bucket}{prefix}".format(region=self.region, appid=appid,
-                                             bucket=self.bucket, prefix=self.resource_prefix)
+        
+        resource = list()
+        for i in range(len(self.resource_prefix)):
+            if not str(self.resource_prefix[i]).startswith('/'):
+                self.resource_prefix[i] = '/' + self.resource_prefix[i]
+            resource.append("qcs::cos:{region}:uid/{appid}:{bucket}{prefix}".format(region=self.region,
+                                                                                appid=appid, bucket=self.bucket,
+                                                                                prefix=self.resource_prefix[i]))
         return resource
 
     def get_effect(self):
@@ -314,7 +324,7 @@ class Scope(object):
 
     def get_dict(self):
         result = dict()
-        result['action'] = self.action;
+        result['action'] = self.action
         result['bucket'] = self.bucket
         result['region'] = self.region
         result['prefix'] = self.resource_prefix
