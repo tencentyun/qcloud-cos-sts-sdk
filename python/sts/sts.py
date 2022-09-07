@@ -50,8 +50,10 @@ class Sts:
             elif "region" == key_lower:
                 self.region = config.get(key)
             elif "allow_prefix" == key_lower:
-                prefix = config.get(key)
-                for prefix in prefix:
+                allow_prefix = config.get(key)
+                if isinstance(allow_prefix, str):
+                    allow_prefix = [allow_prefix]
+                for prefix in allow_prefix:
                     resource_prefix.append(prefix)
             elif "policy" == key_lower:
                 self.policy = config.get(key)
@@ -311,6 +313,8 @@ class Scope(object):
         appid = str(self.bucket[(split_index + 1):]).strip()
         
         resource = list()
+        if isinstance(self.resource_prefix, str):
+            self.resource_prefix = [self.resource_prefix]
         for i in range(len(self.resource_prefix)):
             if not str(self.resource_prefix[i]).startswith('/'):
                 self.resource_prefix[i] = '/' + self.resource_prefix[i]
