@@ -20,8 +20,8 @@ def test_policy2():
 
 def test_policy3():
     scopes = list()
-    scopes.append(Scope('name/cos:PutObject', 'example-1250000000', 'ap-guangzhou', 'exampleobject',))
-    scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', 'exampleobject',))
+    scopes.append(Scope('name/cos:PutObject', 'example-1250000000', 'ap-guangzhou', 'exampleobject'))
+    scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:InitiateMultipartUpload', 'example-1250000000', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:ListParts', 'example-1250000000', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:UploadPart', 'example-1250000000', 'ap-guangzhou', 'exampleobject'))
