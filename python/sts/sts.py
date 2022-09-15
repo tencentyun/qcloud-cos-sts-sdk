@@ -125,10 +125,15 @@ class Sts:
             raise e
 
         if self.policy is None:
-            statement = self.get_statement()
             policy = {
                 'version': '2.0',
-                'statement': statement,
+                'statement': [
+                    {
+                        'action': self.allow_actions,
+                        'effect': 'allow',
+                        'resource': self.resource
+                    }
+                ]
             }
         else:
             policy = self.policy
@@ -169,10 +174,15 @@ class Sts:
         except ImportError as e:
             raise e
         if self.policy is None:
-            statement = self.get_statement()
             policy = {
                 'version': '2.0',
-                'statement': statement
+                'statement': [
+                    {
+                        'action': self.allow_actions,
+                        'effect': 'allow',
+                        'resource': self.resource
+                    }
+                ]
             }
         else:
             policy = self.policy
@@ -208,17 +218,6 @@ class Sts:
                 raise Exception("result: " + result, e)
             raise Exception("result: " + result, e)
     
-    def get_statement(self):
-        statement = list()
-        for resource in self.resource:
-            stmt = {
-                    'action': self.allow_actions,
-                    'effect': 'allow',
-                    'resource': resource
-                }
-            statement.append(stmt)
-        return statement
-
     def __encrypt(self, method, domain, key_values):
         source = Tools.flat_params(key_values)
         source = method + domain + '/?' + source
