@@ -23,7 +23,7 @@ pip install -U qcloud-python-sts
 |duration_seconds|long| 要申请的临时密钥最长有效时间，单位秒，默认 1800，最大可设置 7200 |
 |bucket|String| 存储桶名称：bucketName-appid, 如 test-125000000|
 |region|String| 存储桶所属地域，如 ap-guangzhou|
-|allow_prefix|String|资源的前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)|
+|allow_prefix|list|资源的前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)|
 |allow_actions|list| 授予 COS API 权限集合, 如简单上传操作：name/cos:PutObject|
 |policy|dict| 策略：由 allow_actions、bucket、allow_prefix字段组成的描述授权的具体信息|
 
