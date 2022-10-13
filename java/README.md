@@ -18,7 +18,7 @@
 ### getCredential
 
 获取临时密钥接口
-具体接口说明请见 [官网文档](https://cloud.tencent.com/document/product/1312/48195) 。
+具体接口说明请见安全凭证服务的 [获取联合身份临时访问凭证](https://cloud.tencent.com/document/product/1312/48195) 。
 
 ### getPolicy
 
