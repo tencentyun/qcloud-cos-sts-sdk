@@ -10,8 +10,12 @@ if __name__ == '__main__':
 
     def get_credential_demo():
         config = {
+            # 请求URL，域名部分必须和domain保持一致
+            # 使用外网域名时：https://sts.tencentcloudapi.com/
+            # 使用内网域名时：https://sts.internal.tencentcloudapi.com/
             'url': 'https://sts.tencentcloudapi.com/',
             # 域名，非必须，默认为 sts.tencentcloudapi.com
+            # 内网域名：sts.internal.tencentcloudapi.com
             'domain': 'sts.tencentcloudapi.com', 
             # 临时密钥有效时长，单位是秒
             'duration_seconds': 1800,
