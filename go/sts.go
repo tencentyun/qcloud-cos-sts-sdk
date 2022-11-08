@@ -246,7 +246,7 @@ func (c *Client) GetCredential(opt *CredentialOptions) (*CredentialResult, error
 		return nil, result.Response.Error
 	}
 	if result.Response != nil && result.Response.Credentials != nil {
-		result.Response.StartTime = result.Response.ExpiredTime - int(opt.DurationSeconds)
+		result.Response.StartTime = result.Response.ExpiredTime - int(durationSeconds)
 		return result.Response, nil
 	}
 	return nil, errors.New(fmt.Sprintf("GetCredential failed, result: %v", result.Response))
@@ -336,7 +336,7 @@ func (c *Client) GetRoleCredential(opt *CredentialOptions) (*CredentialResult, e
 		return nil, result.Response.Error
 	}
 	if result.Response != nil && result.Response.Credentials != nil {
-		result.Response.StartTime = result.Response.ExpiredTime - int(opt.DurationSeconds)
+		result.Response.StartTime = result.Response.ExpiredTime - int(durationSeconds)
 		return result.Response, nil
 	}
 	return nil, errors.New(fmt.Sprintf("GetCredential failed, result: %v", result.Response))
