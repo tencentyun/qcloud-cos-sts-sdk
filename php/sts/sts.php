@@ -56,9 +56,13 @@ class STS{
 				}else{
 					throw new Exception("bucket== null");
 				}
-				if(array_key_exists('allowPrefix', $config)){
-					if(!(strpos($config['allowPrefix'], '/') === 0)){
-					$config['allowPrefix'] = '/' . $config['allowPrefix'];
+				if(array_key_exists('allowPrefixes', $config)){
+					$resource = array();
+					foreach($config['allowPrefixes'] as &$val) {
+						if (!(strpos($val, '/') === 0)) {
+						    $allow = '/' . $val;
+						}
+						$resource[] = 'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':' . $config['bucket'] . $val;
 					}
 				}else{
 					throw new Exception("allowPrefix == null");
@@ -70,9 +74,7 @@ class STS{
 							'action'=> $config['allowActions'],
 							'effect'=> 'allow',
 							'principal'=> array('qcs'=> array('*')),
-							'resource'=> array(
-								'qcs::cos:' . $config['region'] . ':uid/' . $AppId . ':' . $config['bucket'] . $config['allowPrefix']
-							)
+							'resource'=> $resource
 						)
 					)
 				);	
