@@ -2,12 +2,16 @@ var bodyParser = require('body-parser');
 var STS = require('../index');
 var express = require('express');
 
+// 如果您使用了腾讯云 cvm，可以设置内部域名：设置host或endpoint为sts.internal.tencentcloudapi.com
+
 // 配置参数
 var config = {
     secretId: 'AKIDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
     secretKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // 固定密钥
     proxy: '',
     durationSeconds: 1800, // 密钥有效期
+    // host: 'sts.tencentcloudapi.com', // 域名，非必须，默认为 sts.tencentcloudapi.com
+    endpoint: 'sts.tencentcloudapi.com', // 域名，非必须，与host二选一，默认为 sts.tencentcloudapi.com
 
     // 放行判断相关参数
     bucket: 'test-1250000000', // 换成你的 bucket
@@ -74,6 +78,7 @@ app.all('/sts', function (req, res, next) {
         secretKey: config.secretKey,
         proxy: config.proxy,
         durationSeconds: config.durationSeconds,
+        endpoint: config.endpoint,
         policy: policy,
     }, function (err, tempKeys) {
         var result = JSON.stringify(err || tempKeys) || '';
