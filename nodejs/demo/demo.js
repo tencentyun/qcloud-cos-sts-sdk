@@ -1,12 +1,14 @@
 var STS = require('../sdk/sts');
 
+// 如果您使用了腾讯云 cvm，可以设置内部域名：设置host或endpoint为sts.internal.tencentcloudapi.com
+
 // 配置参数
 var config = {
     secretId: process.env.GROUP_SECRET_ID,   // 固定密钥
     secretKey: process.env.GROUP_SECRET_KEY,  // 固定密钥
     proxy: '',
     host: 'sts.tencentcloudapi.com', // 域名，非必须，默认为 sts.tencentcloudapi.com
-    endpoint: 'sts.internal.tencentcloudapi.com', // 域名，非必须，与host二选一，默认为 sts.tencentcloudapi.com
+    // endpoint: 'sts.internal.tencentcloudapi.com', // 域名，非必须，与host二选一，默认为 sts.tencentcloudapi.com
     durationSeconds: 1800,  // 密钥有效期
     // 放行判断相关参数
     bucket: 'test-bucket-1253653367', // 换成你的 bucket
@@ -36,6 +38,13 @@ var policy = {
         'resource': [
             'qcs::cos:' + config.region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
         ],
+        // condition生效条件，更多请参考：https://cloud.tencent.com/document/product/436/71307
+        // 'condition': {
+        //   // 比如限定ip访问
+        //   'ip_equal': {
+        //     'qcs:ip': '10.121.2.10/24'
+        //   }
+        // }
     }],
 };
 
