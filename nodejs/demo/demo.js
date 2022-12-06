@@ -38,7 +38,7 @@ var policy = {
         'resource': [
             'qcs::cos:' + config.region + ':uid/' + appId + ':prefix//' + appId + '/' + shortBucketName + '/' + config.allowPrefix,
         ],
-        // condition生效条件，更多请参考：https://cloud.tencent.com/document/product/436/71307
+        // condition生效条件，关于 condition 的详细设置规则和COS支持的condition类型可以参考https://cloud.tencent.com/document/product/436/71306
         // 'condition': {
         //   // 比如限定ip访问
         //   'ip_equal': {
