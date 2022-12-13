@@ -134,7 +134,7 @@ public class CosStsClientTest {
                     + "                    \"cos:content-type\":\"image/jpeg\"\n"
                     + "                }\n"
                     + "            }\n"
-                    + "        },\n"
+                    + "        }\n"
                     + "    ]\n"
                     + "}";
 
