@@ -46,6 +46,15 @@ if __name__ == '__main__':
                 'name/cos:UploadPart',
                 'name/cos:CompleteMultipartUpload'
             ],
+            # 临时密钥生效条件，关于condition的详细设置规则和COS支持的condition类型可以参考 https://cloud.tencent.com/document/product/436/71306
+            "condition": {
+                "ip_equal":{
+                    "qcs:ip":[
+                        "10.217.182.3/24",
+                        "111.21.33.72/24",
+                    ]
+                }
+            }
         }
 
         try:
@@ -93,6 +102,15 @@ if __name__ == '__main__':
                 'name/cos:UploadPart',
                 'name/cos:CompleteMultipartUpload'
             ],
+            # 临时密钥生效条件，关于condition的详细设置规则和COS支持的condition类型可以参考 https://cloud.tencent.com/document/product/436/71306
+            "condition": {
+                "ip_equal":{
+                    "qcs:ip":[
+                        "10.217.182.3/24",
+                        "111.21.33.72/24",
+                    ]
+                }
+            }
         }
 
         try:
