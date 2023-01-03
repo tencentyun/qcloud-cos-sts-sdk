@@ -8,12 +8,28 @@ from sts.sts import Sts, Scope
 
 def test_policy():
     scope = Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', 'exampleobject')
+    scope.set_condition({
+       'ip_equal':{
+            'qcs:ip':[
+               "10.217.182.3/24",
+               "111.21.33.72/24" 
+            ]
+        }
+    })
     scopes = list()
     scopes.append(scope)
     print(json.dumps(Sts.get_policy(scopes), indent=4))
 
 def test_policy2():
     scope = Scope('name/cos:PutObject', 'test-1250000000', 'ap-guangzhou', ['exampleobject', 'exampleobject2'])
+    scope.set_condition({
+       'ip_equal':{
+            'qcs:ip':[
+               "10.217.182.3/24",
+               "111.21.33.72/24" 
+            ]
+        }
+    })
     scopes = list()
     scopes.append(scope)
     print(json.dumps(Sts.get_policy(scopes), indent=4))

@@ -24,6 +24,7 @@ class Sts:
     region = None
     resource = None
     allow_actions = None
+    condition = None
     policy = None
     network_proxy = None
     url = sts_url
@@ -59,6 +60,8 @@ class Sts:
                 self.policy = config.get(key)
             elif "allow_actions" == key_lower:
                 self.allow_actions = config.get(key)
+            elif "condition" == key_lower:
+                self.condition = config.get(key)
             elif "proxy" == key_lower:
                 self.network_proxy = config.get(key)
             elif "url" == key_lower:
@@ -110,6 +113,9 @@ class Sts:
 
             statement_element['effect'] = scope.get_effect()
 
+            if scope.get_condition() is not None:
+                statement_element['condition'] = scope.get_condition()
+
             resources.extend(scope.get_resource())
             statement_element['resource'] = resources
 
@@ -135,6 +141,8 @@ class Sts:
                     }
                 ]
             }
+            if self.condition is not None:
+                policy['statement'][0]['condition'] = self.condition
         else:
             policy = self.policy
         policy_encode = quote(json.dumps(policy))
@@ -184,6 +192,8 @@ class Sts:
                     }
                 ]
             }
+            if self.condition is not None:
+                policy['statement'][0]['condition'] = self.condition
         else:
             policy = self.policy
         policy_encode = quote(json.dumps(policy))
@@ -324,6 +334,9 @@ class Scope(object):
 
     def get_effect(self):
         return self.effect
+    
+    def get_condition(self):
+        return self.condition
 
     def get_dict(self):
         result = dict()
