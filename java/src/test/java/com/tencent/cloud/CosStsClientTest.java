@@ -36,7 +36,7 @@ public class CosStsClientTest {
                 System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
             }
 
-            // 设置域名
+            // 设置域名,可通过此方式设置内网域名
             //config.put("host", "sts.internal.tencentcloudapi.com");
 
             // 临时密钥有效时长，单位是秒
