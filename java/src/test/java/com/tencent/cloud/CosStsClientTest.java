@@ -36,7 +36,7 @@ public class CosStsClientTest {
                 System.setProperty("https.proxyPort", properties.getProperty("https.proxyPort"));
             }
 
-            // 设置域名
+            // 设置域名,可通过此方式设置内网域名
             //config.put("host", "sts.internal.tencentcloudapi.com");
 
             // 临时密钥有效时长，单位是秒
@@ -111,34 +111,39 @@ public class CosStsClientTest {
 
             /**
              * condition复杂且没有统一的格式，这里也可以直接设置
+             * 设置condition（如有需要）
+             //# 临时密钥生效条件，关于condition的详细设置规则和COS支持的condition类型可以参考 https://cloud.tencent.com/document/product/436/71307
+             final String raw_policy = "{\n" +
+             "  \"version\":\"2.0\",\n" +
+             "  \"statement\":[\n" +
+             "    {\n" +
+             "      \"effect\":\"allow\",\n" +
+             "      \"action\":[\n" +
+             "          \"name/cos:PutObject\",\n" +
+             "          \"name/cos:PostObject\",\n" +
+             "          \"name/cos:InitiateMultipartUpload\",\n" +
+             "          \"name/cos:ListMultipartUploads\",\n" +
+             "          \"name/cos:ListParts\",\n" +
+             "          \"name/cos:UploadPart\",\n" +
+             "          \"name/cos:CompleteMultipartUpload\"\n" +
+             "        ],\n" +
+             "      \"resource\":[\n" +
+             "          \"qcs::cos:ap-shanghai:uid/1250000000:examplebucket-1250000000/*\"\n" +
+             "      ],\n" +
+             "      \"condition\": {\n" +
+             "        \"ip_equal\": {\n" +
+             "            \"qcs:ip\": [\n" +
+             "                \"192.168.1.0/24\",\n" +
+             "                \"101.226.100.185\",\n" +
+             "                \"101.226.100.186\"\n" +
+             "            ]\n" +
+             "        }\n" +
+             "      }\n" +
+             "    }\n" +
+             "  ]\n" +
+             "}";
 
-            final String raw_policy = "{\n"
-                    + "    \"version\":\"2.0\",\n"
-                    + "    \"statement\":[\n"
-                    + "        {\n"
-                    + "            \"effect\":\"allow\",\n"
-                    + "            \"action\":[\n"
-                    + "                \"name/cos:PutObject\",\n"
-                    + "                \"name/cos:PostObject\",\n"
-                    + "                \"name/cos:InitiateMultipartUpload\",\n"
-                    + "                \"name/cos:ListMultipartUploads\",\n"
-                    + "                \"name/cos:ListParts\",\n"
-                    + "                \"name/cos:UploadPart\",\n"
-                    + "                \"name/cos:CompleteMultipartUpload\"\n"
-                    + "            ],\n"
-                    + "            \"resource\":[\n"
-                    + "                \"qcs::cos:ap-shanghai:uid/125xxxxxx:examplebucket-125xxxxxx/*\"\n"
-                    + "            ],\n"
-                    + "            \"condition\":{\n"
-                    + "                \"string_equal\":{\n"
-                    + "                    \"cos:content-type\":\"image/jpeg\"\n"
-                    + "                }\n"
-                    + "            }\n"
-                    + "        }\n"
-                    + "    ]\n"
-                    + "}";
-
-            config.put("policy", raw_policy);
+             config.put("policy", raw_policy);
              */
 
             Response credential = CosStsClient.getCredential(config);
