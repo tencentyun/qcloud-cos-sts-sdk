@@ -44,6 +44,16 @@ func main() {
 						// 存储桶的命名格式为 BucketName-APPID，此处填写的 bucket 必须为此格式
 						"qcs::cos:ap-guangzhou:uid/" + appid + ":" + bucket + "/exampleobject",
 					},
+					// 开始构建生效条件 condition
+					// 关于 condition 的详细设置规则和COS支持的condition类型可以参考https://cloud.tencent.com/document/product/436/71306
+					Condition: map[string]map[string]interface{}{
+						"ip_equal": map[string]interface{}{
+							"qcs:ip": []string{
+								"10.217.182.3/24",
+								"111.21.33.72/24",
+							},
+						},
+					},
 				},
 			},
 		},
