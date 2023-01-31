@@ -89,4 +89,20 @@ func main() {
 	}
 	fmt.Printf("%+v\n", res)
 	fmt.Printf("%+v\n", res.Credentials)
+
+	// case 4 申请OIDC角色临时密钥
+	/*
+	wopt := &sts.WebIdentityOptions{
+		ProviderId:       "your ProviderId",
+		WebIdentityToken: "your WebIdentityToken",
+		RoleArn:          "your RoleArn",
+		RoleSessionName:  "test",
+	}
+	res, err = c.AssumeRoleWithWebIdentity(wopt)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", res)
+	fmt.Printf("%+v\n", res.Credentials)
+	*/
 }
