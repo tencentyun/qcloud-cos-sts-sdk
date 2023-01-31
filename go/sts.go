@@ -1,9 +1,12 @@
 package sts
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,8 +15,13 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
+	"strconv"
 	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 const (
 	kHost = "sts.tencentcloudapi.com"
@@ -59,6 +67,15 @@ type CredentialResult struct {
 	StartTime   int              `json:"StartTime,omitempty"`
 	RequestId   string           `json:"RequestId,omitempty"`
 	Error       *CredentialError `json:"Error,omitempty"`
+}
+
+type WebIdentityOptions struct {
+	Region           string `json:"-"`
+	ProviderId       string
+	WebIdentityToken string
+	RoleArn          string
+	RoleSessionName  string
+	DurationSeconds  int64
 }
 
 func (e *CredentialError) Error() string {
@@ -200,6 +217,17 @@ func (c *Client) signed(method string, params map[string]interface{}) string {
 	return sign
 }
 
+func sha256hex(s string) string {
+	b := sha256.Sum256([]byte(s))
+	return hex.EncodeToString(b[:])
+}
+
+func hmacsha256(s, key string) string {
+	hashed := hmac.New(sha256.New, []byte(key))
+	hashed.Write([]byte(s))
+	return string(hashed.Sum(nil))
+}
+
 func (c *Client) GetCredential(opt *CredentialOptions) (*CredentialResult, error) {
 	if opt == nil || opt.Policy == nil {
 		return nil, errors.New("CredentialOptions is illegal")
@@ -216,7 +244,6 @@ func (c *Client) GetCredential(opt *CredentialOptions) (*CredentialResult, error
 	if err != nil {
 		return nil, err
 	}
-	rand.Seed(time.Now().UnixNano())
 	params := map[string]interface{}{
 		"SecretId":        c.Credential.GetSecretId(),
 		"Policy":          url.QueryEscape(policy),
@@ -272,7 +299,6 @@ func (c *Client) RequestCredential(opt *CredentialOptions) (*http.Response, erro
 	if err != nil {
 		return nil, err
 	}
-	rand.Seed(time.Now().UnixNano())
 	params := map[string]interface{}{
 		"SecretId":        c.Credential.GetSecretId(),
 		"Policy":          url.QueryEscape(policy),
@@ -303,7 +329,6 @@ func (c *Client) GetRoleCredential(opt *CredentialOptions) (*CredentialResult, e
 	if err != nil {
 		return nil, err
 	}
-	rand.Seed(time.Now().UnixNano())
 	params := map[string]interface{}{
 		"SecretId":        c.Credential.GetSecretId(),
 		"Policy":          url.QueryEscape(policy),
@@ -343,6 +368,55 @@ func (c *Client) GetRoleCredential(opt *CredentialOptions) (*CredentialResult, e
 
 }
 
+func (c *Client) AssumeRoleWithWebIdentity(opt *WebIdentityOptions) (*CredentialResult, error) {
+	if opt == nil || opt.ProviderId == "" || opt.WebIdentityToken == "" || opt.RoleArn == "" {
+		return nil, errors.New("WebIdentityOptions is illegal")
+	}
+	topt := *opt
+	if topt.Region == "" {
+		topt.Region = "ap-guangzhou"
+	}
+	if topt.DurationSeconds == 0 {
+		topt.DurationSeconds = 1800
+	}
+	body, err := json.Marshal(topt)
+	if err != nil {
+		return nil, err
+	}
+	params := map[string]string{
+		"Host":           c.conf.Host,
+		"X-TC-Action":    "AssumeRoleWithWebIdentity",
+		"X-TC-Version":   "2018-08-13",
+		"X-TC-Region":    topt.Region,
+		"Content-Type":   "application/json",
+		"X-TC-Timestamp": fmt.Sprintf("%v", time.Now().Unix()),
+		"Authorization":  "SKIP",
+	}
+
+	resp, err := c.sendRequestv3(http.MethodPost, params, body)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	result := &CredentialCompleteResult{}
+	err = json.NewDecoder(resp.Body).Decode(result)
+	if err == io.EOF {
+		err = nil // ignore EOF errors caused by empty response body
+	}
+	if err != nil {
+		return nil, err
+	}
+	if result.Response != nil && result.Response.Error != nil {
+		result.Response.Error.RequestId = result.Response.RequestId
+		return nil, result.Response.Error
+	}
+	if result.Response != nil && result.Response.Credentials != nil {
+		result.Response.StartTime = result.Response.ExpiredTime - int(topt.DurationSeconds)
+		return result.Response, nil
+	}
+	return nil, errors.New(fmt.Sprintf("GetCredential failed, result: %v", result.Response))
+}
+
 func (c *Client) sendRequest(params map[string]interface{}) (*http.Response, error) {
 	paramValues := url.Values{}
 	for k, v := range params {
@@ -354,4 +428,63 @@ func (c *Client) sendRequest(params map[string]interface{}) (*http.Response, err
 	urlStr := fmt.Sprintf("%s://%s", c.conf.Scheme, c.conf.Host)
 	resp, err := c.client.PostForm(urlStr, paramValues)
 	return resp, err
+}
+
+func (c *Client) sendRequestv3(method string, params map[string]string, body []byte) (*http.Response, error) {
+	urlStr := fmt.Sprintf("%s://%s", c.conf.Scheme, c.conf.Host)
+	req, err := http.NewRequest(method, urlStr, bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	for key, value := range params {
+		req.Header.Add(key, value)
+	}
+	if req.Header.Get("Authorization") == "" {
+		c.signedv3(req, body)
+	}
+	resp, err := c.client.Do(req)
+	return resp, err
+}
+
+func (c *Client) signedv3(request *http.Request, body []byte) {
+	canonicalHeaders := fmt.Sprintf("content-type:%s\nhost:%s\n", request.Header.Get("Content-Type"), request.Header.Get("Host"))
+	signedHeaders := "content-type;host"
+	hashedRequestPayload := sha256hex(string(body))
+
+	canonicalRequest := fmt.Sprintf("%s\n%s\n%s\n%s\n%s\n%s",
+		request.Method,
+		"/",
+		"",
+		canonicalHeaders,
+		signedHeaders,
+		hashedRequestPayload)
+
+	algorithm := "TC3-HMAC-SHA256"
+	requestTimestamp := request.Header.Get("X-TC-Timestamp")
+	timestamp, _ := strconv.ParseInt(requestTimestamp, 10, 64)
+	t := time.Unix(timestamp, 0).UTC()
+	// must be the format 2006-01-02, ref to package time for more info
+	date := t.Format("2006-01-02")
+	credentialScope := fmt.Sprintf("%s/%s/tc3_request", date, "sts")
+	hashedCanonicalRequest := sha256hex(canonicalRequest)
+	string2sign := fmt.Sprintf("%s\n%s\n%s\n%s",
+		algorithm,
+		requestTimestamp,
+		credentialScope,
+		hashedCanonicalRequest)
+
+	secretDate := hmacsha256(date, "TC3"+c.Credential.GetSecretKey())
+	secretService := hmacsha256("sts", secretDate)
+	secretKey := hmacsha256("tc3_request", secretService)
+	signature := hex.EncodeToString([]byte(hmacsha256(string2sign, secretKey)))
+
+	// build authorization
+	authorization := fmt.Sprintf("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s",
+		algorithm,
+		c.Credential.GetSecretId(),
+		credentialScope,
+		signedHeaders,
+		signature)
+
+	request.Header.Set("Authorization", authorization)
 }

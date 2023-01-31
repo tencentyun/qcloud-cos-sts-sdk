@@ -321,3 +321,99 @@ func main() {
         fmt.Printf("%+v\n", res.Credentials)
 }
 ```
+
+### AssumeRoleWithWebIdentity
+
+[申请OIDC角色临时密钥](https://cloud.tencent.com/document/product/1312/73070)申请OIDC角色临时密钥。
+
+```go
+func (c *Client) AssumeRoleWithWebIdentity(opt *WebIdentityOptions) (*CredentialResult, error)
+```
+#### 参数说明
+
+```go
+type WebIdentityOptions struct {
+	Region           string
+	ProviderId       string
+	WebIdentityToken string
+	RoleArn          string
+	RoleSessionName  string
+	DurationSeconds  int64
+}
+```
+
+|字段|类型|描述|必选|
+| ---- | ---- | ---- | ---- |
+|opt|*WebIdentityOptions| 授权策略 | 是 |
+|Region|string| STS云API的地域，建议与存储桶地域保持一致 | 否 |
+|ProviderId | string| 身份提供商名称 | 是 |
+|WebIdentityToken|string| IdP签发的OIDC令牌 | 是 |
+|RoleArn|String| 角色访问描述名 | 是 |
+|RoleSessionName|string| 会话名称 | 是 |
+|DurationSeconds|int64| 指定临时证书的有效期，单位：秒，默认7200秒，最长可设定有效期为43200秒。 | 否 |
+
+### 返回值说明
+
+``` go
+type Credentials struct {
+    TmpSecretID  string
+    TmpSecretKey string
+    SessionToken string
+}
+type CredentialResult struct {
+    Credentials *Credentials
+    StartTime   int
+    ExpiredTime int
+    Expiration  string
+    RequestId   string
+}
+```
+
+|字段|类型|描述|
+| ---- | ---- | ---- |
+|Credentials | *Credentials | 临时密钥信息 |
+|TmpSecretID | string | 临时密钥 Id，可用于计算签名 |
+|TmpSecretKey | string | 临时密钥 Key，可用于计算签名 |
+|SessionToken | string | 请求时需要用的 token 字符串，最终请求 COS API 时，需要放在 Header 的 x-cos-security-token 字段 |
+|StartTime | int | 密钥的起始时间，是 UNIX 时间戳 |
+|ExpiredTime | int | 密钥的失效时间，是 UNIX 时间戳 |
+
+### 使用方法
+
+调用代码如下：
+
+```go
+package main
+
+import (
+        "fmt"
+        "github.com/tencentyun/qcloud-cos-sts-sdk/go"
+        "os"
+        "time"
+)
+
+func main() {
+        appid := "1259654469"
+        bucket := "test-1259654469"
+        c := sts.NewClient(
+                // 通过环境变量获取密钥, os.Getenv 方法表示获取环境变量
+                os.Getenv("SECRETID"),  // 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参考https://cloud.tencent.com/document/product/598/37140
+                os.Getenv("SECRETKEY"), // 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参考https://cloud.tencent.com/document/product/598/37140
+                nil,
+                // sts.Host("sts.internal.tencentcloudapi.com"), // 设置域名, 默认域名sts.tencentcloudapi.com
+                // sts.Scheme("http"),      // 设置协议, 默认为https，公有云sts获取临时密钥不允许走http，特殊场景才需要设置http
+        )
+        opt := &sts.WebIdentityOptions{
+            ProviderId:       "your ProviderId",
+            WebIdentityToken: "your WebIdentityToken",
+            RoleArn:          "your RoleArn",
+            RoleSessionName:  "test",
+        }
+        res, err := c.AssumeRoleWithWebIdentity(wopt)
+        if err != nil {
+            panic(err)
+        }
+        fmt.Printf("%+v\n", res)
+        fmt.Printf("%+v\n", res.Credentials)
+}
+```
