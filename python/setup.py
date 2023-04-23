@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf8') as fh:
 
 setup(
     name='qcloud-python-sts',
-    version='3.1.3',
+    version='3.1.4',
     description='this is sts for python on v3',
     long_description=long_description,
     long_description_content_type="text/markdown",
