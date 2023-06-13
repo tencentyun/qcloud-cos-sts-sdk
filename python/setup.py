@@ -1,7 +1,8 @@
 # coding=utf-8
 from setuptools import setup, find_packages
+import io
 
-with open("README.md", "r", encoding='utf8') as fh:
+with io.open("README.md", "r", encoding='utf8') as fh:
     long_description = fh.read()
 
 setup(
