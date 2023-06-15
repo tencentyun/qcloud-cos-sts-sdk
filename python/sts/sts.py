@@ -95,6 +95,22 @@ class Sts:
                                                                                     appid=appid, bucket=self.bucket,
                                                                                     prefix=prefix))
 
+    def add_resource(self, resource):
+        """
+        追加需要的资源，仅当 self.policy 字段未设置时有效
+        :param resource: 需要追加的资源，支持str与list两种类型
+        """
+        if self.policy is not None:
+            return
+        if self.resource is None:
+            self.resource = list()
+        if isinstance(resource, str):
+            self.resource.append(resource)
+        elif isinstance(resource, list):
+            self.resource.extend(resource)
+        else:
+            raise ValueError('Error: param type is invalid, type:' + str(type(resource)))
+
     @staticmethod
     def get_policy(scopes=[]):
         if not isinstance(scopes, list):
@@ -278,6 +294,7 @@ class Scope(object):
     resource_prefix = None
     condition = None
     effect = 'allow'
+    service_type = 'cos'
 
     def __init__(self, action=None, bucket=None, region=None, resource_prefix=None):
         self.action = action
@@ -327,7 +344,7 @@ class Scope(object):
         for i in range(len(self.resource_prefix)):
             if not str(self.resource_prefix[i]).startswith('/'):
                 self.resource_prefix[i] = '/' + self.resource_prefix[i]
-            resource.append("qcs::cos:{region}:uid/{appid}:{bucket}{prefix}".format(region=self.region,
+            resource.append("qcs::{service_type}:{region}:uid/{appid}:{bucket}{prefix}".format(service_type=self.service_type, region=self.region,
                                                                                 appid=appid, bucket=self.bucket,
                                                                                 prefix=self.resource_prefix[i]))
         return resource
@@ -347,4 +364,9 @@ class Scope(object):
         result['effect'] = self.effect
         result['condition'] = self.condition
         return result
+
+
+class CIScope(Scope):
+    service_type = 'ci'
+    pass
 
