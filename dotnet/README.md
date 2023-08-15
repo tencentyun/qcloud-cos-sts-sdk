@@ -29,6 +29,16 @@ dotnet add package Tencent.QCloud.Cos.Sts.Sdk
    "RequestId":"3f8f5f69-1929-4f8f-9e47-ee0426a880ae"
 }
 ```
+#### 返回值说明
+| 字段                       | 类型     | 描述                         |
+|--------------------------|--------|----------------------------|
+| Credentials              | dict   | 临时密钥信息                     |
+| Credentials.tmpSecretId  | String | 临时密钥 Id，可用于计算签名            |
+| Credentials.tmpSecretKey | String | 临时密钥 Key，可用于计算签名           |
+| Credentials.Token        | String | 请求时需要用的 tmpToken 字符串  |
+| expiredTime              | String | 密钥的失效时间，是 UNIX 时间戳         |
+| StartTime                | String | 密钥的起始时间，是 UNIX 时间戳         |
+| RequestId                | String | 请求request id               |
 
 ## 相关 SDK
 

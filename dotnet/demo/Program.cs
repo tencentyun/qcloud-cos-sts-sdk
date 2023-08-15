@@ -44,6 +44,8 @@ namespace demo
             // 设置域名
             // values.Add("Domain", "sts.tencentcloudapi.com");
 
+
+            // foreach 打印的返回值
             // Credentials = {
             //   "Token": "4oztDXOAAI3c6qUE5TkNuVzSP1tUQz15f3f946eb08f9411d3d61505cc4bc74cczCZLchkvRmmrqzE09ELVw35gzYlBXsQp03PBpL79ubLvoAMWbBgSMmI6eApmhqv7NFeDdKJlikVe0fNCU2NNUe7cHrgttfTIK87ZnC86kww-HysFgIGeBNWpwo4ih0lV0z9a2WiTIjPoeDBwPU4YeeAVQAGPnRgHALoL2FtxNsutFzDjuryRZDK7Am4Cs9YxpZHhG7_F_II6363liKNsHTk8ONRZrNxKiOqvFvyhsJ-oTTUg0I0FT4_xo0lq5zR9yyySXHbE7z-2im4rgnK3sBagN47zkgltJyefJmaPUdDgGmvaQBO6TqxiiszOsayS7CxCZK1yi90H2KS3xRUYTLf94aVaZlufrIwntXIXZaHOKHmwuZuXl7HnHoXbfg_YENoLP6JAkDCw0GOFEGNOrkCuxRtcdJ08hysrwBw1hmYawDHkbyxYkirY-Djg7PswiC4_juBvG0iwjzVwE0W_rhxIa7YtamLnZJxQk9dyzbbl0F4DTYwS101Hq9wC7jtifkXFjBFTGRnfPe85K-hEnJLaEy7eYfulIPI9QiIUxi4BLPbzjD9j3qJ4Wdt5oqk9XcF9y5Ii2uQx1eymNl7qCA",
             //   "TmpSecretId": "xxxxxxxxxxxx",
@@ -53,7 +55,7 @@ namespace demo
             // Expiration = 2020/8/20 上午9:43:22
             // RequestId = 2b731be1-ebe8-4638-8a72-906bc564a55a
             // StartTime = 1597914802
-            Dictionary<string, object> credential = STSClient.genCredential(values);
+            Dictionary<string, object> credential = STSClient.genCredential(values); //返回值说明见README.md
             foreach (KeyValuePair<string, object> kvp in credential)
             {
                 Console.WriteLine("{0} = {1}", kvp.Key, kvp.Value);
