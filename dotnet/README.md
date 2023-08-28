@@ -12,8 +12,8 @@ dotnet add package Tencent.QCloud.Cos.Sts.Sdk
 
 ## 查看使用示例
 
-请查看 [demo 示例](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/dotnet/demo)，里面描述了如何调用SDK。
-临时密钥的获取已经使用 https://github.com/tencentyun/qcloud-cos-sts-sdk/blob/master/dotnet/demo/GetCredentialDemo.cs
+- 请查看 [demo 示例](https://github.com/tencentyun/qcloud-cos-sts-sdk/tree/master/dotnet/demo)，里面描述了如何调用SDK。
+- 临时密钥的获取以及使用 https://github.com/tencentyun/qcloud-cos-sts-sdk/blob/master/dotnet/demo/GetCredentialDemo.cs
 
 
 #### 返回示例
