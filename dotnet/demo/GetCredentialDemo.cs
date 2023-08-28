@@ -28,10 +28,10 @@ namespace COSSnippet
         private CosXml cosXml;
 
         //永久密钥
-        string secretId = "AKIDOjrkRzMXWJ80f7Xmoa8bz94kDSXQ6aru";
-        string secretKey = "rkkdIAoFfv8OTM2f9RhirrgMr9HCwZR5";
+        string secretId = "";
+        string secretKey = "";
 
-        string bucket = "dotnet-ut-obj-1318182572";
+        string bucket = "dotnet-1318182572";
         string region = "ap-guangzhou";
 
         //临时密钥
