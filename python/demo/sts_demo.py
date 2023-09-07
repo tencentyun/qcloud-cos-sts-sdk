@@ -3,7 +3,34 @@
 import json
 import os
 
-from sts.sts import Sts
+from python.sts.sts import Sts, CIScope, Scope
+
+
+def ci_and_cos_sts_demo():
+    scopes = list()
+    scopes.append(CIScope('name/ci:*', 'test-125000000', 'ap-chongqing', '*'))
+    scopes.append(Scope('name/cos:*', 'test-125000000', 'ap-chongqing', '*'))
+    config = {
+        'sts_scheme': 'https',
+        'sts_url': 'sts.tencentcloudapi.com/',
+        # 临时密钥有效时长，单位是秒
+        'duration_seconds': 1800,
+        'secret_id': os.environ['COS_SECRET_ID'],
+        # 固定密钥
+        'secret_key': os.environ['COS_SECRET_KEY'],
+        # 换成 bucket 所在地区
+        'region': 'ap-chongqing',
+        #  设置网络代理
+        # 'proxy': {
+        #     'http': 'xxx',
+        #     'https': 'xxx'
+        # },
+        'policy': Sts.get_policy(scopes)
+    }
+
+    sts = Sts(config)
+    response = sts.get_credential()
+    print('get data : ' + json.dumps(dict(response), indent=4))
 
 
 if __name__ == '__main__':
@@ -120,3 +147,4 @@ if __name__ == '__main__':
             print('get data : ' + json.dumps(dict(response), indent=4))
         except Exception as e:
             print(e)
+    ci_and_cos_sts_demo()

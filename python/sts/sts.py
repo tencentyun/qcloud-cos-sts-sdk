@@ -344,9 +344,14 @@ class Scope(object):
         for i in range(len(self.resource_prefix)):
             if not str(self.resource_prefix[i]).startswith('/'):
                 self.resource_prefix[i] = '/' + self.resource_prefix[i]
-            resource.append("qcs::{service_type}:{region}:uid/{appid}:{bucket}{prefix}".format(service_type=self.service_type, region=self.region,
-                                                                                appid=appid, bucket=self.bucket,
-                                                                                prefix=self.resource_prefix[i]))
+                if self.service_type == 'cos':
+                    resource.append("qcs::{service_type}:{region}:uid/{appid}:{bucket}{prefix}".format(service_type=self.service_type, region=self.region,
+                                                                                        appid=appid, bucket=self.bucket,
+                                                                                        prefix=self.resource_prefix[i]))
+                elif self.service_type == 'ci':
+                    resource.append("qcs::{service_type}:{region}:uid/{appid}:bucket/{bucket}{prefix}".format(service_type=self.service_type, region=self.region,
+                                                                                                       appid=appid, bucket=self.bucket,
+                                                                                                       prefix=self.resource_prefix[i]))
         return resource
 
     def get_effect(self):
