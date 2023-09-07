@@ -4,6 +4,7 @@ import json
 import os
 
 from sts.sts import Sts, Scope
+from sts.sts import CIScope
 
 
 def test_policy():
@@ -43,6 +44,7 @@ def test_policy3():
     scopes.append(Scope('name/cos:UploadPart', 'example-1250000000', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:CompleteMultipartUpload', 'example-1250000000', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', '1/test.txt'))
+    scopes.append(CIScope('name/ci:UpdateMediaQueue', 'example-1250000000', 'ap-guangzhou', '1/test.txt'))
     print(json.dumps(Sts.get_policy(scopes), indent=4))
 
 def test_policy4():
@@ -54,6 +56,7 @@ def test_policy4():
     scopes.append(Scope('name/cos:UploadPart', 'example-1250000000', 'ap-guangzhou', ['exampleobject', 'exampleobject2']))
     scopes.append(Scope('name/cos:CompleteMultipartUpload', 'example-1250000000', 'ap-guangzhou', ['exampleobject', 'exampleobject2']))
     scopes.append(Scope('name/cos:GetObject', 'example-1250000000', 'ap-guangzhou', ['1/test.txt', '2/test.txt']))
+    scopes.append(CIScope('name/ci:UpdateMediaQueue', 'example-1250000000', 'ap-guangzhou', ['1/test.txt', '2/test.txt']))
     print(json.dumps(Sts.get_policy(scopes), indent=4))
 
 
@@ -66,6 +69,7 @@ def test_sts():
     scopes.append(Scope('name/cos:UploadPart', 'example-1253653367', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:CompleteMultipartUpload', 'example-1253653367', 'ap-guangzhou', 'exampleobject'))
     scopes.append(Scope('name/cos:GetObject', 'example-1253653367', 'ap-guangzhou', '1/test.txt'))
+    scopes.append(CIScope('name/ci:UpdateMediaQueue', 'example-1253653367', 'ap-guangzhou', '1/test.txt'))
     config = {
         'sts_scheme': 'https',
         'sts_url': 'sts.tencentcloudapi.com/',
@@ -98,6 +102,8 @@ def test_sts2():
     scopes.append(Scope('name/cos:UploadPart', 'example-1253653367', 'ap-guangzhou', ['exampleobject', 'exampleobject2']))
     scopes.append(Scope('name/cos:CompleteMultipartUpload', 'example-1253653367', 'ap-guangzhou', ['exampleobject', 'exampleobject2']))
     scopes.append(Scope('name/cos:GetObject', 'example-1253653367', 'ap-guangzhou', ['1/test.txt', '2/test.txt']))
+    scopes.append(CIScope('name/ci:UpdateMediaQueue', 'example-1253653367', 'ap-guangzhou', ['*']))
+
     config = {
         'sts_scheme': 'https',
         'sts_url': 'sts.tencentcloudapi.com/',
