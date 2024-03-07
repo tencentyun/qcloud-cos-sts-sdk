@@ -29,6 +29,7 @@ class Sts:
     network_proxy = None
     url = sts_url
     domain = sts_domain
+    service_type = 'cos'
 
     def __init__(self, config={}):
         self.parse_parameters(config)
@@ -91,9 +92,14 @@ class Sts:
             for prefix in resource_prefix:
                 if not str(prefix).startswith('/'):
                     prefix = '/' + prefix
-                self.resource.append("qcs::cos:{region}:uid/{appid}:{bucket}{prefix}".format(region=self.region,
+                if self.service_type == 'cos':
+                    self.resource.append("qcs::{service_type}:{region}:uid/{appid}:{bucket}{prefix}".format(service_type=self.service_type, region=self.region,
                                                                                     appid=appid, bucket=self.bucket,
                                                                                     prefix=prefix))
+                elif self.service_type == 'ci':
+                    self.resource.append("qcs::{service_type}:{region}:uid/{appid}:bucket/{bucket}{prefix}".format(service_type=self.service_type, region=self.region,
+                                                                                                              appid=appid, bucket=self.bucket,
+                                                                                                              prefix=prefix))
 
     def add_resource(self, resource):
         """
@@ -269,6 +275,11 @@ class Sts:
                 bc_json[k[0].lower() + k[1:]] = v
         
         return bc_json
+
+
+class CISts(Sts):
+    service_type = 'ci'
+    pass
 
 
 class Tools(object):
