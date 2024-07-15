@@ -15,6 +15,7 @@
   "author": "wjielai@tencent.com",
   "license": "MIT",
   "dependencies": {
+    "qcloud-cos-sts": "^3.1.0",
     "request": "^2.88.0"
   },
   "devDependencies": {
