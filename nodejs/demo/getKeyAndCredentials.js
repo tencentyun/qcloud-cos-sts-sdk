@@ -11,9 +11,6 @@ const config = {
   durationSeconds: 1800,
   bucket: process.env.Bucket,
   region: process.env.Region,
-  // 允许操作（上传）的对象前缀，可以根据自己网站的用户登录态判断允许上传的目录，例子： user1/* 或者 * 或者a.jpg
-  // 请注意当使用 * 时，可能存在安全风险，详情请参阅：https://cloud.tencent.com/document/product/436/40265
-  allowPrefix: '_ALLOW_DIR_/*',
   // 密钥的上传操作权限列表
   allowActions: [
     // 简单上传
@@ -39,7 +36,6 @@ const generateCosKey = function (ext) {
 
 // 创建临时密钥服务
 const app = express();
-
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -52,7 +48,6 @@ function getSts({ cosKey, condition }) {
   return new Promise((resolve, reject) => {
     // 获取临时密钥
     const AppId = config.bucket.substr(config.bucket.lastIndexOf('-') + 1);
-    // 数据万象DescribeMediaBuckets接口需要resource为*,参考 https://cloud.tencent.com/document/product/460/41741
     let resource =
       'qcs::cos:' +
       config.region +
@@ -61,10 +56,7 @@ function getSts({ cosKey, condition }) {
       ':' +
       config.bucket +
       '/' +
-      config.allowPrefix;
-    if (cosKey) {
-      resource += cosKey;
-    }
+      cosKey;
     console.log('检查resource是否正确', resource);
     const policy = {
       version: '2.0',
@@ -107,12 +99,6 @@ function getSts({ cosKey, condition }) {
 
 // 返回临时密钥和上传信息，客户端自行计算签名
 app.get('/getKeyAndCredentials', function (req, res, next) {
-  // TODO 这里根据自己业务需要做好放行判断
-  if (config.allowPrefix === '_ALLOW_DIR_/*') {
-    res.send({ error: '请修改 allowPrefix 配置项，指定允许上传的路径前缀' });
-    return;
-  }
-
   // 业务自行实现 用户登录态校验，比如对 token 校验
   // const userToken = req.query.userToken;
   // const canUpload = checkUserRole(userToken);
