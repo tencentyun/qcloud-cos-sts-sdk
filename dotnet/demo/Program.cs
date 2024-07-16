@@ -73,10 +73,10 @@ namespace Demo
              *   StartTime = 1597914802
              */
             Dictionary<string, object> credential = STSClient.genCredential(values); //返回值说明见README.md
-            // foreach (KeyValuePair<string, object> kvp in credential)
-            // {
-            //     Console.WriteLine("{0} = {1}", kvp.Key, kvp.Value);
-            // }
+            foreach (KeyValuePair<string, object> kvp in credential)
+            {
+                 Console.WriteLine("{0} = {1}", kvp.Key, kvp.Value);
+            }
             return credential;
         }
         
