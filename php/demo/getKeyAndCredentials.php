@@ -5,7 +5,7 @@ use QCloud\COSSTS\Sts;
 
 // 生成要上传的 COS 文件路径文件名
 function generateCosKey($ext) {
-  $ymd = date('ymd');
+  $ymd = date('Ymd');
   $r = substr('000000' . rand(), -6);
   $cosKey = 'file/' . $ymd. '/' . $ymd . '_' . $r;
   if ($ext) {
