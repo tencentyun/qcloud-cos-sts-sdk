@@ -24,9 +24,8 @@ namespace COSSnippet
         string bucket = "bucket-125000000";
         string appId = "125000000";
         string region = "ap-guangzhou";
-        string ext = "jpg";
+        string filename = "test.jpg";
         int time = 1800;
-        
         
         // 限制
         Boolean limitExt = false; // 限制上传文件后缀
@@ -61,8 +60,10 @@ namespace COSSnippet
                 "name/cos:CompleteMultipartUpload",
             };
             
+			string[] segments = filename.Split(".");
+        	string ext = segments.Length > 0 ? segments[segments.Length - 1] : string.Empty;  
             string resource = $"qcs::cos:{region}:uid/{appId}:{bucket}/{generateCosKey(ext)}";
-            
+
             var condition = new Dictionary<string, object>();
             
             // 1. 限制上传文件后缀

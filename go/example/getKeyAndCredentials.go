@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	ext             string
+	filename        string
 	appId           string
 	SecretId        string
 	SecretKey       string
@@ -48,7 +48,7 @@ func getPermission() Permission {
 
 func getConfig() Config {
 	config := Config{
-		ext:             "jpg",
+		filename:        "test.jpg",
 		appId:           "12500000000",
 		SecretId:        os.Getenv("SECRETID"),  // 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参考https://cloud.tencent.com/document/product/598/37140
 		SecretKey:       os.Getenv("SECRETKEY"), // 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参考https://cloud.tencent.com/document/product/598/37140
@@ -94,8 +94,14 @@ func main() {
 
 	condition := make(map[string]map[string]interface{})
 
+	segments := strings.Split(config.filename, ".")
+	if len(segments) == 0 {
+		ext := ""
+	}
+	ext := segments[len(segments)-1]
+
 	if permission.LimitExt {
-		extInvalid := config.ext == "" || !stringInSlice(config.ext, permission.ExtWhiteList)
+		extInvalid := ext == "" || !stringInSlice(ext, permission.ExtWhiteList)
 		if extInvalid {
 			fmt.Printf("%+v\n", "非法文件，禁止上传")
 			return
@@ -131,7 +137,7 @@ func main() {
 					Resource: []string{
 						// 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
 						// 存储桶的命名格式为 BucketName-APPID，此处填写的 bucket 必须为此格式
-						"qcs::cos:ap-guangzhou:uid/" + config.appId + ":" + config.Bucket + "/" + generateCosKey(config.ext),
+						"qcs::cos:ap-guangzhou:uid/" + config.appId + ":" + config.Bucket + "/" + generateCosKey(ext),
 					},
 					// 开始构建生效条件 condition
 					// 关于 condition 的详细设置规则和COS支持的condition类型可以参考https://cloud.tencent.com/document/product/436/71306

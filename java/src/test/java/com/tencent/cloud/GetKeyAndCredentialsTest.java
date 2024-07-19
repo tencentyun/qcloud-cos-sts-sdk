@@ -29,13 +29,15 @@ public class GetKeyAndCredentialsTest {
 
         String bucket = "bucket-1250000000";
         String appId = "1250000000";
-        String ext = "jpg";
+        String filename = "test.jpg";
         String region = "ap-guangzhou";
         String secretId = "";
         String secretKey = "";
         String proxy  = "";
         int durationSeconds = 1800;
 
+        String[] segments = filename.split("\\.");
+        String ext = segments.length > 0 ? segments[segments.length - 1] : "";
 
         // 临时密钥限制
         Boolean limitExt = false; // 限制上传文件后缀

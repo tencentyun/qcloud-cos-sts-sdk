@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     # 配置参数
     config = {
-        "ext":"jpg",
+        "filename":"test.jpg",
         "appId": "125000000",
         "secretId": os.getenv("SecretId"),
         "secretKey": os.getenv("SecretKey"),
@@ -48,13 +48,16 @@ if __name__ == '__main__':
         cos_key = f"file/{ymd}/{ymd}_{r}.{ext if ext else ''}"
         return cos_key
 
-    resource = f"qcs::cos:{config['region']}:uid/{config['appId']}:{config['bucket']}/{generate_cos_key(config['ext'])}"
+    segments = config['filename'].split(separator)
+    ext = segments[-1] if segments else ""
+
+    resource = f"qcs::cos:{config['region']}:uid/{config['appId']}:{config['bucket']}/{generate_cos_key(ext)}"
 
     condition = {}
 
     # 1. 限制上传文件后缀
     if permission["limitExt"]:
-        ext_invalid = not config['ext'] or config['ext'] not in permission["extWhiteList"]
+        ext_invalid = not ext or ext not in permission["extWhiteList"]
         if ext_invalid:
             print('非法文件，禁止上传')
 
