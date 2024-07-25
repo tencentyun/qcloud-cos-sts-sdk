@@ -106,7 +106,6 @@ var _getCredential = function (options, callback) {
       data = util.backwardCompat(data);
       callback(null, data);
     }).catch(err => {
-      console.log('err', err);
       callback(err);
     });
 };
