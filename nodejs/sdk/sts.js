@@ -1,4 +1,5 @@
-var request= require('request');
+var axios= require('axios');
+var qs = require('qs');
 var crypto= require('crypto');
 
 var StsUrl = 'https://{host}/';
@@ -88,31 +89,25 @@ var _getCredential = function (options, callback) {
     var opt = {
         method: method,
         url: StsUrl.replace('{host}', endpoint),
-        strictSSL: false,
-        json: true,
-        form: params,
         headers: {
-            Host: endpoint
+          'accept': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded',
+          Host: endpoint
         },
+        data: qs.stringify(params),
         proxy: proxy,
     };
-    request(opt, function (err, response, body) {
-        var data = body && body.Response;
-        if (data) {
-            if (data.Error) {
-                callback(data.Error);
-            } else {
-                try {
-                    data.startTime = data.ExpiredTime - durationSeconds;
-                    data = util.backwardCompat(data);
-                    callback(null, data)
-                } catch (e) {
-                    callback(new Error(`Parse Response Error: ${JSON.stringify(data)}`))
-                }
-            }
-        } else {
-            callback(err || body);
-        }
+    axios(opt).then(res => {
+      let data = res.data.Response;
+      if (data.Error) {
+        return callback(data.Error);
+      }
+      data.startTime = data.ExpiredTime - durationSeconds;
+      data = util.backwardCompat(data);
+      callback(null, data);
+    }).catch(err => {
+      console.log('err', err);
+      callback(err);
     });
 };
 

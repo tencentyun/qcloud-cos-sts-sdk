@@ -117,6 +117,9 @@ app.get('/getKeyAndCredentials', function (req, res, next) {
 
   // 客户端传进原始文件名，这里根据文件后缀生成随机 Key
   const filename = req.query.filename;
+  if (!filename) {
+    res.send({ error: '请传入文件名' });
+  }
   const ext = pathLib.extname(filename);
   const cosKey = generateCosKey(ext);
   const condition = {};
@@ -163,7 +166,6 @@ app.get('/getKeyAndCredentials', function (req, res, next) {
       });
     })
     .catch((err) => {
-      console.log('sts error', err);
       res.send(err);
     });
 });
