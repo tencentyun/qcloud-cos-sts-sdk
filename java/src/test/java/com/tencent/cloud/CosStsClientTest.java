@@ -133,9 +133,9 @@ public class CosStsClientTest {
              "      \"condition\": {\n" +
              "        \"ip_equal\": {\n" +
              "            \"qcs:ip\": [\n" +
-             "                \"192.168.1.0/24\",\n" +
-             "                \"101.226.100.185\",\n" +
-             "                \"101.226.100.186\"\n" +
+             "                \"xx.xx.xx.xx\",\n" +
+             "                \"yy.yy.yy.yy\",\n" +
+             "                \"zz.zz.zz.zz\"\n" +
              "            ]\n" +
              "        }\n" +
              "      }\n" +
@@ -206,8 +206,8 @@ public class CosStsClientTest {
             // 关于 condition 的详细设置规则可以参考 https://cloud.tencent.com/document/product/598/10604#.E5.AD.97.E7.AC.A6.E4.B8.B2.E8.AF.B4.E6.98.8E
             ConditionTypeValue conditionTypeValue = new ConditionTypeValue();
             conditionTypeValue.setKey("qcs:ip");
-            conditionTypeValue.addValue("10.10.10.10");
-            conditionTypeValue.addValue("10.10.10.11");
+            conditionTypeValue.addValue("xx.xx.xx.xx");
+            conditionTypeValue.addValue("yy.yy.yy.yy");
 
             // 增加规则
             statement.addCondition("ip_equal", conditionTypeValue);
