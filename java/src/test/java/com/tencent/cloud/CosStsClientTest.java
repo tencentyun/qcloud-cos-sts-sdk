@@ -43,7 +43,7 @@ public class CosStsClientTest {
             config.put("durationSeconds", 1800);
 
             // 换成你的 bucket
-            config.put("bucket", "sts-sdk-test-1251668577");
+            config.put("bucket", "sts-sdk-test-1250000000");
             // 换成 bucket 所在地区
             config.put("region", "ap-chengdu");
 
@@ -104,9 +104,9 @@ public class CosStsClientTest {
 
             //设置 policy
             List<Scope> scopes = new ArrayList<Scope>();
-            Scope scope = new Scope("name/cos:PutObject", "sts-sdk-test-1251668577", "ap-chengdu", "/test.txt");
+            Scope scope = new Scope("name/cos:PutObject", "sts-sdk-test-1250000000", "ap-chengdu", "/test.txt");
             scopes.add(scope);
-            scopes.add(new Scope("name/cos:GetObject", "sts-sdk-test-1251668577", "ap-chengdu", "/test.txt"));
+            scopes.add(new Scope("name/cos:GetObject", "sts-sdk-test-1250000000", "ap-chengdu", "/test.txt"));
             config.put("policy", CosStsClient.getPolicy(scopes));
 
             /**
@@ -199,7 +199,7 @@ public class CosStsClientTest {
             // 一条资源的规则是：qcs::cos:<REGION>:uid/<APPID>:<BUCKET-APPID>/<OBJECT>
             statement.addResources(new String[] {
                     String.format("qcs::cos:%s:uid/%s:%s/%s",
-                            "ap-chengdu", "1251668577", "sts-sdk-test-1251668577", "exampleObject")
+                            "ap-chengdu", "1250000000", "sts-sdk-test-1250000000", "exampleObject")
             });
 
             // 开始构建生效条件 condition
