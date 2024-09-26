@@ -49,8 +49,7 @@ func main() {
 					Condition: map[string]map[string]interface{}{
 						"ip_equal": map[string]interface{}{
 							"qcs:ip": []string{
-								"10.217.182.3/24",
-								"111.21.33.72/24",
+								"",
 							},
 						},
 					},
