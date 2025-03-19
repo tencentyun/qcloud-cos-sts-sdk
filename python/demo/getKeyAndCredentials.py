@@ -121,6 +121,8 @@ if __name__ == '__main__':
                 "key": key,
                 "startTime": credential_dic.get("startTime"),
                 "expiredTime": credential_dic.get("expiredTime"),
+                "requestId": credential_dic.get("requestId"),
+                "expiration": credential_dic.get("expiration"),
                 "credentials": {
                     "tmpSecretId": credential_info.get("tmpSecretId"),
                     "tmpSecretKey": credential_info.get("tmpSecretKey"),

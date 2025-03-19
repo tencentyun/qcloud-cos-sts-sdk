@@ -125,6 +125,8 @@ public class GetKeyAndCredentialsTest {
             credentials.put("sessionToken",response.credentials.sessionToken);
             credential.put("startTime",response.startTime);
             credential.put("expiredTime",response.expiredTime);
+            credential.put("requestId",response.requestId);
+            credential.put("expiration",response.expiration);
             credential.put("credentials",credentials);
             credential.put("bucket",config.get("bucket"));
             credential.put("region",config.get("region"));

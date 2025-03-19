@@ -145,6 +145,8 @@ namespace COSSnippet
             Dictionary<string, object> dictionary1 = new Dictionary<string, object>();
             dictionary1.Add("credentials",credentials1);
             dictionary1.Add("startTime",credential["StartTime"]);
+            dictionary1.Add("requestId",credential["RequestId"]);
+            dictionary1.Add("expiration",credential["Expiration"]);
             dictionary1.Add("expiredTime",credential["ExpiredTime"]);
             dictionary1.Add("bucket",config["bucket"]);
             dictionary1.Add("region",config["region"]);
