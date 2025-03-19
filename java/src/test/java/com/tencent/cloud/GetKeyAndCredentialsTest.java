@@ -70,8 +70,8 @@ public class GetKeyAndCredentialsTest {
                 put("cos:content-length", 5L * 1024 * 1024);
             }});
         }
-
-        String resource = "qcs::cos:" + region + ":uid/" + appId + ':' + bucket + '/' + generateCosKey(ext);
+        String key = generateCosKey(ext);
+        String resource = "qcs::cos:" + region + ":uid/" + appId + ':' + bucket + '/' + key;
         List allowActions = Arrays.asList(
                 // 简单上传
                 "name/cos:PutObject",
@@ -82,7 +82,6 @@ public class GetKeyAndCredentialsTest {
                 "name/cos:UploadPart",
                 "name/cos:CompleteMultipartUpload"
         );
-
 
         // 构建policy
         Map<String, Object> policy = new HashMap();
@@ -106,6 +105,7 @@ public class GetKeyAndCredentialsTest {
         config.put("duration",durationSeconds);
         config.put("bucket",bucket);
         config.put("region",region);
+        config.put("key",key);
         config.put("policy",Jackson.toJsonPrettyString(policy));
         return config;
     }
@@ -116,12 +116,18 @@ public class GetKeyAndCredentialsTest {
     @Test
     public void testGetKeyAndCredentials() {
         TreeMap config = this.getConfig();
-
         try {
             Response response = CosStsClient.getCredential(config);
-            System.out.println(response.credentials.tmpSecretId);
-            System.out.println(response.credentials.tmpSecretKey);
-            System.out.println(response.credentials.sessionToken);
+            TreeMap <String,Object> credential = new TreeMap<String, Object>();
+            TreeMap <String,Object> credentials = new TreeMap<String, Object>();
+            credentials.put("tmpSecretId",response.credentials.tmpSecretId);
+            credentials.put("tmpSecretKey",response.credentials.tmpSecretKey);
+            credentials.put("sessionToken",response.credentials.sessionToken);
+            credential.put("credentials",credentials);
+            credential.put("bucket",config.get("bucket"));
+            credential.put("region",config.get("region"));
+            credential.put("key",config.get("key"));
+            System.out.println(credential);
         } catch (Exception e) {
         	    e.printStackTrace();
             throw new IllegalArgumentException("no valid secret !");
