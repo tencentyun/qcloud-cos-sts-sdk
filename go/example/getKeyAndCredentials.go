@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/tencentyun/qcloud-cos-sts-sdk/go"
 	"math/rand"
 	"os"
+	"reflect"
+	"strings"
 	"time"
+	"unicode"
 )
 
 type Config struct {
@@ -211,5 +215,10 @@ func main() {
 	resultMap["region"] = config.Region
 	resultMap["key"] = key
 	// 打印结果
-	fmt.Printf("%#v", resultMap)
+	jsonBytes, err := json.MarshalIndent(resultMap, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	// 转换为字符串并打印
+	fmt.Println(string(jsonBytes))
 }

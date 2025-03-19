@@ -131,7 +131,8 @@ public class GetKeyAndCredentialsTest {
             credential.put("bucket",config.get("bucket"));
             credential.put("region",config.get("region"));
             credential.put("key",config.get("key"));
-            System.out.println(credential);
+            System.out.println(Jackson.toJsonPrettyString(credential));
+
         } catch (Exception e) {
         	    e.printStackTrace();
             throw new IllegalArgumentException("no valid secret !");

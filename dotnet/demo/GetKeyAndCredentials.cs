@@ -153,12 +153,12 @@ namespace COSSnippet
             dictionary1.Add("key",config["key"]);
             return dictionary1;
         }
-        
         static void Main(string[] args)
         {
             GetKeyAndCredentials m = new GetKeyAndCredentials();
             Dictionary<string, object> result = m.GetCredential();
-            Console.WriteLine("Credentials:" + result);
+            string Credentials = JsonConvert.SerializeObject(result);
+            Console.WriteLine($"{Credentials}");
         }
     }
 }
