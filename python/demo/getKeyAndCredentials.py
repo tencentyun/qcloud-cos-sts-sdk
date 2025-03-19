@@ -48,10 +48,10 @@ if __name__ == '__main__':
         cos_key = f"file/{ymd}/{ymd}_{r}.{ext if ext else ''}"
         return cos_key
 
-    segments = config['filename'].split(separator)
+    segments = config['filename'].split(".")
     ext = segments[-1] if segments else ""
-
-    resource = f"qcs::cos:{config['region']}:uid/{config['appId']}:{config['bucket']}/{generate_cos_key(ext)}"
+    key = generate_cos_key(ext)
+    resource = f"qcs::cos:{config['region']}:uid/{config['appId']}:{config['bucket']}/{key}"
 
     condition = {}
 
@@ -105,11 +105,26 @@ if __name__ == '__main__':
                 ],
             },
         }
-
+    
         try:
+
             sts = Sts(credentialOption)
             response = sts.get_credential()
-            print('get data : ' + json.dumps(dict(response), indent=4))
+            credential_dic = dict(response)
+            credential_info = credential_dic.get("credentials")
+            credential = {
+                "bucket":config.get("bucket"),
+                "region":config.get("region"),
+                "key":key,
+                "startTime":credential_dic.get("startTime"),
+                "expiredTime": credential_dic.get("expiredTime"),
+                "credentials": {
+                    "tmpSecretId":credential_info.get("tmpSecretId"),
+                    "tmpSecretKey":credential_info.get("tmpSecretKey"),
+                    "sessionToken": credential_info.get("sessionToken"),
+                },
+            }
+            print('get data : ' + json.dumps(credential, indent=4))
         except Exception as e:
             print(e)
 
