@@ -123,6 +123,8 @@ public class GetKeyAndCredentialsTest {
             credentials.put("tmpSecretId",response.credentials.tmpSecretId);
             credentials.put("tmpSecretKey",response.credentials.tmpSecretKey);
             credentials.put("sessionToken",response.credentials.sessionToken);
+            credential.put("startTime",response.startTime);
+            credential.put("expiredTime",response.expiredTime);
             credential.put("credentials",credentials);
             credential.put("bucket",config.get("bucket"));
             credential.put("region",config.get("region"));
