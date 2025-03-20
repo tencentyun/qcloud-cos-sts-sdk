@@ -154,16 +154,14 @@ app.get('/getKeyAndCredentials', function (req, res, next) {
 
   getSts({ cosKey, condition })
     .then((data) => {
-      res.send({
-        TmpSecretId: data.credentials.tmpSecretId,
-        TmpSecretKey: data.credentials.tmpSecretKey,
-        SessionToken: data.credentials.sessionToken,
-        StartTime: Math.round(Date.now() / 1000),
-        ExpiredTime: data.expiredTime,
-        Bucket: config.bucket,
-        Region: config.region,
-        Key: cosKey,
-      });
+      res.send(
+        Object.assign(data, {
+          startTime: Math.round(Date.now() / 1000),
+          bucket: config.bucket,
+          region: config.region,
+          key: cosKey,
+        })
+      );
     })
     .catch((err) => {
       res.send(err);
