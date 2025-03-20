@@ -61,8 +61,9 @@ namespace COSSnippet
             };
             
 			string[] segments = filename.Split(".");
-        	string ext = segments.Length > 0 ? segments[segments.Length - 1] : string.Empty;  
-            string resource = $"qcs::cos:{region}:uid/{appId}:{bucket}/{generateCosKey(ext)}";
+        	string ext = segments.Length > 0 ? segments[segments.Length - 1] : string.Empty;
+            string key = generateCosKey(ext);
+            string resource = $"qcs::cos:{region}:uid/{appId}:{bucket}/{key}";
 
             var condition = new Dictionary<string, object>();
             
@@ -124,6 +125,7 @@ namespace COSSnippet
 
             config.Add("secretId", secretId);
             config.Add("secretKey", secretKey);
+            config.Add("key", key);
             config.Add("policy", jsonPolicy);
             return config;
         }
@@ -135,16 +137,28 @@ namespace COSSnippet
             var config = getConfig();
             //获取临时密钥
             Dictionary<string, object> credential = STSClient.genCredential(config);
-            return credential;
+            Dictionary<string, object> credentials = JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject((object) credential["Credentials"]));
+            Dictionary<string, object> credentials1 = new Dictionary<string, object>();
+            credentials1.Add("tmpSecretId",credentials["TmpSecretId"]);
+            credentials1.Add("tmpSecretKey",credentials["TmpSecretKey"]);
+            credentials1.Add("sessionToken",credentials["Token"]);
+            Dictionary<string, object> dictionary1 = new Dictionary<string, object>();
+            dictionary1.Add("credentials",credentials1);
+            dictionary1.Add("startTime",credential["StartTime"]);
+            dictionary1.Add("requestId",credential["RequestId"]);
+            dictionary1.Add("expiration",credential["Expiration"]);
+            dictionary1.Add("expiredTime",credential["ExpiredTime"]);
+            dictionary1.Add("bucket",config["bucket"]);
+            dictionary1.Add("region",config["region"]);
+            dictionary1.Add("key",config["key"]);
+            return dictionary1;
         }
-        
         static void Main(string[] args)
         {
             GetKeyAndCredentials m = new GetKeyAndCredentials();
             Dictionary<string, object> result = m.GetCredential();
-            Console.WriteLine("Credentials:" + result["Credentials"]);
-            Console.WriteLine("ExpiredTime:" + result["ExpiredTime"]);
-            Console.WriteLine("StartTime:" + result["StartTime"]);
+            string Credentials = JsonConvert.SerializeObject(result);
+            Console.WriteLine($"{Credentials}");
         }
     }
 }

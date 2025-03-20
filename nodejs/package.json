@@ -1,6 +1,6 @@
 {
   "name": "qcloud-cos-sts",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,8 @@
   "author": "wjielai@tencent.com",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.2"
+    "axios": "^1.7.2",
+    "qs": "^6.13.0"
   },
   "devDependencies": {
     "body-parser": "^1.18.3",

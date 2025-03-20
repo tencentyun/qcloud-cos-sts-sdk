@@ -43,7 +43,7 @@ public class CosStsClientTest {
             config.put("durationSeconds", 1800);
 
             // 换成你的 bucket
-            config.put("bucket", "sts-sdk-test-1251668577");
+            config.put("bucket", "sts-sdk-test-1250000000");
             // 换成 bucket 所在地区
             config.put("region", "ap-chengdu");
 
@@ -104,9 +104,9 @@ public class CosStsClientTest {
 
             //设置 policy
             List<Scope> scopes = new ArrayList<Scope>();
-            Scope scope = new Scope("name/cos:PutObject", "sts-sdk-test-1251668577", "ap-chengdu", "/test.txt");
+            Scope scope = new Scope("name/cos:PutObject", "sts-sdk-test-1250000000", "ap-chengdu", "/test.txt");
             scopes.add(scope);
-            scopes.add(new Scope("name/cos:GetObject", "sts-sdk-test-1251668577", "ap-chengdu", "/test.txt"));
+            scopes.add(new Scope("name/cos:GetObject", "sts-sdk-test-1250000000", "ap-chengdu", "/test.txt"));
             config.put("policy", CosStsClient.getPolicy(scopes));
 
             /**
@@ -133,9 +133,9 @@ public class CosStsClientTest {
              "      \"condition\": {\n" +
              "        \"ip_equal\": {\n" +
              "            \"qcs:ip\": [\n" +
-             "                \"192.168.1.0/24\",\n" +
-             "                \"101.226.100.185\",\n" +
-             "                \"101.226.100.186\"\n" +
+             "                \"xx.xx.xx.xx\",\n" +
+             "                \"yy.yy.yy.yy\",\n" +
+             "                \"zz.zz.zz.zz\"\n" +
              "            ]\n" +
              "        }\n" +
              "      }\n" +
@@ -199,15 +199,15 @@ public class CosStsClientTest {
             // 一条资源的规则是：qcs::cos:<REGION>:uid/<APPID>:<BUCKET-APPID>/<OBJECT>
             statement.addResources(new String[] {
                     String.format("qcs::cos:%s:uid/%s:%s/%s",
-                            "ap-chengdu", "1251668577", "sts-sdk-test-1251668577", "exampleObject")
+                            "ap-chengdu", "1250000000", "sts-sdk-test-1250000000", "exampleObject")
             });
 
             // 开始构建生效条件 condition
             // 关于 condition 的详细设置规则可以参考 https://cloud.tencent.com/document/product/598/10604#.E5.AD.97.E7.AC.A6.E4.B8.B2.E8.AF.B4.E6.98.8E
             ConditionTypeValue conditionTypeValue = new ConditionTypeValue();
             conditionTypeValue.setKey("qcs:ip");
-            conditionTypeValue.addValue("10.10.10.10");
-            conditionTypeValue.addValue("10.10.10.11");
+            conditionTypeValue.addValue("xx.xx.xx.xx");
+            conditionTypeValue.addValue("yy.yy.yy.yy");
 
             // 增加规则
             statement.addCondition("ip_equal", conditionTypeValue);

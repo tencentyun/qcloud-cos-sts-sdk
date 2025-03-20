@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/tencentyun/qcloud-cos-sts-sdk/go"
 	"math/rand"
 	"os"
+	"reflect"
+	"strings"
 	"time"
+	"unicode"
 )
 
 type Config struct {
@@ -77,6 +81,58 @@ func stringInSlice(str string, list []string) bool {
 	return false
 }
 
+func StructToCamelMap(input interface{}) map[string]interface{} {
+	v := reflect.ValueOf(input)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	result := make(map[string]interface{})
+	typ := v.Type()
+
+	for i := 0; i < v.NumField(); i++ {
+		field := typ.Field(i)
+		fieldValue := v.Field(i)
+
+		// 转换字段名为小驼峰
+		key := toLowerCamel(field.Name)
+
+		// 处理嵌套结构体
+		if fieldValue.Kind() == reflect.Struct ||
+			(fieldValue.Kind() == reflect.Ptr && fieldValue.Elem().Kind() == reflect.Struct) {
+
+			if fieldValue.IsNil() && fieldValue.Kind() == reflect.Ptr {
+				result[key] = nil
+				continue
+			}
+
+			result[key] = StructToCamelMap(fieldValue.Interface())
+		} else {
+			// 处理基本类型
+			result[key] = fieldValue.Interface()
+		}
+	}
+
+	return result
+}
+
+// 转换为小驼峰格式（首字母小写）
+func toLowerCamel(s string) string {
+	if s == "" {
+		return s
+	}
+
+	// 处理全大写单词（如 ID）
+	if strings.ToUpper(s) == s {
+		return strings.ToLower(s)
+	}
+
+	// 普通小驼峰转换
+	runes := []rune(s)
+	runes[0] = unicode.ToLower(runes[0])
+	return string(runes)
+}
+
 func main() {
 
 	config := getConfig()
@@ -96,7 +152,7 @@ func main() {
 
 	segments := strings.Split(config.filename, ".")
 	if len(segments) == 0 {
-		ext := ""
+		//ext := ""
 	}
 	ext := segments[len(segments)-1]
 
@@ -123,6 +179,7 @@ func main() {
 		}
 	}
 
+	key := generateCosKey(ext)
 	// 策略概述 https://cloud.tencent.com/document/product/436/18023
 	opt := &sts.CredentialOptions{
 		DurationSeconds: int64(config.DurationSeconds),
@@ -137,7 +194,7 @@ func main() {
 					Resource: []string{
 						// 这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
 						// 存储桶的命名格式为 BucketName-APPID，此处填写的 bucket 必须为此格式
-						"qcs::cos:ap-guangzhou:uid/" + config.appId + ":" + config.Bucket + "/" + generateCosKey(ext),
+						"qcs::cos:ap-guangzhou:uid/" + config.appId + ":" + config.Bucket + "/" + key,
 					},
 					// 开始构建生效条件 condition
 					// 关于 condition 的详细设置规则和COS支持的condition类型可以参考https://cloud.tencent.com/document/product/436/71306
@@ -152,6 +209,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%+v\n", res)
-	fmt.Printf("%+v\n", res.Credentials)
+	// 转换为小驼峰 map
+	resultMap := StructToCamelMap(res)
+	resultMap["bucket"] = config.Bucket
+	resultMap["region"] = config.Region
+	resultMap["key"] = key
+	// 打印结果
+	jsonBytes, err := json.MarshalIndent(resultMap, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	// 转换为字符串并打印
+	fmt.Println(string(jsonBytes))
 }
