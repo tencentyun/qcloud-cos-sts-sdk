@@ -43,6 +43,9 @@ export interface CredentialData {
     /** 请求时需要用的 token 字符串，最终请求 COS API 时，需要放在 Header 的 x-cos-security-token 字段 */
     sessionToken: string;
   }
+
+    /** 请求 ID */
+    requestId: string;
 }
 
 /** 获取临时密钥接口(获取联合身份临时访问凭证)。 */
