@@ -100,7 +100,9 @@ var _getCredential = function (options, callback) {
     axios(opt).then(res => {
       let data = res.data.Response;
       if (data.Error) {
-        return callback(data.Error);
+        const RequestId = data?.RequestId || '';
+        const res = Object.assign(data.Error, { RequestId });
+        return callback(res);
       }
       data.startTime = data.ExpiredTime - durationSeconds;
       data = util.backwardCompat(data);
