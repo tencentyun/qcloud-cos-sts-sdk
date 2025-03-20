@@ -5,6 +5,8 @@ export interface GetCredentialOptions {
   /** 云 API 密钥 Key */
   secretKey: string;
 
+  region: string;
+
   /** 要申请的临时密钥，限定的权限范围 */
   policy: object;
 
@@ -44,8 +46,8 @@ export interface CredentialData {
     sessionToken: string;
   }
 
-    /** 请求 ID */
-    requestId: string;
+  /** 请求 ID */
+  requestId: string;
 }
 
 /** 获取临时密钥接口(获取联合身份临时访问凭证)。 */
