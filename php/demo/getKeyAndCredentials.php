@@ -86,16 +86,16 @@ function getKeyAndCredentials($filename) {
 
   $sts = new Sts();
   $tempKeys = $sts->getTempKeys($config);
-  $resTemp = array(
-    'TmpSecretId' => $tempKeys['credentials']['tmpSecretId'],
-    'TmpSecretKey' => $tempKeys['credentials']['tmpSecretKey'],
-    'SessionToken' => $tempKeys['credentials']['sessionToken'],
-    'StartTime' => time(),
-    'ExpiredTime' => $tempKeys['expiredTime'],
-    'Bucket' => $bucket,
-    'Region' => $region,
-    'Key' => $cosKey,
-  );
-  echo json_encode($resTemp);
+  $resTemp = array_merge(
+    $tempKeys,
+    [
+      'startTime' => time(),
+      'bucket' => $bucket,
+      'region' => $region,
+      'key' => $cosKey,
+    ]
+ );
+ echo json_encode($resTemp, JSON_UNESCAPED_SLASHES);
+
   return $resTemp;
 }
