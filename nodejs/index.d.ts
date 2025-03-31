@@ -5,7 +5,7 @@ export interface GetCredentialOptions {
   /** 云 API 密钥 Key */
   secretKey: string;
 
-  region: string;
+  region?: string;
 
   /** 要申请的临时密钥，限定的权限范围 */
   policy: object;
