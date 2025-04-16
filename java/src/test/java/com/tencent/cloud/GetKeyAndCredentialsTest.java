@@ -59,12 +59,12 @@ public class GetKeyAndCredentialsTest {
 
         // 2. 限制上传文件 content-type
         if (limitContentType) {
-            condition.put("string_like", new HashMap<String, String>() {{
+            condition.put("string_like_if_exist", new HashMap<String, String>() {{
                 put("cos:content-type", "image/*");
             }});
         }
 
-        // 3. 限制上传文件大小
+        // 3. 限制上传文件大小(只对简单上传生效)
         if (limitContentLength) {
             condition.put("numeric_less_than_equal", new HashMap<String, Long>() {{
                 put("cos:content-length", 5L * 1024 * 1024);

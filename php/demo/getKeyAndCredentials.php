@@ -44,12 +44,12 @@ function getKeyAndCredentials($filename) {
   // 2. 限制上传文件 content-type
   if ($permission['limitContentType']) {
     // 只允许上传 content-type 为图片类型
-    $condition['string_like'] = array('cos:content-type' => 'image/*');
+    $condition['string_like_if_exist'] = array('cos:content-type' => 'image/*');
   }
 
   // 3. 限制上传文件大小
   if ($permission['limitContentLength']) {
-    // 上传大小限制不能超过 5MB
+    // 上传大小限制不能超过 5MB(只对简单上传生效)
     $condition['numeric_less_than_equal'] = array('cos:content-length' => 5 * 1024 * 1024);
   }
 

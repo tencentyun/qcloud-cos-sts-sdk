@@ -81,13 +81,13 @@ namespace COSSnippet
             // 2. 限制上传文件 content-type
             if (limitContentType)
             {
-                condition["string_like"] = new Dictionary<string, string>
+                condition["string_like_if_exist"] = new Dictionary<string, string>
                 {
                     { "cos:content-type", "image/*" } // 只允许上传 content-type 为图片类型
                 };
             }
 
-            // 3. 限制上传文件大小
+            // 3. 限制上传文件大小(只对简单上传生效)
             if (limitContentLength)
             {
                 condition["numeric_less_than_equal"] = new Dictionary<string, long>

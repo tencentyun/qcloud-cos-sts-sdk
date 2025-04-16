@@ -165,7 +165,7 @@ func main() {
 	}
 
 	if permission.LimitContentType {
-		condition["string_like"] = map[string]interface{}{
+		condition["string_like_if_exist"] = map[string]interface{}{
 			// 只允许上传 content-type 为图片类型
 			"cos:content-type": "image/*",
 		}
@@ -174,7 +174,7 @@ func main() {
 	// 3. 限制上传文件大小
 	if permission.LimitContentLength {
 		condition["numeric_less_than_equal"] = map[string]interface{}{
-			// 上传大小限制不能超过 5MB
+			// 上传大小限制不能超过 5MB(只对简单上传生效)
 			"cos:content-length": 5 * 1024 * 1024,
 		}
 	}

@@ -66,7 +66,7 @@ if __name__ == '__main__':
     # 2. 限制上传文件 content-type
     if permission["limitContentType"]:
         condition.update({
-            "string_like": {
+            "string_like_if_exist": {
                 # 只允许上传 content-type 为图片类型
                 "cos:content-type": "image/*"
             }
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     if permission["limitContentLength"]:
         condition.update({
             "numeric_less_than_equal": {
-                # 上传大小限制不能超过 5MB
+                # 上传大小限制不能超过 5MB(只对简单上传生效)
                 "cos:content-length": 5 * 1024 * 1024
             }
         })
