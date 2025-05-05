@@ -3,7 +3,7 @@
 import json
 import os
 
-from python.sts.sts import Sts, CIScope, Scope
+from sts.sts import Sts, CIScope, Scope
 
 
 def ci_and_cos_sts_demo():

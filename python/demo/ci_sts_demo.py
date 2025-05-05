@@ -3,7 +3,7 @@
 import json
 import os
 
-from python.sts.sts import CISts
+from sts.sts import CISts
 
 if __name__ == '__main__':
 
