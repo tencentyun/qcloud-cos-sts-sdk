@@ -61,4 +61,5 @@
 | 语言      | 作者 |  仓库 | 
 | ----------- | ----------- |----------- |
 | elixir   | @scottming        |[scottming/qcloud_cos_sts](https://github.com/scottming/qcloud_cos_sts)        |
+| Erlang   | @LeslieChou7   | [LeslieChou7/qcloud_cos_sts](https://github.com/LeslieChou7/qcloud_cos_sts.git)  |
 
