@@ -1,19 +1,23 @@
 package com.tencent.cloud.cos.util;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
-import javax.net.ssl.HttpsURLConnection;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
 
 /**
  * 请求调用类
@@ -122,7 +126,6 @@ public class Request {
 	public static String sendRequest(String url,
 			Map<String, Object> requestParams, String requestMethod) {
 		String result = "";
-		BufferedReader in = null;
 		String paramStr = "";
 
 		for (String key : requestParams.keySet()) {
@@ -138,6 +141,7 @@ public class Request {
 			}
 		}
 
+		CloseableHttpResponse response = null;
 		try {
 
 			if (requestMethod.equals("GET")) {
@@ -148,57 +152,33 @@ public class Request {
 				}
 			}
 			requestUrl = url;
-		
-			URL realUrl = new URL(url);
-			URLConnection connection = null;
-			if (url.toLowerCase().startsWith("https")) {
-				HttpsURLConnection httpsConn = (HttpsURLConnection) realUrl
-						.openConnection();
 
-				/*httpsConn.setHostnameVerifier(new HostnameVerifier() {
-					public boolean verify(String hostname, SSLSession session) {
-						return true;
-					}
-				});*/
-				connection = httpsConn;
+			HttpUriRequestBase request;
+			if (requestMethod.equals("POST")) {
+				HttpPost httpPost = new HttpPost(url);
+				httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+				List<NameValuePair> formParams = new ArrayList<>();
+				for (Map.Entry<String, Object> entry : requestParams.entrySet()) {
+					formParams.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
+				}
+				httpPost.setEntity(new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8));
+				request = httpPost;
 			} else {
-				connection = realUrl.openConnection();
+				request = new HttpGet(url);
 			}
 
 			// 设置通用的请求属性
-			connection.setRequestProperty("accept", "*/*");
-			connection.setRequestProperty("connection", "Keep-Alive");
-			connection.setRequestProperty("user-agent",
+			request.setHeader("accept", "*/*");
+			request.setHeader("connection", "Keep-Alive");
+			request.setHeader("user-agent",
 					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-			// 设置链接主机超时时间
-			connection.setConnectTimeout(connectTimeout);
-			connection.setReadTimeout(readTimeout);
 
-			if (requestMethod.equals("POST")) {
-				((HttpURLConnection) connection).setRequestMethod("POST");
-				// 发送POST请求必须设置如下两行
-				connection.setDoOutput(true);
-				connection.setDoInput(true);
-				connection.setRequestProperty("Content-Type",
-						"application/x-www-form-urlencoded");
-				OutputStream out = new DataOutputStream(
-						connection.getOutputStream());
-				out.write(paramStr.getBytes());
-				out.flush();
-				out.close();
-			}
+			response = HttpClientHolder.getClient().execute(request);
 
-			// 建立实际的连接
-//			System.out.println("request: url:" + url + ", METHOD: " + requestMethod + ", param:" + paramStr);
-			connection.connect();
-
-			// 定义 BufferedReader输入流来读取URL的响应
-			in = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-
-			String line;
-			while ((line = in.readLine()) != null) {
-				result += line;
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+				EntityUtils.consume(entity);
 			}
 
 		} catch (Exception e) {
@@ -207,8 +187,8 @@ public class Request {
 		} finally {
 			// 使用finally块来关闭输入流
 			try {
-				if (in != null) {
-					in.close();
+				if (response != null) {
+					response.close();
 				}
 			} catch (Exception e2) {
 				result = "{\"code\":-2800,\"location\":\"com.qcloud.Common.Request:234\",\"message\":\"api sdk throw exception! "
